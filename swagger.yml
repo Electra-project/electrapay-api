@@ -1,0 +1,438 @@
+swagger: '2.0'
+info:
+  description: REST API for ElectraPay
+  version: "1.0.0"
+  title: ElectraPay API
+  # put the contact info for your development or API team
+  contact:
+    email: develop@electraproject.org
+
+# basePath: /api
+# tags are used for organizing operations
+tags:
+- name: account
+  description: Secured Merchant account only calls
+- name: order
+  description: Secured Merchant order only calls
+schemes : [ "https" ]
+paths:
+  /v1/account/{id}:
+    get:
+      tags:
+      - account
+      summary: Fetch account details
+      operationId: getAccount
+      parameters:
+        - name: id
+          in: path
+          description: Enter the accountid to retrieve
+          required : true
+          type: integer
+          format: int64
+      description: Retrieve the account details.
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful
+          schema:
+            $ref: '#/definitions/account'
+        400:
+          description: Invalid request
+        401:
+          description: Authorization information is missing or invalid.
+        404:
+          description: Account information not found.
+        500:
+          description: Internal service error
+      security : [ {
+                     "basicAuth" : [ ]
+                   } ]
+  /v1/account:
+    post:
+      tags:
+      - account
+      summary: Add a new account
+      operationId: accountNew
+      description: Add a new account.
+      consumes : [ "application/json" ]
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful
+          schema:
+            $ref: '#/definitions/account'
+        400:
+          description: Invalid request
+        401:
+          description: Authorization information is missing or invalid.
+        404:
+          description: Account information not found.
+        500:
+          description: Internal service error
+  /v1/order:
+    post:
+      tags:
+      - order
+      summary: Add a new order request
+      operationId: orderNew
+      description: Process a new order request
+      consumes: [ "application/json" ]
+      parameters:
+        - name: order
+          in: body
+          description: New order details
+          required: true
+          schema:
+            $ref: '#/definitions/ordernew'
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful
+          schema:
+            $ref: '#/definitions/order'
+        400:
+          description: Invalid request
+        401:
+          description: Authorization information is missing or invalid.
+        404:
+          description: Account information not found.
+        500:
+          description: Internal service error
+securityDefinitions:
+  "basicAuth" :
+    "type" : "basic"
+  "apiKey" :
+    "type" : "apiKey"
+    "name" : "X-Auth-Token"
+    "in" : "header"
+definitions:
+  account:
+    type: object
+    required: ["id","uuid","name","description","language","timezone","accounttype","currencies","walletaddress","walletcurrency","defaultvat","organisation","plugintype","status"]
+    properties:
+      id:
+        type: number
+        description: Internal id assigned by electraPay
+        example: 1
+      uuid:
+        type: string
+        format: uuid
+        description: Unique id assigned by electraPay
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      name:
+        type: string
+        description: Account name
+        example: Electra Donation Wallet
+      description:
+        type: string
+        description: Account description
+        example: Electra Donation Wallet
+      accounttype:
+          type: string
+          enum:
+          - personal
+          - business
+          - nonprofit
+          description: Account type
+          example: nonprofit
+      logourl:
+        type: string
+        description: Account logo URL
+        example: http://electraproject.org/images/logo.svg
+      logoimg:
+        type: string
+        description: Account logo URL
+        example: http://electraproject.org/images/logo.svg
+      address1:
+        type: string
+        description: Account address line 1
+      address2:
+        type: string
+        description: Account address line 2
+      address3:
+        type: string
+        description: Account address line 3
+      postalcode:
+        type: number
+        example: 2390
+        description: Account postal code
+      suburb:
+        type: string
+        example: Leidseplein
+        description: Account Suburb name
+      city:
+        type: string
+        example: Amsterdam
+        description: Account city
+      country:
+        type: string
+        description : "Account country in [ISO 3166-1 alpha-2] (https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)"
+        example: NL
+      language:
+        type: string
+        description : Account language [ISO 639-1] (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
+        example: nl
+      timezone:
+        type: string
+        description : Timezone full description on [[Wikipedia] (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+        example: Europe/Amsterdam
+      callbackuri:
+        type: string
+        description : Callback URI
+        example: https://www.electrabay/api
+      website:
+        type: string
+        description : Website address
+        example: https://www.electrabay
+      currencies:
+        type: array
+        items :
+          $ref: '#/definitions/currency'
+        description : List of allowed currencies
+        example: ["USD"]
+      walletaddress:
+        type: string
+        description : Coin wallet address
+        example : "EVggmyfsA7krt7XsCYyh5DVe5JxDbVs5cZ"
+      walletcurrency:
+        type: string
+        description: Name of coin
+        example: "ECA"
+      contacttitle:
+        type: string
+        description: Title contact person
+        example: Mr
+      contactfirstname:
+        type: string
+        description: Firstname of contact person
+        example: Edward
+      contactmiddlenames:
+        type: string
+        description : Middlenames of contact person
+        example : Mark
+      contactlastname:
+        type: string
+        description: Lastname of contact person
+        example: Peterson
+      contactemail:
+        type: string
+        format : email
+        description : email address of contact person
+        example : edwardp@electrabay.com
+      contactphone:
+        type: string
+        description : phone number of contact person
+        example : +44 333 333 333
+      contactmobile:
+        type: string
+        description: mobile number of contact person
+        example: +44 333 333 333
+      vatno:
+        type: string
+        description : VAT number
+        example : V140976
+      defaultvat:
+        type: number
+        description : VAT percentage
+        example : 25
+        minimum : 0
+        maximum : 100
+      organisation:
+        type: string
+        description : Name from Organisation Model
+        example : ElectraProject
+      plugintype :
+        type: string
+        enum:
+        - MAGENTO2
+        - MAGENTO
+        - SHOPIFY
+        description : eCommerce Plugin list
+        example: MAGENTO2
+      status:
+        type: string
+        enum :
+        - ACTIVE
+        - SUSPENDED
+        - SUSPECT
+        - PENDING
+        - DEACTIVATED
+        description : The account status
+        example : ACTIVE
+  "key" : {
+    "type" : "object",
+    "required" : [ "created", "key" ],
+    "properties" : {
+      "key" : {
+        "type" : "string",
+        "example" : "priv_fcfac2016614418f969fa5697383e47c",
+        "description" : "Api key"
+      },
+      "created" : {
+        "type" : "string",
+        "format" : "date-time",
+        "example" : "2018-04-04T12:40:56.656+00:00",
+        "description" : "Key creation date. In [ISO-8601](http://en.wikipedia.org/wiki/ISO_8601) extended offset date-time format."
+      }
+    }
+  }
+  order:
+    type: object
+    required:
+    - id
+    - uuid
+    - accountid
+    - shortdescription
+    - longdescription
+    - reference
+    - paymentcategory
+    - ordercurrency
+    - orderamount
+    properties:
+      id:
+        type: number
+        description: Unique id assigned by electraPay
+        example: 1
+      uuid:
+        type: string
+        format: uuid
+        description: Unique id assigned by electraPay
+        example: f59f2257-3363-4f2f-a8a4-a288b7c0b7db
+      accountid:
+        type: number
+        description: Account id assigned by ElectraPay
+        example: 1
+      shortdescription:
+        type: string
+        description: A short description of what is being paid for.
+        example: Electra donation
+      longdescription:
+        type: string
+        description: A long description of what is being paid for.
+        example: Electra donation to developers
+      reference:
+        type: string
+        description: Unique reference to link to calling system.
+        example: ORD-11109
+      paymentcategory:
+        type: string
+        enum:
+        - goods
+        - services
+        - donation
+        - event
+        - personal
+        description: The payment type
+        example: donation
+      ordercurrency:
+        type: string
+        enum:
+        - ECA
+        - BTC
+        - USD
+        description: The currency of the order
+        example: USD
+      orderamount:
+        type: number
+        format: float
+        description: The order amount (excluding fees)
+        example: 12.00
+      quotecurrency:
+        type: string
+        enum:
+        - ECA
+        description: The currency of the quoted amount
+        example: ECA
+      quoteamount:
+          type: number
+          format: float
+          description: The final quoted amount
+          example: 20000.00
+      qrcode:
+          type: string
+          description: Base64 image for the QR Code
+          example:
+      ordertoken:
+          type: number
+          description: A random generated token number that can also be used for payment.
+          example: 11654
+      ordertransactionid:
+          type: string
+          description: Blockchain transactionid for the final payment
+          example:
+      orderstatus:
+          type: string
+          enum:
+          - PENDING
+          - AWAITING_PAYMENT
+          - FINAL_PAYMENT
+          - CLOSED
+          - CANCELLED
+          - REVERSED
+  ordernew :
+    type: object
+    required:
+    - accountid
+    - shortdescription
+    - longdescription
+    - reference
+    - paymentcategory
+    - ordercurrency
+    - orderamount
+    properties:
+      accountid:
+        type: number
+        description: Account id assigned by ElectraPay
+        example: 1
+      shortdescription:
+        type: string
+        description: A short description of what is being paid for
+        example: Electra donation
+      longdescription:
+        type: string
+        description: A long description of what is being paid for
+        example: Electra donation to developers
+      reference:
+        type: string
+        description: Unique reference to link to calling system.
+        example: ORD-11109
+      paymentcategory:
+        type: string
+        enum:
+          - goods
+          - services
+          - donation
+          - event
+          - personal
+        description: The payment type
+        example: donation
+      ordercurrency:
+        type: string
+        enum:
+          - ECA
+          - BTC
+          - USD
+        description: The currency of the order
+        example: USD
+      orderamount:
+        type: number
+        format: float
+        description: The order amount (excluding fees)
+        example: 12.00
+  currency :
+    type: string
+    enum:
+    - USD
+    - EUR
+    description : Currency list
+    example: USD
+# Added by API Auto Mocking Plugin
+# host: api.electraPay.org
+# Added by API Auto Mocking Plugin
+# basePath: /
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /electraproject/ElectraPay/1.0.0
