@@ -102,9 +102,7 @@ func (s AccountController) Get(c *gin.Context) {
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, account)
-
 }
 
 func (s AccountController) New(c *gin.Context) {
@@ -145,9 +143,7 @@ func (s AccountController) New(c *gin.Context) {
 		accountbyte := []byte(queueinfo.ResponseInfo)
 		json.Unmarshal(accountbyte, &account)
 
-		c.Header("X-Version", "1.0")
 		c.JSON(200, account)
-
 	}
 }
 
@@ -180,7 +176,6 @@ func (s AccountController) Register(c *gin.Context) {
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, account)
 }
 
@@ -214,9 +209,7 @@ func (s AccountController) Edit(c *gin.Context) {
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, account)
-
 }
 
 func (s AccountController) Close(c *gin.Context) {
@@ -249,9 +242,7 @@ func (s AccountController) Close(c *gin.Context) {
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, account)
-
 }
 
 func (s AccountController) AddressEdit(c *gin.Context) {
@@ -284,9 +275,7 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 	addressbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(addressbyte, &address)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, address)
-
 }
 
 func (s AccountController) AddressAdd(c *gin.Context) {
@@ -319,9 +308,7 @@ func (s AccountController) AddressAdd(c *gin.Context) {
 	addressbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(addressbyte, &address)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, address)
-
 }
 
 func (s AccountController) AddressRemove(c *gin.Context) {
@@ -354,9 +341,7 @@ func (s AccountController) AddressRemove(c *gin.Context) {
 	addressbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(addressbyte, &address)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, address)
-
 }
 
 func (s AccountController) ContactEdit(c *gin.Context) {
@@ -389,9 +374,7 @@ func (s AccountController) ContactEdit(c *gin.Context) {
 	contactbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(contactbyte, &contact)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, contact)
-
 }
 
 func (s AccountController) ContactAdd(c *gin.Context) {
@@ -423,9 +406,7 @@ func (s AccountController) ContactAdd(c *gin.Context) {
 	contactbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(contactbyte, &contact)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, contact)
-
 }
 
 func (s AccountController) ContactRemove(c *gin.Context) {
@@ -458,7 +439,5 @@ func (s AccountController) ContactRemove(c *gin.Context) {
 	contactbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(contactbyte, &contact)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, contact)
-
 }
