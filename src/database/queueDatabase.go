@@ -10,8 +10,6 @@ import (
 
 var queuedb *sql.DB
 
-const ()
-
 func init() {
 
 	var err error
@@ -23,7 +21,7 @@ func init() {
 
 	queuedbName := os.Getenv("QUEUEDB")
 	queuedbUser := os.Getenv("QUEUEUSER")
-	queuedbPass := os.Getenv("QUEUEPASS")
+	queuedbPass := os.Getenv("QUEUEPASSWORD")
 	queuedbHost := os.Getenv("QUEUEHOST")
 	queuedbPort := os.Getenv("QUEUEPORT")
 

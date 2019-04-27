@@ -52,8 +52,8 @@ func (s OrderController) New(c *gin.Context) {
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ORDER"
-	queueinfo.APIType = "PUT"
+	queueinfo.Category = "ORDER_NEW"
+	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 3 {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -88,7 +88,7 @@ func (s OrderController) Get(c *gin.Context) {
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ORDER"
+	queueinfo.Category = "ORDER_FIND"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 3 {
@@ -124,7 +124,7 @@ func (s OrderController) Cancel(c *gin.Context) {
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ORDER"
+	queueinfo.Category = "ORDER_CANCEL"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 3 {
@@ -160,7 +160,7 @@ func (s OrderController) Reverse(c *gin.Context) {
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ORDER"
+	queueinfo.Category = "ORDER_REVERSE"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 3 {
