@@ -27,40 +27,53 @@ func Router() *gin.Engine {
 	 * public routes
 	 */
 	accountController := new(controllers.AccountController)
-	//public
-	router.POST("/v1/account/", accountController.New)
-	router.POST("/account/", accountController.New)
+
+	// account
 	router.POST("/v1/account/:accountid/register/", accountController.Register)
 	router.POST("/account/:accountid/register/", accountController.Register)
 
-	router.GET("/v1/account/:accountid", accountController.Get)
-	router.GET("/account/:accountid", accountController.Get)
-	router.PUT("/v1/account/:accountid", accountController.Edit)
-	router.PUT("/account/:accountid", accountController.Edit)
-	router.PUT("/v1/account/:accountid/close", accountController.Close)
-	router.PUT("/account/:accountid/close", accountController.Close)
-	router.PUT("/v1/account/:accountid/address/:addressid", accountController.AddressEdit)
-	router.PUT("/account/:accountid/address/:addressid", accountController.AddressEdit)
-	router.PUT("/v1/account/:accountid/address", accountController.AddressAdd)
-	router.PUT("/account/:accountid/address", accountController.AddressAdd)
-	router.DELETE("/v1/account/:accountid/address/:addressid", accountController.AddressRemove)
-	router.DELETE("/account/:accountid/address/:addressid", accountController.AddressRemove)
-	router.PUT("/v1/account/:accountid/contact/:contactid", accountController.ContactEdit)
-	router.PUT("/account/:accountid/contact/:contactid", accountController.ContactEdit)
-	router.PUT("/v1/account/:accountid/contact/", accountController.ContactAdd)
-	router.PUT("/account/:accountid/contact/", accountController.ContactAdd)
-	router.DELETE("/v1/account/:accountid/contact/:contactid", accountController.ContactRemove)
-	router.DELETE("/account/:accountid/contact/:contactid", accountController.ContactRemove)
+	// login
+	router.POST("/v1/authenticate", authenticator.LoginHandler)
+	router.POST("/authenticate", authenticator.LoginHandler)
 
-	orderController := new(controllers.OrderController)
-	router.POST("/v1/order/", orderController.New)
-	router.POST("/order/", orderController.New)
-	router.GET("/v1/order/:uuid", orderController.Get)
-	router.GET("/order/:uuid/", orderController.Get)
-	router.POST("/v1/order/:uuid/cancel", orderController.Cancel)
-	router.POST("/order/:uuid/cancel", orderController.Cancel)
-	router.POST("/v1/order/:uuid/reverse", orderController.Reverse)
-	router.POST("/order/:uuid/reverse", orderController.Reverse)
+	/**
+	 * authenticated routes
+	 */
+	auth := router.Group("/")
+	auth.Use(authenticator.MiddlewareFunc())
+	{
+		auth.POST("/v1/account/", accountController.New)
+		auth.POST("/account/", accountController.New)
+
+		auth.GET("/v1/account/:accountid", accountController.Get)
+		auth.GET("/account/:accountid", accountController.Get)
+		auth.PUT("/v1/account/:accountid", accountController.Edit)
+		auth.PUT("/account/:accountid", accountController.Edit)
+		auth.PUT("/v1/account/:accountid/close", accountController.Close)
+		auth.PUT("/account/:accountid/close", accountController.Close)
+		auth.PUT("/v1/account/:accountid/address/:addressid", accountController.AddressEdit)
+		auth.PUT("/account/:accountid/address/:addressid", accountController.AddressEdit)
+		auth.PUT("/v1/account/:accountid/address", accountController.AddressAdd)
+		auth.PUT("/account/:accountid/address", accountController.AddressAdd)
+		auth.DELETE("/v1/account/:accountid/address/:addressid", accountController.AddressRemove)
+		auth.DELETE("/account/:accountid/address/:addressid", accountController.AddressRemove)
+		auth.PUT("/v1/account/:accountid/contact/:contactid", accountController.ContactEdit)
+		auth.PUT("/account/:accountid/contact/:contactid", accountController.ContactEdit)
+		auth.PUT("/v1/account/:accountid/contact/", accountController.ContactAdd)
+		auth.PUT("/account/:accountid/contact/", accountController.ContactAdd)
+		auth.DELETE("/v1/account/:accountid/contact/:contactid", accountController.ContactRemove)
+		auth.DELETE("/account/:accountid/contact/:contactid", accountController.ContactRemove)
+
+		orderController := new(controllers.OrderController)
+		auth.POST("/v1/order/", orderController.New)
+		auth.POST("/order/", orderController.New)
+		auth.GET("/v1/order/:uuid", orderController.Get)
+		auth.GET("/order/:uuid/", orderController.Get)
+		auth.POST("/v1/order/:uuid/cancel", orderController.Cancel)
+		auth.POST("/order/:uuid/cancel", orderController.Cancel)
+		auth.POST("/v1/order/:uuid/reverse", orderController.Reverse)
+		auth.POST("/order/:uuid/reverse", orderController.Reverse)
+	}
 
 	codeController := new(controllers.CodeController)
 	router.GET("/v1/accounttype/", codeController.GetAccountType)
