@@ -16,16 +16,16 @@ tags:
   description: Secured Merchant order only calls
 schemes : [ "https" ]
 paths:
-  /v1/account/{id}:
+  /v1/account/{uuid}:
     get:
       tags:
       - account
       summary: Fetch account details
       operationId: getAccount
       parameters:
-        - name: id
+        - name: uuid
           in: path
-          description: Enter the accountid to retrieve
+          description: Enter the uuid of the account to retrieve
           required : true
           type: integer
           format: int64
@@ -144,7 +144,7 @@ definitions:
         example: http://electraproject.org/images/logo.svg
       logoimg:
         type: string
-        description: Account logo URL
+        description: Base64 encoded image
         example: http://electraproject.org/images/logo.svg
       address1:
         type: string

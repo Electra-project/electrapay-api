@@ -8,3 +8,8 @@ debug
 /electra-api
 /electra-api.exe
 msyncd
+
+.env.prod
+.env
+
+./electrapay-api

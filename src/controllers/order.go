@@ -52,8 +52,8 @@ func (s OrderController) New(c *gin.Context) {
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ORDER"
-	queueinfo.APIType = "PUT"
+	queueinfo.Category = "ORDER_NEW"
+	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 3 {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -77,10 +77,9 @@ func (s OrderController) New(c *gin.Context) {
 	var order Order
 	orderbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(orderbyte, &order)
-	final, _ := json.Marshal(order)
 
 	c.Header("X-Version", "1.0")
-	c.JSON(200, string(final))
+	c.JSON(200, order)
 
 }
 
@@ -88,22 +87,21 @@ func (s OrderController) Get(c *gin.Context) {
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ORDER"
+	queueinfo.Category = "ORDER_FIND"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if len(URLArray) == 4 {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = URLArray[2]
+		queueinfo.Version = URLArray[3]
+	}
 	if len(URLArray) == 3 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = ""
-		queueinfo.Version = URLArray[1]
-	}
-	if len(URLArray) == 2 {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = ""
+		queueinfo.Parameters = URLArray[2]
 		queueinfo.Version = "v1"
 	}
-	buf := make([]byte, 1024)
-	num, _ := c.Request.Body.Read(buf)
-	queueinfo.RequestInfo = string(buf[0:num])
+
+	queueinfo.RequestInfo = "{}"
 	queueinfo, err := queue.QueueProcess(queueinfo)
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -113,10 +111,9 @@ func (s OrderController) Get(c *gin.Context) {
 	var order Order
 	orderbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(orderbyte, &order)
-	final, _ := json.Marshal(order)
 
 	c.Header("X-Version", "1.0")
-	c.JSON(200, string(final))
+	c.JSON(200, order)
 
 }
 
@@ -124,22 +121,20 @@ func (s OrderController) Cancel(c *gin.Context) {
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ORDER"
+	queueinfo.Category = "ORDER_CANCEL"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if len(URLArray) == 4 {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = URLArray[2]
+		queueinfo.Version = URLArray[3]
+	}
 	if len(URLArray) == 3 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = ""
-		queueinfo.Version = URLArray[1]
-	}
-	if len(URLArray) == 2 {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = ""
+		queueinfo.Parameters = URLArray[2]
 		queueinfo.Version = "v1"
 	}
-	buf := make([]byte, 1024)
-	num, _ := c.Request.Body.Read(buf)
-	queueinfo.RequestInfo = string(buf[0:num])
+	queueinfo.RequestInfo = "{}"
 	queueinfo, err := queue.QueueProcess(queueinfo)
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -149,10 +144,9 @@ func (s OrderController) Cancel(c *gin.Context) {
 	var order Order
 	orderbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(orderbyte, &order)
-	final, _ := json.Marshal(order)
 
 	c.Header("X-Version", "1.0")
-	c.JSON(200, string(final))
+	c.JSON(200, order)
 
 }
 
@@ -160,22 +154,20 @@ func (s OrderController) Reverse(c *gin.Context) {
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ORDER"
+	queueinfo.Category = "ORDER_REVERSE"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if len(URLArray) == 4 {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = URLArray[2]
+		queueinfo.Version = URLArray[3]
+	}
 	if len(URLArray) == 3 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = ""
-		queueinfo.Version = URLArray[1]
-	}
-	if len(URLArray) == 2 {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = ""
+		queueinfo.Parameters = URLArray[2]
 		queueinfo.Version = "v1"
 	}
-	buf := make([]byte, 1024)
-	num, _ := c.Request.Body.Read(buf)
-	queueinfo.RequestInfo = string(buf[0:num])
+	queueinfo.RequestInfo = "{}"
 	queueinfo, err := queue.QueueProcess(queueinfo)
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -185,9 +177,8 @@ func (s OrderController) Reverse(c *gin.Context) {
 	var order Order
 	orderbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(orderbyte, &order)
-	final, _ := json.Marshal(order)
 
 	c.Header("X-Version", "1.0")
-	c.JSON(200, string(final))
+	c.JSON(200, order)
 
 }

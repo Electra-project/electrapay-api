@@ -65,14 +65,15 @@ func queueAdd(queue Queue) (Queue, error) {
 		"request_date, " +
 		"request_info, " +
 		"response_code, " +
+		"response_info, " +
 		"response_description)  " +
-		"VALUES(?,?,?,?,?,?,?,?,?,?)")
+		"VALUES(?,?,?,?,?,?,?,?,?,?,?)")
 	if err != nil {
 		helpers.LogErr("Queue : Cannot update Queue to process - " + err.Error())
 		return Queue{}, err
 	}
 	res, err := stmt.Exec(queue.Reference, queue.Category, queue.APIURL, queue.APIType,
-		queue.Version, queue.Parameters, time.Now().UTC(), queue.RequestInfo, queue.ResponseCode, queue.ResponseDescription)
+		queue.Version, queue.Parameters, time.Now().UTC(), queue.RequestInfo, queue.ResponseCode, "", queue.ResponseDescription)
 	if err != nil {
 		helpers.LogErr("Queue : Cannot insert into Queue to process - " + err.Error())
 		return Queue{}, err

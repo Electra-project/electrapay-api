@@ -153,7 +153,7 @@ func (s AccountController) Register(c *gin.Context) {
 	var queueinfo queue.Queue
 
 	queueinfo.Category = "ACCOUNT_REGISTER"
-	queueinfo.APIType = "PUT"
+	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 4 {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -186,7 +186,7 @@ func (s AccountController) Edit(c *gin.Context) {
 	var queueinfo queue.Queue
 
 	queueinfo.Category = "ACCOUNT_EDIT"
-	queueinfo.APIType = "POST"
+	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 4 {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -218,7 +218,7 @@ func (s AccountController) Close(c *gin.Context) {
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ACCOUNT"
+	queueinfo.Category = "ACCOUNT_CLOSE"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 4 {
@@ -251,7 +251,7 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ACCOUNT"
+	queueinfo.Category = "ACCOUNT_ADDRESS_EDIT"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 4 {
@@ -284,7 +284,7 @@ func (s AccountController) AddressAdd(c *gin.Context) {
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ACCOUNT"
+	queueinfo.Category = "ACCOUNT_ADDRESS_NEW"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 4 {
@@ -317,7 +317,7 @@ func (s AccountController) AddressRemove(c *gin.Context) {
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ACCOUNT"
+	queueinfo.Category = "ACCOUNT_ADDRESS_DELETE"
 	queueinfo.APIType = "DELETE"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 4 {
@@ -350,7 +350,7 @@ func (s AccountController) ContactEdit(c *gin.Context) {
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ACCOUNT"
+	queueinfo.Category = "ACCOUNT_CONTACT_EDIT"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 4 {
@@ -382,8 +382,8 @@ func (s AccountController) ContactAdd(c *gin.Context) {
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ACCOUNT"
-	queueinfo.APIType = "PUT"
+	queueinfo.Category = "ACCOUNT_CONTACT_NEW"
+	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 4 {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -402,7 +402,7 @@ func (s AccountController) ContactAdd(c *gin.Context) {
 		return
 	}
 
-	var contact Address
+	var contact Contact
 	contactbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(contactbyte, &contact)
 
@@ -415,7 +415,7 @@ func (s AccountController) ContactRemove(c *gin.Context) {
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ACCOUNT"
+	queueinfo.Category = "ACCOUNT_CONTACT_DELETE"
 	queueinfo.APIType = "DELETE"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 4 {
