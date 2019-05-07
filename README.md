@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="https://cdn.discordapp.com/attachments/575318354529746946/575318376529002547/ic_launcher.png"
+        height="130">
+
 # ElectraPay API
 
 ElectraPay API public web-services.
