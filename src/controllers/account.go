@@ -3,71 +3,12 @@ package controllers
 import "github.com/gin-gonic/gin"
 import (
 	"encoding/json"
+	"github.com/Electra-project/electrapay-api/src/helpers"
 	"github.com/Electra-project/electrapay-api/src/models"
 	"github.com/Electra-project/electrapay-api/src/queue"
 	"strconv"
 	"strings"
 )
-
-type Error struct {
-	ResponseCode        string `json:"responsecode"`
-	ResponseDescription string `json:"responsedescription"`
-}
-
-type AccountEdit struct {
-	Id                  int64    `json:"id"`
-	Uuid                string   `json:"uuid"`
-	Name                string   `json:"name"`
-	Description         string   `json:"description"`
-	Type                string   `json:"accounttype"`
-	LogoURL             string   `json:"logourl"`
-	LogoImg             string   `json:"logoimg"`
-	Country             string   `json:"country"`
-	Language            string   `json:"language"`
-	Timezone            string   `json:"timezone"`
-	CallbackURI         string   `json:"callbackurl"`
-	Website             string   `json:"website"`
-	Currencies          []string `json:"currencies"`
-	WalletAddress       string   `json:"walletaddress"`
-	WalletCurrency      string   `json:"walletcurrency"`
-	VatNo               string   `json:"vatno"`
-	DefaultVAT          int64    `json:"defaultvat"`
-	Organisation        string   `json:"orgnisation"`
-	PluginType          string   `json:"plugintype"`
-	Status              string   `json:"status"`
-	ResponseCode        string   `json:"responsecode"`
-	ResponseDescription string   `json:"responsedescription"`
-}
-
-type Address struct {
-	AccountId           int64  `json:"id"`
-	Uuid                string `json:"uuid"`
-	AddressType         string `json:"addresstype"`
-	Address1            string `json:"address1"`
-	Address2            string `json:"address2"`
-	Address3            string `json:"address3"`
-	Suburb              string `json:"suburb"`
-	PostalCode          string `json:"postalcode"`
-	City                string `json:"city"`
-	Country             string `json:"country"`
-	ResponseCode        string `json:"responsecode"`
-	ResponseDescription string `json:"responsedescription"`
-}
-
-type Contact struct {
-	AccountId           int64  `json:"id"`
-	Uuid                string `json:"uuid"`
-	ContactType         string `json:"contacttype"`
-	ContactTitle        string `json:"contacttitle"`
-	ContactFirstname    string `json:"contactfirstname"`
-	ContactMiddlenames  string `json:"contactmiddlenames"`
-	ContactLastname     string `json:"contactlastname"`
-	ContactEmail        string `json:"contactemail"`
-	ContactPhone        string `json:"contactphone"`
-	ContactMobile       string `json:"contactmobile"`
-	ResponseCode        string `json:"responsecode"`
-	ResponseDescription string `json:"responsedescription"`
-}
 
 type AccountController struct{}
 
@@ -75,6 +16,7 @@ func (s AccountController) Get(c *gin.Context) {
 	//API to retrieve account information
 	// We get the authenticated user
 	user, _ := c.Get("uuid")
+	version := helpers.GetVersion()
 	var authenticatedAccount = user.(*models.Account)
 
 	var queueinfo queue.Queue
@@ -89,7 +31,7 @@ func (s AccountController) Get(c *gin.Context) {
 	if len(URLArray) == 3 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
-		queueinfo.Version = "v1"
+		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
 	queueinfo, err := queue.QueueProcess(queueinfo)
@@ -109,7 +51,7 @@ func (s AccountController) Register(c *gin.Context) {
 	//API to register a new account
 
 	var queueinfo queue.Queue
-
+	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_REGISTER"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
@@ -121,7 +63,7 @@ func (s AccountController) Register(c *gin.Context) {
 	if len(URLArray) == 2 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
-		queueinfo.Version = "v1"
+		queueinfo.Version = version
 	}
 	buf := make([]byte, 1024)
 	num, _ := c.Request.Body.Read(buf)
@@ -133,7 +75,7 @@ func (s AccountController) Register(c *gin.Context) {
 	}
 
 	if queueinfo.ResponseCode != "00" {
-		returnError := Error{}
+		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
 		c.Header("X-Version", "1.0")
@@ -150,21 +92,64 @@ func (s AccountController) Register(c *gin.Context) {
 func (s AccountController) Edit(c *gin.Context) {
 
 	//API to Edit account details
-
+	version := helpers.GetVersion()
 	var queueinfo queue.Queue
-
 	queueinfo.Category = "ACCOUNT_EDIT"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if len(URLArray) == 3 {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = ""
+		queueinfo.Version = URLArray[1]
+	}
+	if len(URLArray) == 2 {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = ""
+		queueinfo.Version = version
+	}
+	buf := make([]byte, 1024)
+	num, _ := c.Request.Body.Read(buf)
+	queueinfo.RequestInfo = string(buf[0:num])
+	queueinfo, err := queue.QueueProcess(queueinfo)
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+	if queueinfo.ResponseCode != "00" {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.Header("X-Version", "1.0")
+		c.JSON(200, returnError)
+	} else {
+		var account models.Account
+		accountbyte := []byte(queueinfo.ResponseInfo)
+		json.Unmarshal(accountbyte, &account)
+
+		c.JSON(200, account)
+	}
+}
+
+func (s AccountController) Close(c *gin.Context) {
+	//API to Close account details
+	version := helpers.GetVersion()
+	user, _ := c.Get("uuid")
+	var authenticatedAccount = user.(*models.Account)
+
+	var queueinfo queue.Queue
+
+	queueinfo.Category = "ACCOUNT_CLOSE"
+	queueinfo.APIType = "POST"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 4 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = URLArray[1]
 	}
 	if len(URLArray) == 3 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
-		queueinfo.Version = "v1"
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
 	queueinfo, err := queue.QueueProcess(queueinfo)
@@ -180,24 +165,26 @@ func (s AccountController) Edit(c *gin.Context) {
 	c.JSON(200, account)
 }
 
-func (s AccountController) Close(c *gin.Context) {
-
+func (s AccountController) Suspend(c *gin.Context) {
 	//API to Close account details
 
+	user, _ := c.Get("uuid")
+	var authenticatedAccount = user.(*models.Account)
+	version := helpers.GetVersion()
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ACCOUNT_CLOSE"
-	queueinfo.APIType = "PUT"
+	queueinfo.Category = "ACCOUNT_SUSPEND"
+	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 4 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = URLArray[1]
 	}
 	if len(URLArray) == 3 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
-		queueinfo.Version = "v1"
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
 	queueinfo, err := queue.QueueProcess(queueinfo)
@@ -211,6 +198,41 @@ func (s AccountController) Close(c *gin.Context) {
 	json.Unmarshal(accountbyte, &account)
 
 	c.JSON(200, account)
+}
+
+func (s AccountController) ApiKey(c *gin.Context) {
+	//API to Close account details
+
+	user, _ := c.Get("uuid")
+	var authenticatedAccount = user.(*models.Account)
+	version := helpers.GetVersion()
+	var queueinfo queue.Queue
+
+	queueinfo.Category = "ACCOUNT_APIKEY_RENEW"
+	queueinfo.APIType = "POST"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if len(URLArray) == 4 {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Version = URLArray[1]
+	}
+	if len(URLArray) == 3 {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Version = version
+	}
+	queueinfo.RequestInfo = "{}"
+	queueinfo, err := queue.QueueProcess(queueinfo)
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+
+	var apikey models.ApiKey
+	apikeybyte := []byte(queueinfo.ResponseInfo)
+	json.Unmarshal(apikeybyte, &apikey)
+
+	c.JSON(200, apikey)
 }
 
 func (s AccountController) AddressEdit(c *gin.Context) {
@@ -218,85 +240,110 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 	//API to Edit account Address details
 
 	var queueinfo queue.Queue
-
+	user, _ := c.Get("uuid")
+	var authenticatedAccount = user.(*models.Account)
+	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_ADDRESS_EDIT"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
+	if len(URLArray) == 5 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 3 {
+	if len(URLArray) == 4 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
-		queueinfo.Version = "v1"
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[3]
+		queueinfo.Version = version
 	}
-	queueinfo.RequestInfo = "{}"
+	buf := make([]byte, 1024)
+	num, _ := c.Request.Body.Read(buf)
+	queueinfo.RequestInfo = string(buf[0:num])
 	queueinfo, err := queue.QueueProcess(queueinfo)
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
 	}
 
-	var address Address
-	addressbyte := []byte(queueinfo.ResponseInfo)
-	json.Unmarshal(addressbyte, &address)
+	if queueinfo.ResponseCode != "00" {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.Header("X-Version", "1.0")
+		c.JSON(200, returnError)
+	} else {
+		var address models.Address
+		addressbyte := []byte(queueinfo.ResponseInfo)
+		json.Unmarshal(addressbyte, &address)
 
-	c.JSON(200, address)
+		c.JSON(200, address)
+	}
 }
 
 func (s AccountController) AddressAdd(c *gin.Context) {
 
-	//API to Edit account details
+	//API to Add account address details
 
 	var queueinfo queue.Queue
-
+	user, _ := c.Get("uuid")
+	var authenticatedAccount = user.(*models.Account)
+	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_ADDRESS_NEW"
-	queueinfo.APIType = "PUT"
+	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 4 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = URLArray[1]
 	}
 	if len(URLArray) == 3 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
-		queueinfo.Version = "v1"
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Version = version
 	}
-	queueinfo.RequestInfo = "{}"
+	buf := make([]byte, 1024)
+	num, _ := c.Request.Body.Read(buf)
+	queueinfo.RequestInfo = string(buf[0:num])
 	queueinfo, err := queue.QueueProcess(queueinfo)
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
 	}
 
-	var address Address
-	addressbyte := []byte(queueinfo.ResponseInfo)
-	json.Unmarshal(addressbyte, &address)
+	if queueinfo.ResponseCode != "00" {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.Header("X-Version", "1.0")
+		c.JSON(200, returnError)
+	} else {
+		var address models.Address
+		addressbyte := []byte(queueinfo.ResponseInfo)
+		json.Unmarshal(addressbyte, &address)
 
-	c.JSON(200, address)
+		c.JSON(200, address)
+	}
 }
 
 func (s AccountController) AddressRemove(c *gin.Context) {
 
 	//API to Delete account address details
-
 	var queueinfo queue.Queue
-
+	user, _ := c.Get("uuid")
+	var authenticatedAccount = user.(*models.Account)
+	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_ADDRESS_DELETE"
 	queueinfo.APIType = "DELETE"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
+	if len(URLArray) == 5 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 3 {
+	if len(URLArray) == 4 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
-		queueinfo.Version = "v1"
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
+		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
 	queueinfo, err := queue.QueueProcess(queueinfo)
@@ -305,7 +352,7 @@ func (s AccountController) AddressRemove(c *gin.Context) {
 		return
 	}
 
-	var address Address
+	var address models.Address
 	addressbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(addressbyte, &address)
 
@@ -317,84 +364,110 @@ func (s AccountController) ContactEdit(c *gin.Context) {
 	//API to Edit account Contact details
 
 	var queueinfo queue.Queue
-
+	user, _ := c.Get("uuid")
+	var authenticatedAccount = user.(*models.Account)
+	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_CONTACT_EDIT"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
+	if len(URLArray) == 5 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 3 {
+	if len(URLArray) == 4 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
-		queueinfo.Version = "v1"
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[3]
+		queueinfo.Version = version
 	}
-	queueinfo.RequestInfo = "{}"
+	buf := make([]byte, 1024)
+	num, _ := c.Request.Body.Read(buf)
+	queueinfo.RequestInfo = string(buf[0:num])
 	queueinfo, err := queue.QueueProcess(queueinfo)
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
 	}
 
-	var contact Contact
-	contactbyte := []byte(queueinfo.ResponseInfo)
-	json.Unmarshal(contactbyte, &contact)
+	if queueinfo.ResponseCode != "00" {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.Header("X-Version", "1.0")
+		c.JSON(200, returnError)
+	} else {
+		var contact models.Contact
+		contactbyte := []byte(queueinfo.ResponseInfo)
+		json.Unmarshal(contactbyte, &contact)
 
-	c.JSON(200, contact)
+		c.JSON(200, contact)
+	}
 }
 
 func (s AccountController) ContactAdd(c *gin.Context) {
-	//API to Add account Contact details
+
+	//API to Add account contact details
 
 	var queueinfo queue.Queue
-
+	user, _ := c.Get("uuid")
+	var authenticatedAccount = user.(*models.Account)
+	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_CONTACT_NEW"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 4 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = URLArray[1]
 	}
 	if len(URLArray) == 3 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
-		queueinfo.Version = "v1"
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Version = version
 	}
-	queueinfo.RequestInfo = "{}"
+	buf := make([]byte, 1024)
+	num, _ := c.Request.Body.Read(buf)
+	queueinfo.RequestInfo = string(buf[0:num])
 	queueinfo, err := queue.QueueProcess(queueinfo)
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
 	}
 
-	var contact Contact
-	contactbyte := []byte(queueinfo.ResponseInfo)
-	json.Unmarshal(contactbyte, &contact)
+	if queueinfo.ResponseCode != "00" {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.Header("X-Version", "1.0")
+		c.JSON(200, returnError)
+	} else {
+		var contact models.Contact
+		contactbyte := []byte(queueinfo.ResponseInfo)
+		json.Unmarshal(contactbyte, &contact)
 
-	c.JSON(200, contact)
+		c.JSON(200, contact)
+	}
 }
 
 func (s AccountController) ContactRemove(c *gin.Context) {
 
-	//API to Remove account contact details
-
+	//API to Delete contact address details
 	var queueinfo queue.Queue
-
+	user, _ := c.Get("uuid")
+	var authenticatedAccount = user.(*models.Account)
+	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_CONTACT_DELETE"
 	queueinfo.APIType = "DELETE"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
+	if len(URLArray) == 5 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 3 {
+	if len(URLArray) == 4 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
-		queueinfo.Version = "v1"
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
+		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
 	queueinfo, err := queue.QueueProcess(queueinfo)
@@ -403,7 +476,7 @@ func (s AccountController) ContactRemove(c *gin.Context) {
 		return
 	}
 
-	var contact Contact
+	var contact models.Contact
 	contactbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(contactbyte, &contact)
 

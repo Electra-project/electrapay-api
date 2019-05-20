@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"github.com/Electra-project/electrapay-api/src/helpers"
 	"github.com/Electra-project/electrapay-api/src/queue"
 	"github.com/gin-gonic/gin"
 	"github.com/shopspring/decimal"
@@ -51,7 +52,7 @@ type OrderController struct{}
 func (s OrderController) New(c *gin.Context) {
 
 	var queueinfo queue.Queue
-
+	version := helpers.GetVersion()
 	queueinfo.Category = "ORDER_NEW"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
@@ -63,7 +64,7 @@ func (s OrderController) New(c *gin.Context) {
 	if len(URLArray) == 2 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
-		queueinfo.Version = "v1"
+		queueinfo.Version = version
 	}
 	buf := make([]byte, 1024)
 	num, _ := c.Request.Body.Read(buf)
@@ -89,6 +90,7 @@ func (s OrderController) Get(c *gin.Context) {
 
 	queueinfo.Category = "ORDER_FIND"
 	queueinfo.APIType = "GET"
+	version := helpers.GetVersion()
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 4 {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -98,7 +100,7 @@ func (s OrderController) Get(c *gin.Context) {
 	if len(URLArray) == 3 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = URLArray[2]
-		queueinfo.Version = "v1"
+		queueinfo.Version = version
 	}
 
 	queueinfo.RequestInfo = "{}"
@@ -120,6 +122,7 @@ func (s OrderController) Get(c *gin.Context) {
 func (s OrderController) Cancel(c *gin.Context) {
 
 	var queueinfo queue.Queue
+	version := helpers.GetVersion()
 
 	queueinfo.Category = "ORDER_CANCEL"
 	queueinfo.APIType = "PUT"
@@ -132,7 +135,7 @@ func (s OrderController) Cancel(c *gin.Context) {
 	if len(URLArray) == 3 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = URLArray[2]
-		queueinfo.Version = "v1"
+		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
 	queueinfo, err := queue.QueueProcess(queueinfo)
@@ -153,6 +156,7 @@ func (s OrderController) Cancel(c *gin.Context) {
 func (s OrderController) Reverse(c *gin.Context) {
 
 	var queueinfo queue.Queue
+	version := helpers.GetVersion()
 
 	queueinfo.Category = "ORDER_REVERSE"
 	queueinfo.APIType = "PUT"
@@ -165,7 +169,7 @@ func (s OrderController) Reverse(c *gin.Context) {
 	if len(URLArray) == 3 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = URLArray[2]
-		queueinfo.Version = "v1"
+		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
 	queueinfo, err := queue.QueueProcess(queueinfo)

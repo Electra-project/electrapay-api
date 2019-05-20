@@ -14,7 +14,6 @@ import (
 func Router() *gin.Engine {
 
 	authenticator := authenticators.Authenticator()
-	apiauthenticator := authenticators.APIKeyAuthenticator()
 
 	router := gin.Default()
 	router.Use(middlewares.CORS())
@@ -43,7 +42,7 @@ func Router() *gin.Engine {
 	router.POST(vdir+"/account/register/", accountController.Register)
 	router.POST("/account/register/", accountController.Register)
 
-	// login
+	// login to create a JWT token
 	router.POST(vdir+"/account/authenticate", authenticator.LoginHandler)
 	router.POST("/account/authenticate", authenticator.LoginHandler)
 
@@ -57,36 +56,36 @@ func Router() *gin.Engine {
 		auth.GET("/account/:accountid", accountController.Get)
 		auth.PUT(vdir+"/account/:accountid", accountController.Edit)
 		auth.PUT("/account/:accountid", accountController.Edit)
-		auth.PUT(vdir+"/account/:accountid/close", accountController.Close)
-		auth.PUT("/account/:accountid/close", accountController.Close)
+		auth.POST(vdir+"/account/:accountid/close", accountController.Close)
+		auth.POST("/account/:accountid/close", accountController.Close)
+		auth.POST(vdir+"/account/:accountid/apikey", accountController.ApiKey)
+		auth.POST("/account/:accountid/apikey", accountController.ApiKey)
+		auth.POST(vdir+"/account/:accountid/suspend", accountController.Suspend)
+		auth.POST("/account/:accountid/suspend", accountController.Suspend)
 		auth.PUT(vdir+"/account/:accountid/address/:addressid", accountController.AddressEdit)
+
 		auth.PUT("/account/:accountid/address/:addressid", accountController.AddressEdit)
-		auth.PUT(vdir+"/account/:accountid/address", accountController.AddressAdd)
-		auth.PUT("/account/:accountid/address", accountController.AddressAdd)
+		auth.POST(vdir+"/account/:accountid/address", accountController.AddressAdd)
+		auth.POST("/account/:accountid/address", accountController.AddressAdd)
 		auth.DELETE(vdir+"/account/:accountid/address/:addressid", accountController.AddressRemove)
 		auth.DELETE("/account/:accountid/address/:addressid", accountController.AddressRemove)
 		auth.PUT(vdir+"/account/:accountid/contact/:contactid", accountController.ContactEdit)
 		auth.PUT("/account/:accountid/contact/:contactid", accountController.ContactEdit)
-		auth.PUT(vdir+"/account/:accountid/contact/", accountController.ContactAdd)
-		auth.PUT("/account/:accountid/contact/", accountController.ContactAdd)
+		auth.POST(vdir+"/account/:accountid/contact/", accountController.ContactAdd)
+		auth.POST("/account/:accountid/contact/", accountController.ContactAdd)
 		auth.DELETE(vdir+"/account/:accountid/contact/:contactid", accountController.ContactRemove)
 		auth.DELETE("/account/:accountid/contact/:contactid", accountController.ContactRemove)
 	}
 
-	authapi := router.Group("/")
-	authapi.Use(apiauthenticator.MiddlewareFunc())
-	{
-
-		orderController := new(controllers.OrderController)
-		authapi.POST(vdir+"/order/", orderController.New)
-		authapi.POST("/order/", orderController.New)
-		authapi.GET(vdir+"/order/:uuid", orderController.Get)
-		authapi.GET("/order/:uuid/", orderController.Get)
-		authapi.POST(vdir+"/order/:uuid/cancel", orderController.Cancel)
-		authapi.POST("/order/:uuid/cancel", orderController.Cancel)
-		authapi.POST(vdir+"/order/:uuid/reverse", orderController.Reverse)
-		authapi.POST("/order/:uuid/reverse", orderController.Reverse)
-	}
+	orderController := new(controllers.OrderController)
+	router.POST(vdir+"/order/", orderController.New)
+	router.POST("/order/", orderController.New)
+	router.GET(vdir+"/order/:uuid", orderController.Get)
+	router.GET("/order/:uuid/", orderController.Get)
+	router.POST(vdir+"/order/:uuid/cancel", orderController.Cancel)
+	router.POST("/order/:uuid/cancel", orderController.Cancel)
+	router.POST(vdir+"/order/:uuid/reverse", orderController.Reverse)
+	router.POST("/order/:uuid/reverse", orderController.Reverse)
 
 	codeController := new(controllers.CodeController)
 	router.GET(vdir+"/accounttype/", codeController.GetAccountType)
