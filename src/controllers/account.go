@@ -78,7 +78,7 @@ func (s AccountController) Get(c *gin.Context) {
 	var authenticatedAccount = user.(*models.Account)
 
 	var queueinfo queue.Queue
-	queueinfo.Category = "ACCOUNT_FIND"
+	queueinfo.Category = "ACCOUNT_FETCH"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 4 {
@@ -88,7 +88,7 @@ func (s AccountController) Get(c *gin.Context) {
 	}
 	if len(URLArray) == 3 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = string(authenticatedAccount.Id)
+		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = "v1"
 	}
 	queueinfo.RequestInfo = "{}"
@@ -105,12 +105,12 @@ func (s AccountController) Get(c *gin.Context) {
 	c.JSON(200, account)
 }
 
-func (s AccountController) New(c *gin.Context) {
-	//API to create a new account
+func (s AccountController) Register(c *gin.Context) {
+	//API to register a new account
 
 	var queueinfo queue.Queue
 
-	queueinfo.Category = "ACCOUNT_NEW"
+	queueinfo.Category = "ACCOUNT_REGISTER"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray) == 3 {
@@ -145,38 +145,6 @@ func (s AccountController) New(c *gin.Context) {
 
 		c.JSON(200, account)
 	}
-}
-
-func (s AccountController) Register(c *gin.Context) {
-
-	//API to Register an account to make it active
-	var queueinfo queue.Queue
-
-	queueinfo.Category = "ACCOUNT_REGISTER"
-	queueinfo.APIType = "POST"
-	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
-		queueinfo.Version = URLArray[1]
-	}
-	if len(URLArray) == 3 {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
-		queueinfo.Version = "v1"
-	}
-	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
-	if err != nil {
-		c.AbortWithError(404, err)
-		return
-	}
-
-	var account models.Account
-	accountbyte := []byte(queueinfo.ResponseInfo)
-	json.Unmarshal(accountbyte, &account)
-
-	c.JSON(200, account)
 }
 
 func (s AccountController) Edit(c *gin.Context) {

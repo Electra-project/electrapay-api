@@ -63,7 +63,7 @@ func Authenticator() (middleware *jwt.GinJWTMiddleware) {
 			secret := loginVals.Secret
 
 			var queueinfo queue.Queue
-			queueinfo.Category = "AUTHENTICATE"
+			queueinfo.Category = "ACCOUNT_AUTHENTICATE"
 			queueinfo.APIType = "POST"
 			queueinfo.Parameters = ""
 			queueinfo.Version = "v1"

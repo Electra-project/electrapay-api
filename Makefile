@@ -13,7 +13,7 @@ install:
 	godep restore
 
 lint:
-	golint ./main.go
+	golint ./application.go
 	golint ./src/...
 
 start:
