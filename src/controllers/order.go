@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/Electra-project/electrapay-api/src/helpers"
 	"github.com/Electra-project/electrapay-api/src/queue"
 	"github.com/gin-gonic/gin"
@@ -45,6 +46,18 @@ type Order struct {
 	OrderStatus              string          `json:"orderstatus"`
 	ResponseCode             string          `json:"responsecode"`
 	ResponseDescription      string          `json:"responsedescription"`
+}
+
+type PaymentCategory struct {
+	Id          int64  `json:"id"`
+	Code        string `json:"code"`
+	Description string `json:"description"`
+}
+
+type AllowedCurrency struct {
+	Id          int64  `json:"id"`
+	Code        string `json:"code"`
+	Description string `json:"description"`
 }
 
 type OrderController struct{}
@@ -184,5 +197,74 @@ func (s OrderController) Reverse(c *gin.Context) {
 
 	c.Header("X-Version", "1.0")
 	c.JSON(200, order)
+
+}
+
+func (s OrderController) PaymentCategory(c *gin.Context) {
+
+	var queueinfo queue.Queue
+	version := helpers.GetVersion()
+
+	queueinfo.Category = "ORDER_PAYMENTCATEGORY"
+	queueinfo.APIType = "GET"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if len(URLArray) == 4 {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = URLArray[2]
+		queueinfo.Version = URLArray[3]
+	}
+	if len(URLArray) == 3 {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = URLArray[2]
+		queueinfo.Version = version
+	}
+	queueinfo.RequestInfo = "{}"
+	queueinfo, err := queue.QueueProcess(queueinfo)
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+
+	var paymentcategories []PaymentCategory
+	queueResult := queueinfo.ResponseInfo
+	json.Unmarshal([]byte(queueResult), &paymentcategories)
+
+	c.Header("X-Version", "1.0")
+	c.JSON(200, paymentcategories)
+
+}
+
+func (s OrderController) AllowedCurrency(c *gin.Context) {
+
+	var queueinfo queue.Queue
+	version := helpers.GetVersion()
+
+	queueinfo.Category = "ORDER_ALLOWEDCURRENCY"
+	queueinfo.APIType = "GET"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if len(URLArray) == 4 {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = URLArray[2]
+		queueinfo.Version = URLArray[3]
+	}
+	if len(URLArray) == 3 {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = URLArray[2]
+		queueinfo.Version = version
+	}
+	queueinfo.RequestInfo = "{}"
+	queueinfo, err := queue.QueueProcess(queueinfo)
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+
+	var allowedcurrencies []AllowedCurrency
+	queueResult := queueinfo.ResponseInfo
+	fmt.Println(queueResult)
+	json.Unmarshal([]byte(queueResult), &allowedcurrencies)
+
+	c.Header("X-Version", "1.0")
+	c.JSON(200, allowedcurrencies)
 
 }
