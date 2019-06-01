@@ -3,9 +3,12 @@ package server
 import (
 	"github.com/gin-gonic/gin"
 
+	"fmt"
 	"github.com/Electra-project/electrapay-api/src/authenticators"
 	"github.com/Electra-project/electrapay-api/src/controllers"
 	"github.com/Electra-project/electrapay-api/src/middlewares"
+	"os"
+	"strconv"
 )
 
 func Router() *gin.Engine {
@@ -16,10 +19,17 @@ func Router() *gin.Engine {
 	router.Use(middlewares.CORS())
 	router.Use(middlewares.ResponseHeaders())
 
+	var version = os.Getenv("VERSION")
+	v, err := strconv.Atoi(version)
+	if err != nil {
+		v = 1
+	}
+	vdir := fmt.Sprint("/v", v, "/")
+
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"name":    "Electrapay API",
-			"version": "1.0",
+			"version": version,
 		})
 	})
 
@@ -28,13 +38,13 @@ func Router() *gin.Engine {
 	 */
 	accountController := new(controllers.AccountController)
 
-	// account
-	router.POST("/v1/account/:accountid/register/", accountController.Register)
-	router.POST("/account/:accountid/register/", accountController.Register)
+	// register a new account - this will send an email with the login code
+	router.POST(vdir+"/account/register/", accountController.Register)
+	router.POST("/account/register/", accountController.Register)
 
-	// login
-	router.POST("/v1/authenticate", authenticator.LoginHandler)
-	router.POST("/authenticate", authenticator.LoginHandler)
+	// login to create a JWT token
+	router.POST(vdir+"/account/authenticate", authenticator.LoginHandler)
+	router.POST("/account/authenticate", authenticator.LoginHandler)
 
 	/**
 	 * authenticated routes
@@ -42,57 +52,63 @@ func Router() *gin.Engine {
 	auth := router.Group("/")
 	auth.Use(authenticator.MiddlewareFunc())
 	{
-		auth.POST("/v1/account/", accountController.New)
-		auth.POST("/account/", accountController.New)
-
-		auth.GET("/v1/account/:accountid", accountController.Get)
+		auth.GET(vdir+"/account/:accountid", accountController.Get)
 		auth.GET("/account/:accountid", accountController.Get)
-		auth.PUT("/v1/account/:accountid", accountController.Edit)
+		auth.PUT(vdir+"/account/:accountid", accountController.Edit)
 		auth.PUT("/account/:accountid", accountController.Edit)
-		auth.PUT("/v1/account/:accountid/close", accountController.Close)
-		auth.PUT("/account/:accountid/close", accountController.Close)
-		auth.PUT("/v1/account/:accountid/address/:addressid", accountController.AddressEdit)
-		auth.PUT("/account/:accountid/address/:addressid", accountController.AddressEdit)
-		auth.PUT("/v1/account/:accountid/address", accountController.AddressAdd)
-		auth.PUT("/account/:accountid/address", accountController.AddressAdd)
-		auth.DELETE("/v1/account/:accountid/address/:addressid", accountController.AddressRemove)
-		auth.DELETE("/account/:accountid/address/:addressid", accountController.AddressRemove)
-		auth.PUT("/v1/account/:accountid/contact/:contactid", accountController.ContactEdit)
-		auth.PUT("/account/:accountid/contact/:contactid", accountController.ContactEdit)
-		auth.PUT("/v1/account/:accountid/contact/", accountController.ContactAdd)
-		auth.PUT("/account/:accountid/contact/", accountController.ContactAdd)
-		auth.DELETE("/v1/account/:accountid/contact/:contactid", accountController.ContactRemove)
-		auth.DELETE("/account/:accountid/contact/:contactid", accountController.ContactRemove)
+		auth.POST(vdir+"/account/close/:accountid", accountController.Close)
+		auth.POST("/account/close/:accountid", accountController.Close)
+		auth.POST(vdir+"/account/apikey/:accountid", accountController.ApiKey)
+		auth.POST("/account/apikey/:accountid", accountController.ApiKey)
+		auth.POST(vdir+"/account/suspend/:accountid", accountController.Suspend)
+		auth.POST("/account/suspend/:accountid", accountController.Suspend)
 
-		orderController := new(controllers.OrderController)
-		auth.POST("/v1/order/", orderController.New)
-		auth.POST("/order/", orderController.New)
-		auth.GET("/v1/order/:uuid", orderController.Get)
-		auth.GET("/order/:uuid/", orderController.Get)
-		auth.POST("/v1/order/:uuid/cancel", orderController.Cancel)
-		auth.POST("/order/:uuid/cancel", orderController.Cancel)
-		auth.POST("/v1/order/:uuid/reverse", orderController.Reverse)
-		auth.POST("/order/:uuid/reverse", orderController.Reverse)
+		auth.PUT("/account/:accountid/address/:addressid", accountController.AddressEdit)
+		auth.PUT(vdir+"/account/:accountid/address/:addressid", accountController.AddressEdit)
+		//auth.POST(vdir+"/account/:accountid/addressnew/", accountController.AddressAdd)
+		//auth.POST("/account/:accountid/address", accountController.AddressAdd)
+		auth.DELETE(vdir+"/account/:accountid/address/:addressid", accountController.AddressRemove)
+		auth.DELETE("/account/:accountid/address/:addressid", accountController.AddressRemove)
+		auth.PUT(vdir+"/account/:accountid/contact/:contactid", accountController.ContactEdit)
+		auth.PUT("/account/:accountid/contact/:contactid", accountController.ContactEdit)
+		//auth.POST(vdir+"/account/:accountid/contact/new", accountController.ContactAdd)
+		//auth.POST("/account/:accountid/contact/new", accountController.ContactAdd)
+		auth.DELETE(vdir+"/account/:accountid/contact/:contactid", accountController.ContactRemove)
+		auth.DELETE("/account/:accountid/contact/:contactid", accountController.ContactRemove)
 	}
 
+	orderController := new(controllers.OrderController)
+	router.POST(vdir+"/order/", orderController.New)
+	router.POST("/order/", orderController.New)
+	router.GET(vdir+"/order/:uuid", orderController.Get)
+	router.GET("/order/:uuid/", orderController.Get)
+	router.POST(vdir+"/order/:uuid/cancel", orderController.Cancel)
+	router.POST("/order/:uuid/cancel", orderController.Cancel)
+	router.POST(vdir+"/order/:uuid/reverse", orderController.Reverse)
+	router.POST("/order/:uuid/reverse", orderController.Reverse)
+	router.GET("/paymentcategory/:accountid", orderController.PaymentCategory)
+	router.GET(vdir+"/paymentcategory/:accountid", orderController.PaymentCategory)
+	router.GET("/allowedcurrency/:accountid", orderController.AllowedCurrency)
+	router.GET(vdir+"/allowedcurrency/:accountid", orderController.AllowedCurrency)
+
 	codeController := new(controllers.CodeController)
-	router.GET("/v1/accounttype/", codeController.GetAccountType)
+	router.GET(vdir+"/accounttype/", codeController.GetAccountType)
 	router.GET("accounttype/", codeController.GetAccountType)
-	router.GET("/v1/addresstype/", codeController.GetAddressType)
+	router.GET(vdir+"/addresstype/", codeController.GetAddressType)
 	router.GET("addresstype/", codeController.GetAddressType)
-	router.GET("/v1/contacttype/", codeController.GetContactType)
+	router.GET(vdir+"/contacttype/", codeController.GetContactType)
 	router.GET("contacttype/", codeController.GetContactType)
-	router.GET("/v1/currencytype/", codeController.GetCurrencyType)
+	router.GET(vdir+"/currencytype/", codeController.GetCurrencyType)
 	router.GET("currencytype/", codeController.GetCurrencyType)
 	router.GET("plugintype/", codeController.GetPluginType)
-	router.GET("/v1/plugintype/", codeController.GetPluginType)
-	router.GET("/v1/currency/", codeController.GetCurrency)
+	router.GET(vdir+"/plugintype/", codeController.GetPluginType)
+	router.GET(vdir+"/currency/", codeController.GetCurrency)
 	router.GET("currency/", codeController.GetCurrency)
-	router.GET("/v1/language/", codeController.GetLanguage)
+	router.GET(vdir+"/language/", codeController.GetLanguage)
 	router.GET("language/", codeController.GetLanguage)
-	router.GET("/v1/country/", codeController.GetCountry)
+	router.GET(vdir+"/country/", codeController.GetCountry)
 	router.GET("country/", codeController.GetCountry)
-	router.GET("/v1/timezone/", codeController.GetTimeZone)
+	router.GET(vdir+"/timezone/", codeController.GetTimeZone)
 	router.GET("timezone/", codeController.GetTimeZone)
 
 	router.NoRoute(func(c *gin.Context) {

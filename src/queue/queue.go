@@ -99,7 +99,7 @@ func queueWaitResponse(queue Queue) (Queue, error) {
 	queueLoop := 1
 	queuestatus := ""
 	db := mysqldatabase.GetQueueDatabase()
-	for queueLoop < 10 {
+	for queueLoop < 30 {
 		err := db.QueryRow("SELECT status "+
 			"FROM queue "+
 			"WHERE id = ? ", queue.Id).Scan(
@@ -111,7 +111,7 @@ func queueWaitResponse(queue Queue) (Queue, error) {
 		if queuestatus != "COMPLETED_PROCESSING" {
 			helpers.LogErr("Queue : Still Processing")
 		} else {
-			queueLoop = 10
+			queueLoop = 30
 		}
 		queueLoop = queueLoop + 1
 		time.Sleep(200 * time.Millisecond)
