@@ -14,6 +14,7 @@ import (
 func Router() *gin.Engine {
 
 	authenticator := authenticators.Authenticator()
+	apiauthenticator := authenticators.BasicAuth()
 
 	router := gin.Default()
 	router.Use(middlewares.CORS())
@@ -77,19 +78,24 @@ func Router() *gin.Engine {
 		auth.DELETE("/account/:accountid/contact/:contactid", accountController.ContactRemove)
 	}
 
-	orderController := new(controllers.OrderController)
-	router.POST(vdir+"/order/", orderController.New)
-	router.POST("/order/", orderController.New)
-	router.GET(vdir+"/order/:uuid", orderController.Get)
-	router.GET("/order/:uuid/", orderController.Get)
-	router.POST(vdir+"/order/:uuid/cancel", orderController.Cancel)
-	router.POST("/order/:uuid/cancel", orderController.Cancel)
-	router.POST(vdir+"/order/:uuid/reverse", orderController.Reverse)
-	router.POST("/order/:uuid/reverse", orderController.Reverse)
-	router.GET("/paymentcategory/:accountid", orderController.PaymentCategory)
-	router.GET(vdir+"/paymentcategory/:accountid", orderController.PaymentCategory)
-	router.GET("/allowedcurrency/:accountid", orderController.AllowedCurrency)
-	router.GET(vdir+"/allowedcurrency/:accountid", orderController.AllowedCurrency)
+	authapi := router.Group("/")
+	authapi.Use(apiauthenticator)
+	{
+
+		orderController := new(controllers.OrderController)
+		authapi.POST(vdir+"/order/", orderController.New)
+		authapi.POST("/order/", orderController.New)
+		authapi.GET(vdir+"/order/:uuid", orderController.Get)
+		authapi.GET("/order/:uuid/", orderController.Get)
+		authapi.POST(vdir+"/order/:uuid/cancel", orderController.Cancel)
+		authapi.POST("/order/:uuid/cancel", orderController.Cancel)
+		authapi.POST(vdir+"/order/:uuid/reverse", orderController.Reverse)
+		authapi.POST("/order/:uuid/reverse", orderController.Reverse)
+		authapi.GET("/paymentcategory/:accountid", orderController.PaymentCategory)
+		authapi.GET(vdir+"/paymentcategory/:accountid", orderController.PaymentCategory)
+		authapi.GET("/allowedcurrency/:accountid", orderController.AllowedCurrency)
+		authapi.GET(vdir+"/allowedcurrency/:accountid", orderController.AllowedCurrency)
+	}
 
 	codeController := new(controllers.CodeController)
 	router.GET(vdir+"/accounttype/", codeController.GetAccountType)
