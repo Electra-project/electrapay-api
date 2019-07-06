@@ -63,3 +63,13 @@ type AccountEdit struct {
 	ResponseCode        string   `json:"responsecode"`
 	ResponseDescription string   `json:"responsedescription"`
 }
+
+type AccountAPIKey struct {
+	Id                  int64  `json:"id"`
+	Uuid                string `json:"uuid"`
+	Name                string `json:"name"`
+	Description         string `json:"description"`
+	ApiKey              string `json:"apikey"`
+	ResponseCode        string `json:"responsecode"`
+	ResponseDescription string `json:"responsedescription"`
+}
