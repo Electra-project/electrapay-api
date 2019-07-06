@@ -40,7 +40,7 @@ func (s AccountController) Get(c *gin.Context) {
 		return
 	}
 
-	var account models.Account
+	var account models.AccountAPIKey
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
 
@@ -122,7 +122,7 @@ func (s AccountController) Edit(c *gin.Context) {
 		c.Header("X-Version", "1.0")
 		c.JSON(200, returnError)
 	} else {
-		var account models.Account
+		var account models.AccountEdit
 		accountbyte := []byte(queueinfo.ResponseInfo)
 		json.Unmarshal(accountbyte, &account)
 
@@ -201,7 +201,7 @@ func (s AccountController) Suspend(c *gin.Context) {
 }
 
 func (s AccountController) ApiKey(c *gin.Context) {
-	//API to Close account details
+	//API to generate a new APIKey
 
 	user, _ := c.Get("uuid")
 	var authenticatedAccount = user.(*models.Account)
@@ -228,7 +228,7 @@ func (s AccountController) ApiKey(c *gin.Context) {
 		return
 	}
 
-	var apikey models.ApiKey
+	var apikey models.AccountAPIKey
 	apikeybyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(apikeybyte, &apikey)
 
