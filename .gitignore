@@ -12,4 +12,4 @@ msyncd
 .env.prod
 .env
 
-./electrapay-api
+electrapay-api
