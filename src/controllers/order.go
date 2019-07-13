@@ -33,6 +33,8 @@ type Order struct {
 	OrderAmount              decimal.Decimal `json:"orderamount"`
 	QuoteCurrency            string          `json:"quotecurrency"`
 	QuoteAmount              decimal.Decimal `json:"quoteamount"`
+	QuoteTranFee             decimal.Decimal `json:"quotetranfee"`
+	QuoteFeeAmount           decimal.Decimal `json:"quotetranfeeamount"`
 	QRCode                   string          `json:"qrcode"`
 	OrderToken               string          `json:"ordertoken"`
 	WalletAddress            string          `json:"walletaddress"`
