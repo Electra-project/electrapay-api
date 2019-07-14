@@ -68,6 +68,7 @@ func queueAdd(queue Queue) (Queue, error) {
 		"response_info, " +
 		"response_description)  " +
 		"VALUES(?,?,?,?,?,?,?,?,?,?,?)")
+
 	if err != nil {
 		helpers.LogErr("Queue : Cannot update Queue to process - " + err.Error())
 		return Queue{}, err
@@ -80,6 +81,7 @@ func queueAdd(queue Queue) (Queue, error) {
 	}
 	rowCnt, err := res.RowsAffected()
 	helpers.LogInfo("Queue : New Job created in queue " + string(rowCnt) + "Row(s)")
+	stmt.Close()
 
 	err1 := db.QueryRow("SELECT id "+
 		"FROM queue "+
@@ -187,6 +189,7 @@ func queueClose(queue Queue) (Queue, error) {
 	}
 	rowCnt, err := res.RowsAffected()
 	helpers.LogInfo("Queue : Queue marked closed " + string(rowCnt) + "Row(s)")
+	stmt.Close()
 
 	return queue, nil
 
