@@ -3,6 +3,7 @@ package controllers
 import "github.com/gin-gonic/gin"
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/Electra-project/electrapay-api/src/helpers"
 	"github.com/Electra-project/electrapay-api/src/models"
 	"github.com/Electra-project/electrapay-api/src/queue"
@@ -23,12 +24,15 @@ func (s AccountController) Get(c *gin.Context) {
 	queueinfo.Category = "ACCOUNT_FETCH"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
+	fmt.Print(len(URLArray))
+	fmt.Print(URLArray[1])
+	fmt.Print(URLArray[2])
+	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 3 {
+	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = version
@@ -55,12 +59,12 @@ func (s AccountController) Register(c *gin.Context) {
 	queueinfo.Category = "ACCOUNT_REGISTER"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 3 {
+	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 2 {
+	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
@@ -97,12 +101,12 @@ func (s AccountController) Edit(c *gin.Context) {
 	queueinfo.Category = "ACCOUNT_EDIT"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 3 {
+	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 2 {
+	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
@@ -141,12 +145,12 @@ func (s AccountController) Close(c *gin.Context) {
 	queueinfo.Category = "ACCOUNT_CLOSE"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
+	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 3 {
+	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = version
@@ -176,12 +180,12 @@ func (s AccountController) Suspend(c *gin.Context) {
 	queueinfo.Category = "ACCOUNT_SUSPEND"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
+	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 3 {
+	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = version
@@ -211,12 +215,12 @@ func (s AccountController) ApiKey(c *gin.Context) {
 	queueinfo.Category = "ACCOUNT_APIKEY_RENEW"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
+	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 3 {
+	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = version
@@ -246,12 +250,12 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 	queueinfo.Category = "ACCOUNT_ADDRESS_EDIT"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 5 {
+	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 4 {
+	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[3]
 		queueinfo.Version = version
@@ -291,12 +295,12 @@ func (s AccountController) AddressAdd(c *gin.Context) {
 	queueinfo.Category = "ACCOUNT_ADDRESS_NEW"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
+	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 3 {
+	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = version
@@ -335,12 +339,12 @@ func (s AccountController) AddressRemove(c *gin.Context) {
 	queueinfo.Category = "ACCOUNT_ADDRESS_DELETE"
 	queueinfo.APIType = "DELETE"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 5 {
+	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 4 {
+	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
 		queueinfo.Version = version
@@ -370,12 +374,12 @@ func (s AccountController) ContactEdit(c *gin.Context) {
 	queueinfo.Category = "ACCOUNT_CONTACT_EDIT"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 5 {
+	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 4 {
+	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[3]
 		queueinfo.Version = version
@@ -415,12 +419,12 @@ func (s AccountController) ContactAdd(c *gin.Context) {
 	queueinfo.Category = "ACCOUNT_CONTACT_NEW"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
+	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 3 {
+	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
 		queueinfo.Version = version
@@ -459,12 +463,12 @@ func (s AccountController) ContactRemove(c *gin.Context) {
 	queueinfo.Category = "ACCOUNT_CONTACT_DELETE"
 	queueinfo.APIType = "DELETE"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 5 {
+	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 4 {
+	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
 		queueinfo.Version = version

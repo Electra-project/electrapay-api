@@ -71,12 +71,12 @@ func (s OrderController) New(c *gin.Context) {
 	queueinfo.Category = "ORDER_NEW"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 3 {
+	if len(URLArray[2]) >= 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 2 {
+	if len(URLArray[2]) < 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
@@ -107,12 +107,12 @@ func (s OrderController) Get(c *gin.Context) {
 	queueinfo.APIType = "GET"
 	version := helpers.GetVersion()
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
+	if len(URLArray[3]) >= 1 {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[2]
-		queueinfo.Version = URLArray[3]
+		queueinfo.Parameters = URLArray[3]
+		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 3 {
+	if len(URLArray[3]) < 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = URLArray[2]
 		queueinfo.Version = version
@@ -141,13 +141,14 @@ func (s OrderController) Cancel(c *gin.Context) {
 
 	queueinfo.Category = "ORDER_CANCEL"
 	queueinfo.APIType = "PUT"
+
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
+	if URLArray[3] != "cancel" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[2]
-		queueinfo.Version = URLArray[3]
+		queueinfo.Parameters = URLArray[3]
+		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 3 {
+	if URLArray[3] == "cancel" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = URLArray[2]
 		queueinfo.Version = version
@@ -176,12 +177,12 @@ func (s OrderController) Reverse(c *gin.Context) {
 	queueinfo.Category = "ORDER_REVERSE"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
+	if URLArray[3] != "reverse" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[2]
-		queueinfo.Version = URLArray[3]
+		queueinfo.Parameters = URLArray[3]
+		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 3 {
+	if URLArray[3] == "reverse" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = URLArray[2]
 		queueinfo.Version = version
@@ -210,12 +211,12 @@ func (s OrderController) PaymentCategory(c *gin.Context) {
 	queueinfo.Category = "ORDER_PAYMENTCATEGORY"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
+	if URLArray[1] != "paymentcategory" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[2]
-		queueinfo.Version = URLArray[3]
+		queueinfo.Parameters = URLArray[3]
+		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 3 {
+	if URLArray[1] == "paymentcategory" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = URLArray[2]
 		queueinfo.Version = version
@@ -244,12 +245,12 @@ func (s OrderController) AllowedCurrency(c *gin.Context) {
 	queueinfo.Category = "ORDER_ALLOWEDCURRENCY"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 4 {
+	if URLArray[1] != "allowedcurrency" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[2]
-		queueinfo.Version = URLArray[3]
+		queueinfo.Parameters = URLArray[3]
+		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 3 {
+	if URLArray[1] == "allowedcurrency" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = URLArray[2]
 		queueinfo.Version = version
