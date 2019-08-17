@@ -71,13 +71,13 @@ func (s CodeController) GetAccountType(c *gin.Context) {
 	queueinfo.Category = "ACCOUNTTYPE_FIND"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 3 {
+	if len(URLArray[2]) >= 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = URLArray[1]
 	}
 	version := helpers.GetVersion()
-	if len(URLArray) == 2 {
+	if len(URLArray[2]) < 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
@@ -106,12 +106,12 @@ func (s CodeController) GetAddressType(c *gin.Context) {
 	queueinfo.Category = "ADDRESSTYPE_FIND"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 3 {
+	if len(URLArray[2]) >= 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 2 {
+	if len(URLArray[2]) < 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
@@ -140,12 +140,12 @@ func (s CodeController) GetContactType(c *gin.Context) {
 	queueinfo.APIType = "GET"
 	version := helpers.GetVersion()
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 3 {
+	if len(URLArray[2]) >= 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 2 {
+	if len(URLArray[2]) < 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
@@ -174,12 +174,12 @@ func (s CodeController) GetCurrencyType(c *gin.Context) {
 	queueinfo.Category = "CURRENCYTYPE_FIND"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 3 {
+	if len(URLArray[2]) >= 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 2 {
+	if len(URLArray[2]) < 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
@@ -207,12 +207,12 @@ func (s CodeController) GetPluginType(c *gin.Context) {
 	queueinfo.APIType = "GET"
 	version := helpers.GetVersion()
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 3 {
+	if len(URLArray[2]) >= 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 2 {
+	if len(URLArray[2]) < 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
@@ -240,12 +240,12 @@ func (s CodeController) GetCurrency(c *gin.Context) {
 	queueinfo.APIType = "GET"
 	version := helpers.GetVersion()
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 3 {
+	if len(URLArray[2]) >= 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 2 {
+	if len(URLArray[2]) < 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
@@ -275,12 +275,12 @@ func (s CodeController) GetCountry(c *gin.Context) {
 	queueinfo.APIType = "GET"
 	version := helpers.GetVersion()
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 3 {
+	if len(URLArray[2]) >= 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 2 {
+	if len(URLArray[2]) < 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
@@ -308,12 +308,12 @@ func (s CodeController) GetLanguage(c *gin.Context) {
 	queueinfo.APIType = "GET"
 	version := helpers.GetVersion()
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray) == 3 {
+	if len(URLArray[2]) >= 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 2 {
+	if len(URLArray[2]) < 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
@@ -342,12 +342,12 @@ func (s CodeController) GetTimeZone(c *gin.Context) {
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	version := helpers.GetVersion()
-	if len(URLArray) == 3 {
+	if len(URLArray[2]) >= 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray) == 2 {
+	if len(URLArray[2]) < 1 {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = version

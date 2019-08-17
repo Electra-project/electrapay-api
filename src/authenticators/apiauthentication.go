@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"fmt"
+	"github.com/Electra-project/electrapay-api/src/helpers"
 	"github.com/Electra-project/electrapay-api/src/models"
 	"github.com/Electra-project/electrapay-api/src/queue"
 	"github.com/gin-gonic/gin"
@@ -28,13 +28,13 @@ func BasicAuth() gin.HandlerFunc {
 }
 
 func authenticateUser(username, password string) bool {
-	fmt.Println(username)
-	fmt.Println(password)
 	var queueinfo queue.Queue
+
+	version := helpers.GetVersion()
 	queueinfo.Category = "API_AUTHENTICATE"
 	queueinfo.APIType = "POST"
 	queueinfo.Parameters = ""
-	queueinfo.Version = "v1"
+	queueinfo.Version = version
 	queueinfo.RequestInfo = "{\"id\": \"" + username + "\", \"apikey\": \"" + password + "\"}"
 	queueinfo, err := queue.QueueProcess(queueinfo)
 	if err != nil {
