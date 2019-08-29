@@ -71,12 +71,12 @@ func (s OrderController) New(c *gin.Context) {
 	queueinfo.Category = "ORDER_NEW"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray[2]) >= 1 {
+	if URLArray[1] == "order" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray[2]) < 1 {
+	if URLArray[1] != "order" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
@@ -107,12 +107,12 @@ func (s OrderController) Get(c *gin.Context) {
 	queueinfo.APIType = "GET"
 	version := helpers.GetVersion()
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if len(URLArray[3]) >= 1 {
+	if URLArray[1] == "order" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = URLArray[3]
 		queueinfo.Version = URLArray[1]
 	}
-	if len(URLArray[3]) < 1 {
+	if URLArray[1] != "order" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = URLArray[2]
 		queueinfo.Version = version
