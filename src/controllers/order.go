@@ -21,6 +21,13 @@ type OrderNew struct {
 	OrderAmount      decimal.Decimal `json:"orderamount"`
 }
 
+type OrderQuery struct {
+	AccountId int64  `json: "accountid"`
+	Reference string `json: "reference"`
+	Uuid      string `json: "uuid"`
+	NodeId    int64  `json: "nodeid"`
+}
+
 type Order struct {
 	OrderId                  int64           `json:"id"`
 	Uuid                     string          `json:"uuid"`
@@ -131,6 +138,29 @@ func (s OrderController) Get(c *gin.Context) {
 
 	c.Header("X-Version", "1.0")
 	c.JSON(200, order)
+
+}
+
+func GetOrderNode(orderquery, version string) (orderqueryresult OrderQuery) {
+
+	var queueinfo queue.Queue
+
+	queueinfo.Category = "ORDER_FIND_NODE"
+	queueinfo.APIType = "GET"
+	queueinfo.APIURL = ""
+	queueinfo.Parameters = ""
+	queueinfo.Version = version
+	queueinfo.RequestInfo = orderquery
+	queueinfo, err := queue.QueueProcess(queueinfo)
+	if err != nil {
+		return
+	}
+
+	var orderqueryresponse OrderQuery
+	orderbyte := []byte(queueinfo.ResponseInfo)
+	json.Unmarshal(orderbyte, &orderqueryresponse)
+
+	return orderqueryresponse
 
 }
 
