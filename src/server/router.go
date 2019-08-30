@@ -31,13 +31,21 @@ func Router() *gin.Engine {
 	 */
 	accountController := new(controllers.AccountController)
 
+	// Verify the email address for an account
+	router.GET(version+"/auth/verify/:email", accountController.AuthVerify)
+	router.GET("/auth/verify/:email", accountController.AuthVerify)
+
+	// Verify the email address for an account
+	router.POST(version+"/auth/setpassword/", accountController.SetPassword)
+	router.POST("/auth/setpassword/", accountController.SetPassword)
+
 	// register a new account - this will send an email with the login code
 	router.POST(version+"/account/register/", accountController.Register)
 	router.POST("/account/register/", accountController.Register)
 
 	// login to create a JWT token
-	router.POST(version+"/account/authenticate", authenticator.LoginHandler)
-	router.POST("/account/authenticate", authenticator.LoginHandler)
+	router.POST(version+"/auth/login", authenticator.LoginHandler)
+	router.POST("/auth/login", authenticator.LoginHandler)
 
 	/**
 	 * authenticated routes
