@@ -2,65 +2,12 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/Electra-project/electrapay-api/src/helpers"
+	"github.com/Electra-project/electrapay-api/src/models"
 	"github.com/Electra-project/electrapay-api/src/queue"
 	"github.com/gin-gonic/gin"
-	"github.com/shopspring/decimal"
 	"strings"
-	"time"
 )
-
-type OrderNew struct {
-	AccountId        int64           `json:"accountid"`
-	ShortDescription string          `json:"shortdescription"`
-	LongDescription  string          `json:"longdescription"`
-	Reference        string          `json:"reference"`
-	Paymentcategory  string          `json:"paymentcategory"`
-	OrderCurrency    string          `json:"ordercurrency"`
-	OrderAmount      decimal.Decimal `json:"orderamount"`
-}
-
-type Order struct {
-	OrderId                  int64           `json:"id"`
-	Uuid                     string          `json:"uuid"`
-	AccountId                int64           `json:"accountid"`
-	ShortDescription         string          `json:"shortdescription"`
-	LongDescription          string          `json:"longdescription"`
-	Reference                string          `json:"reference"`
-	Paymentcategory          string          `json:"paymentcategory"`
-	OrderCurrency            string          `json:"ordercurrency"`
-	OrderAmount              decimal.Decimal `json:"orderamount"`
-	QuoteCurrency            string          `json:"quotecurrency"`
-	QuoteAmount              decimal.Decimal `json:"quoteamount"`
-	QuoteTranFee             decimal.Decimal `json:"quotetranfee"`
-	QuoteFeeAmount           decimal.Decimal `json:"quotetranfeeamount"`
-	QRCode                   string          `json:"qrcode"`
-	OrderToken               string          `json:"ordertoken"`
-	WalletAddress            string          `json:"walletaddress"`
-	OrderReceivedDate        time.Time       `json:"orderreceivedate"`
-	OrderReceivedTransaction string          `json:"orderreceivetransaction"`
-	OrderFinalTransaction    string          `json:"orderfinaltransaction"`
-	OrderReversalTransaction string          `json:"orderreversaltransaction"`
-	OrderQuoteSubmittedDate  time.Time       `json:"orderquotesubmitteddate"`
-	OrderReceivedPaymentDate time.Time       `json:"orderreceivedpaymentdate"`
-	OrderFinalPaymentDate    time.Time       `json:"orderfinalpaymentdate"`
-	OrderStatus              string          `json:"orderstatus"`
-	ResponseCode             string          `json:"responsecode"`
-	ResponseDescription      string          `json:"responsedescription"`
-}
-
-type PaymentCategory struct {
-	Id          int64  `json:"id"`
-	Code        string `json:"code"`
-	Description string `json:"description"`
-}
-
-type AllowedCurrency struct {
-	Id          int64  `json:"id"`
-	Code        string `json:"code"`
-	Description string `json:"description"`
-}
 
 type OrderController struct{}
 
@@ -90,7 +37,7 @@ func (s OrderController) New(c *gin.Context) {
 		return
 	}
 
-	var order Order
+	var order models.Order
 	orderbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(orderbyte, &order)
 
@@ -125,12 +72,41 @@ func (s OrderController) Get(c *gin.Context) {
 		return
 	}
 
-	var order Order
+	var order models.Order
 	orderbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(orderbyte, &order)
 
 	c.Header("X-Version", "1.0")
 	c.JSON(200, order)
+
+}
+
+func GetOrderNode(orderuuid string, accountid int64, orderreference string, version string) (orderqueryresult models.OrderQuery) {
+
+	var queueinfo queue.Queue
+	var orderquery models.OrderQuery
+
+	orderquery.Uuid = orderuuid
+	orderquery.AccountId = accountid
+	orderquery.Reference = orderreference
+
+	queueinfo.Category = "ORDER_FIND_NODE"
+	queueinfo.APIType = "GET"
+	queueinfo.APIURL = ""
+	queueinfo.Parameters = ""
+	queueinfo.Version = version
+	str, err := json.Marshal(orderquery)
+	queueinfo.RequestInfo = string(str)
+	queueinfo, err = queue.QueueProcess(queueinfo)
+	if err != nil {
+		return
+	}
+
+	var orderqueryresponse models.OrderQuery
+	orderbyte := []byte(queueinfo.ResponseInfo)
+	json.Unmarshal(orderbyte, &orderqueryresponse)
+
+	return orderqueryresponse
 
 }
 
@@ -160,7 +136,7 @@ func (s OrderController) Cancel(c *gin.Context) {
 		return
 	}
 
-	var order Order
+	var order models.Order
 	orderbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(orderbyte, &order)
 
@@ -194,7 +170,7 @@ func (s OrderController) Reverse(c *gin.Context) {
 		return
 	}
 
-	var order Order
+	var order models.Order
 	orderbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(orderbyte, &order)
 
@@ -228,7 +204,7 @@ func (s OrderController) PaymentCategory(c *gin.Context) {
 		return
 	}
 
-	var paymentcategories []PaymentCategory
+	var paymentcategories []models.PaymentCategory
 	queueResult := queueinfo.ResponseInfo
 	json.Unmarshal([]byte(queueResult), &paymentcategories)
 
@@ -262,9 +238,8 @@ func (s OrderController) AllowedCurrency(c *gin.Context) {
 		return
 	}
 
-	var allowedcurrencies []AllowedCurrency
+	var allowedcurrencies []models.AllowedCurrency
 	queueResult := queueinfo.ResponseInfo
-	fmt.Println(queueResult)
 	json.Unmarshal([]byte(queueResult), &allowedcurrencies)
 
 	c.Header("X-Version", "1.0")

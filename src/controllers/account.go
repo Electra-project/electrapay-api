@@ -3,7 +3,6 @@ package controllers
 import "github.com/gin-gonic/gin"
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/Electra-project/electrapay-api/src/helpers"
 	"github.com/Electra-project/electrapay-api/src/models"
 	"github.com/Electra-project/electrapay-api/src/queue"
@@ -12,6 +11,90 @@ import (
 )
 
 type AccountController struct{}
+
+func (s AccountController) AuthVerify(c *gin.Context) {
+	//API to verify the status of a user
+
+	var queueinfo queue.Queue
+	queueinfo.Category = "AUTH_VERIFY"
+	queueinfo.APIType = "GET"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	version := helpers.GetVersion()
+
+	if URLArray[1] != "auth" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = URLArray[4]
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "auth" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = URLArray[3]
+		queueinfo.Version = version
+	}
+	queueinfo.RequestInfo = "{}"
+	queueinfo, err := queue.QueueProcess(queueinfo)
+
+	if queueinfo.ResponseCode != "00" {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.Header("X-Version", "1.0")
+		c.JSON(200, returnError)
+	} else {
+		var user models.UserVerify
+		userbyte := []byte(queueinfo.ResponseInfo)
+		json.Unmarshal(userbyte, &user)
+
+		c.JSON(200, user)
+	}
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+
+}
+
+func (s AccountController) SetPassword(c *gin.Context) {
+	//API to set the user password
+	version := helpers.GetVersion()
+
+	var queueinfo queue.Queue
+	queueinfo.Category = "AUTH_SETPASSWORD"
+	queueinfo.APIType = "POST"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if URLArray[1] != "auth" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = ""
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "auth" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = ""
+		queueinfo.Version = version
+	}
+	buf := make([]byte, 1024)
+	num, _ := c.Request.Body.Read(buf)
+	queueinfo.RequestInfo = string(buf[0:num])
+	queueinfo, err := queue.QueueProcess(queueinfo)
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+	if queueinfo.ResponseCode != "00" {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.Header("X-Version", "1.0")
+		c.JSON(200, returnError)
+	} else {
+		var user models.UserVerify
+		userbyte := []byte(queueinfo.ResponseInfo)
+		json.Unmarshal(userbyte, &user)
+
+		c.JSON(200, user)
+	}
+
+}
 
 func (s AccountController) Get(c *gin.Context) {
 	//API to retrieve account information
@@ -24,9 +107,6 @@ func (s AccountController) Get(c *gin.Context) {
 	queueinfo.Category = "ACCOUNT_FETCH"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	fmt.Print(len(URLArray))
-	fmt.Print(URLArray[1])
-	fmt.Print(URLArray[2])
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
