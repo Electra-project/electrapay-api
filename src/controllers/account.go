@@ -3,7 +3,6 @@ package controllers
 import "github.com/gin-gonic/gin"
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/Electra-project/electrapay-api/src/helpers"
 	"github.com/Electra-project/electrapay-api/src/models"
 	"github.com/Electra-project/electrapay-api/src/queue"
@@ -61,14 +60,14 @@ func (s AccountController) SetPassword(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "AUTH_SETPASSWORD"
-	queueinfo.APIType = "PUT"
+	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if URLArray[1] != "account" {
+	if URLArray[1] != "auth" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = URLArray[1]
 	}
-	if URLArray[1] == "account" {
+	if URLArray[1] == "auth" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
@@ -108,9 +107,6 @@ func (s AccountController) Get(c *gin.Context) {
 	queueinfo.Category = "ACCOUNT_FETCH"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
-	fmt.Print(len(URLArray))
-	fmt.Print(URLArray[1])
-	fmt.Print(URLArray[2])
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
 		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/Electra-project/electrapay-api/src/helpers"
 	"github.com/Electra-project/electrapay-api/src/models"
 	"github.com/Electra-project/electrapay-api/src/queue"
@@ -241,7 +240,6 @@ func (s OrderController) AllowedCurrency(c *gin.Context) {
 
 	var allowedcurrencies []models.AllowedCurrency
 	queueResult := queueinfo.ResponseInfo
-	fmt.Println(queueResult)
 	json.Unmarshal([]byte(queueResult), &allowedcurrencies)
 
 	c.Header("X-Version", "1.0")
