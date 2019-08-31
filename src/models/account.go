@@ -45,6 +45,8 @@ type AccountNew struct {
 	Country             string `json:"country"`
 	Language            string `json:"language"`
 	Timezone            string `json:"timezone"`
+	WalletAddress       string `json:"walletaddress"`
+	WalletCurrency      string `json:"walletcurrency"`
 	ContactFirstname    string `json:"contactfirstname"`
 	ContactLastname     string `json:"contactlastname"`
 	ContactEmail        string `json:"contactemail"`
