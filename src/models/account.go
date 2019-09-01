@@ -36,7 +36,23 @@ type Account struct {
 	Status              string   `json:"status"`
 	ResponseCode        string   `json:"responsecode"`
 	ResponseDescription string   `json:"responsedescription"`
-	Secret              string   `json:"-"`
+}
+
+type AccountNew struct {
+	Name                string `json:"name"`
+	Description         string `json:"description"`
+	Type                string `json:"accounttype"`
+	Country             string `json:"country"`
+	Language            string `json:"language"`
+	Timezone            string `json:"timezone"`
+	WalletAddress       string `json:"walletaddress"`
+	WalletCurrency      string `json:"walletcurrency"`
+	ContactFirstname    string `json:"contactfirstname"`
+	ContactLastname     string `json:"contactlastname"`
+	ContactEmail        string `json:"contactemail"`
+	Status              string `json:"status"`
+	ResponseCode        string `json:"responsecode"`
+	ResponseDescription string `json:"responsedescription"`
 }
 
 type AccountEdit struct {
