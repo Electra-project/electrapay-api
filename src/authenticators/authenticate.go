@@ -11,12 +11,12 @@ import (
 )
 
 type Login struct {
-	Uuid   string `form:"uuid" json:"uuid" binding:"required"`
+	Email  string `form:"email" json:"email" binding:"required"`
 	Secret string `form:"secret" json:"secret" binding:"required"`
 }
 
 var idKey = "id"
-var identityKey = "uuid"
+var identityKey = "email"
 var nameKey = "name"
 var descriptionKey = "description"
 var websiteKey = "website"
@@ -36,7 +36,7 @@ func Authenticator() (middleware *jwt.GinJWTMiddleware) {
 			if v, ok := data.(*models.Account); ok {
 				return jwt.MapClaims{
 					idKey:          int64(v.Id),
-					identityKey:    v.Uuid,
+					identityKey:    v.ContactEmail,
 					nameKey:        v.Name,
 					descriptionKey: v.Description,
 					websiteKey:     v.Website,
@@ -47,11 +47,11 @@ func Authenticator() (middleware *jwt.GinJWTMiddleware) {
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
 			return &models.Account{
-				Id:          int64(claims[idKey].(float64)),
-				Uuid:        claims[identityKey].(string),
-				Name:        claims[nameKey].(string),
-				Description: claims[descriptionKey].(string),
-				Website:     claims[websiteKey].(string),
+				Id:           int64(claims[idKey].(float64)),
+				ContactEmail: claims[identityKey].(string),
+				Name:         claims[nameKey].(string),
+				Description:  claims[descriptionKey].(string),
+				Website:      claims[websiteKey].(string),
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
@@ -59,7 +59,7 @@ func Authenticator() (middleware *jwt.GinJWTMiddleware) {
 			if err := c.ShouldBind(&loginVals); err != nil {
 				return "", jwt.ErrMissingLoginValues
 			}
-			uuid := loginVals.Uuid
+			email := loginVals.Email
 			secret := loginVals.Secret
 
 			var queueinfo queue.Queue
@@ -67,8 +67,9 @@ func Authenticator() (middleware *jwt.GinJWTMiddleware) {
 			queueinfo.APIType = "POST"
 			queueinfo.Parameters = ""
 			queueinfo.Version = "v1"
-			queueinfo.RequestInfo = "{\"Uuid\": \"" + uuid + "\", \"Secret\": \"" + secret + "\"}"
+			queueinfo.RequestInfo = "{\"Email\": \"" + email + "\", \"Secret\": \"" + secret + "\"}"
 			queueinfo, err := queue.QueueProcess(queueinfo)
+
 			if err != nil {
 				c.AbortWithError(404, err)
 			}
@@ -76,13 +77,13 @@ func Authenticator() (middleware *jwt.GinJWTMiddleware) {
 			var account models.Account
 			accountbyte := []byte(queueinfo.ResponseInfo)
 			json.Unmarshal(accountbyte, &account)
-			if account.Uuid == uuid {
+			if account.ContactEmail == email {
 				return &models.Account{
-					Id:          account.Id,
-					Uuid:        account.Uuid,
-					Name:        account.Name,
-					Description: account.Description,
-					Website:     account.Website,
+					Id:           account.Id,
+					ContactEmail: account.ContactEmail,
+					Name:         account.Name,
+					Description:  account.Description,
+					Website:      account.Website,
 				}, nil
 			}
 
@@ -90,13 +91,13 @@ func Authenticator() (middleware *jwt.GinJWTMiddleware) {
 		},
 		Authorizator: func(data interface{}, c *gin.Context) bool {
 			// We implement here a base authorization mechanism:
-			// A given user with UUID XXX can only send requests for that given uuid.
-			// If a user with UUID XXX sends a request for UUID YYY, then the request
+			// A given user with Email XXX can only send requests for that given Email.
+			// If a user with UUID XXX sends a request for Email YYY, then the request
 			// Will be rejected
-			var requestUuid = c.Params.ByName("uuid")
-			if requestUuid != "" {
+			var requestEmail = c.Params.ByName("email")
+			if requestEmail != "" {
 				v, ok := data.(*models.Account)
-				if ok && v.Uuid != requestUuid {
+				if ok && v.ContactEmail != requestEmail {
 					return false
 				}
 			}
