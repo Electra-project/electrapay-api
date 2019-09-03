@@ -99,7 +99,7 @@ func (s AccountController) SetPassword(c *gin.Context) {
 func (s AccountController) Get(c *gin.Context) {
 	//API to retrieve account information
 	// We get the authenticated user
-	user, _ := c.Get("uuid")
+	user, _ := c.Get("email")
 	version := helpers.GetVersion()
 	var authenticatedAccount = user.(*models.Account)
 
