@@ -11,8 +11,8 @@ import (
 )
 
 type Login struct {
-	Email  string `form:"email" json:"email" binding:"required"`
-	Secret string `form:"secret" json:"secret" binding:"required"`
+	Email    string `form:"email" json:"email" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
 }
 
 var idKey = "id"
@@ -28,7 +28,7 @@ func Authenticator() (middleware *jwt.GinJWTMiddleware) {
 
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "test zone",
-		Key:         []byte("secret key"),
+		Key:         []byte("password"),
 		Timeout:     time.Hour,
 		MaxRefresh:  time.Hour,
 		IdentityKey: identityKey,
@@ -60,14 +60,14 @@ func Authenticator() (middleware *jwt.GinJWTMiddleware) {
 				return "", jwt.ErrMissingLoginValues
 			}
 			email := loginVals.Email
-			secret := loginVals.Secret
+			password := loginVals.Password
 
 			var queueinfo queue.Queue
 			queueinfo.Category = "ACCOUNT_AUTHENTICATE"
 			queueinfo.APIType = "POST"
 			queueinfo.Parameters = ""
 			queueinfo.Version = "v1"
-			queueinfo.RequestInfo = "{\"Email\": \"" + email + "\", \"Secret\": \"" + secret + "\"}"
+			queueinfo.RequestInfo = "{\"Email\": \"" + email + "\", \"Password\": \"" + password + "\"}"
 			queueinfo, err := queue.QueueProcess(queueinfo)
 
 			if err != nil {
