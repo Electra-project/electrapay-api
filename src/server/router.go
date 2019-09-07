@@ -43,7 +43,7 @@ func Router() *gin.Engine {
 	router.POST(version+"/auth/login", authenticator.LoginHandler)
 	router.POST("/auth/login", authenticator.LoginHandler)
 
-	// check JWT Token
+	// Refresh the token
 	router.POST(version+"/auth/refresh_token", authenticator.RefreshHandler)
 	router.POST("/auth/refresh_token", authenticator.RefreshHandler)
 
