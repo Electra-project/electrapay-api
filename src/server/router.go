@@ -36,16 +36,20 @@ func Router() *gin.Engine {
 	router.GET("/auth/verify/:email", accountController.AuthVerify)
 
 	// Set the password using the authorisation code
-	router.POST(version+"/auth/setpassword/", accountController.SetPassword)
-	router.POST("/auth/setpassword/", accountController.SetPassword)
+	router.POST(version+"/auth/setpassword", accountController.SetPassword)
+	router.POST("/auth/setpassword", accountController.SetPassword)
 
 	// login to create a JWT token
 	router.POST(version+"/auth/login", authenticator.LoginHandler)
 	router.POST("/auth/login", authenticator.LoginHandler)
 
+	// check JWT Token
+	router.POST(version + "/auth/session")
+	router.POST("/auth/session")
+
 	// register a new account - this will send an email with the authorisation code
-	router.POST(version+"/account/register/", accountController.Register)
-	router.POST("/account/register/", accountController.Register)
+	router.POST(version+"/account/register", accountController.Register)
+	router.POST("/account/register", accountController.Register)
 
 	/**
 	 * authenticated routes
@@ -83,8 +87,8 @@ func Router() *gin.Engine {
 	{
 
 		orderController := new(controllers.OrderController)
-		authapi.POST("/"+version+"/order/", orderController.New)
-		authapi.POST("/order/", orderController.New)
+		authapi.POST("/"+version+"/order", orderController.New)
+		authapi.POST("/order", orderController.New)
 		authapi.GET("/"+version+"/order/:uuid", orderController.Get)
 		authapi.GET("/order/:uuid/", orderController.Get)
 		authapi.POST("/"+version+"/order/:uuid/cancel", orderController.Cancel)
@@ -98,7 +102,7 @@ func Router() *gin.Engine {
 	}
 
 	codeController := new(controllers.CodeController)
-	router.GET("/"+version+"/accounttype/", codeController.GetAccountType)
+	router.GET("/"+version+"/accounttype", codeController.GetAccountType)
 	router.GET("accounttype/", codeController.GetAccountType)
 	router.GET("/"+version+"/addresstype/", codeController.GetAddressType)
 	router.GET("addresstype/", codeController.GetAddressType)
