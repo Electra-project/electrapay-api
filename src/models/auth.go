@@ -1,7 +1,7 @@
 package models
 
 type UserVerify struct {
-	EmailAddress        string `json:"emailaddress"`
+	Email               string `json:"email"`
 	Status              string `json:"status"`
 	ResponseCode        string `json:"responsecode"`
 	ResponseDescription string `json:"responsedescription"`
