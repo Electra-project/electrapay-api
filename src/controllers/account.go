@@ -85,7 +85,7 @@ func (s AccountController) SetPassword(c *gin.Context) {
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
 		c.Header("X-Version", "1.0")
-		c.JSON(200, returnError)
+		c.JSON(400, returnError)
 	} else {
 		var user models.UserVerify
 		userbyte := []byte(queueinfo.ResponseInfo)

@@ -43,9 +43,9 @@ func Router() *gin.Engine {
 	router.POST(version+"/auth/login", authenticator.LoginHandler)
 	router.POST("/auth/login", authenticator.LoginHandler)
 
-	// check JWT Token
-	router.POST(version + "/auth/session")
-	router.POST("/auth/session")
+	// Refresh the token
+	router.POST(version+"/auth/refresh_token", authenticator.RefreshHandler)
+	router.POST("/auth/refresh_token", authenticator.RefreshHandler)
 
 	// register a new account - this will send an email with the authorisation code
 	router.POST(version+"/account/register", accountController.Register)
