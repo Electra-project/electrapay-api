@@ -31,6 +31,12 @@ func Router() *gin.Engine {
 	 */
 	accountController := new(controllers.AccountController)
 
+	authController := new(controllers.AuthController)
+
+	// Verify the email address for an account
+	router.POST(version+"/auth/token", authController.Token)
+	router.POST("/auth/token", authController.Token)
+
 	// Verify the email address for an account
 	router.GET(version+"/auth/verify/:email", accountController.AuthVerify)
 	router.GET("/auth/verify/:email", accountController.AuthVerify)
