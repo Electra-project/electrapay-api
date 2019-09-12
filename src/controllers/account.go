@@ -99,9 +99,9 @@ func (s AccountController) SetPassword(c *gin.Context) {
 func (s AccountController) Get(c *gin.Context) {
 	//API to retrieve account information
 	// We get the authenticated user
-	user, _ := c.Get("email")
+	//	user, _ := c.Get("email")
 	version := helpers.GetVersion()
-	var authenticatedAccount = user.(*models.Account)
+	//var authenticatedAccount = user.(*models.Account)
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_FETCH"
@@ -109,12 +109,12 @@ func (s AccountController) Get(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Parameters = URLArray[3]
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Parameters = URLArray[2]
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"

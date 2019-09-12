@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/Electra-project/electrapay-api/src/helpers"
 	"github.com/Electra-project/electrapay-api/src/models"
@@ -10,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -19,6 +21,7 @@ func (s AuthController) Token(c *gin.Context) {
 
 	grantType, err := checkGrantType(c)
 	var email string
+	mySigningKey := []byte(os.Getenv("JWTSECRET"))
 
 	if err != nil || grantType == "" {
 		c.JSON(http.StatusBadRequest, "malformed request")
@@ -57,8 +60,8 @@ func (s AuthController) Token(c *gin.Context) {
 
 			var claims jwt.StandardClaims
 
-			tkn, err := jwt.ParseWithClaims(gt.RefreshToken, claims, func(token *jwt.Token) (interface{}, error) {
-				return os.Getenv("JWTSECRET"), nil
+			tkn, err := jwt.ParseWithClaims(gt.RefreshToken, &claims, func(token *jwt.Token) (interface{}, error) {
+				return mySigningKey, nil
 			})
 
 			fmt.Println(err)
@@ -104,26 +107,32 @@ func (s AuthController) Token(c *gin.Context) {
 
 func generateTokenResponse(email string) (models.GrantTypeResponse, error) {
 
+	mySigningKey := []byte(os.Getenv("JWTSECRET"))
+
 	tokenExp := time.Now().Add(6 * time.Minute).Unix()
 	refreshTokenExp := time.Now().Add(10 * time.Minute).Unix()
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": email,
-		"exp": tokenExp,
-	})
+	claims := &jwt.StandardClaims{
+		Subject:   email,
+		ExpiresAt: tokenExp,
+	}
 
-	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": email,
-		"exp": refreshTokenExp,
-	})
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	tokenString, err := token.SignedString([]byte(os.Getenv("JWTSECRET")))
+	rClaims := &jwt.StandardClaims{
+		Subject:   email,
+		ExpiresAt: refreshTokenExp,
+	}
+
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, rClaims)
+
+	tokenString, err := token.SignedString(mySigningKey)
 	if err != nil {
 		fmt.Println(err.Error())
 		return models.GrantTypeResponse{}, err
 	}
 
-	refreshTokenString, err := refreshToken.SignedString([]byte(email))
+	refreshTokenString, err := refreshToken.SignedString(mySigningKey)
 	if err != nil {
 		fmt.Println(err.Error())
 		return models.GrantTypeResponse{}, err
@@ -162,4 +171,39 @@ func authenticate(email string, password string) (models.Account, error) {
 	}
 	return account, nil
 
+}
+
+func (s AuthController) AuthenticationRequired(c *gin.Context) {
+	t, err := extractToken(c)
+	if err != nil {
+		fmt.Println(err.Error())
+		c.JSON(http.StatusUnauthorized, "invalid token.")
+		c.Abort()
+		return
+	}
+
+	claims := jwt.StandardClaims{}
+	mySigningKey := []byte(os.Getenv("JWTSECRET"))
+
+	_, err = jwt.ParseWithClaims(t, &claims, func(token *jwt.Token) (interface{}, error) {
+		return mySigningKey, nil
+	})
+
+	if err != nil {
+		fmt.Println(err.Error())
+		c.JSON(http.StatusUnauthorized, "invalid token.")
+		c.Abort()
+		return
+	}
+	fmt.Println(claims.Id)
+	return
+}
+
+func extractToken(c *gin.Context) (string, error) {
+	reqToken := c.Request.Header.Get("Authorization")
+	splitToken := strings.Split(string(reqToken), "Bearer ")
+	if len(splitToken) != 2 {
+		return "", errors.New("wrong auth header format")
+	}
+	return strings.TrimSpace(splitToken[1]), nil
 }
