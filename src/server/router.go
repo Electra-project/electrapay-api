@@ -10,7 +10,6 @@ import (
 
 func Router() *gin.Engine {
 
-	authenticator := authenticators.Authenticator()
 	apiauthenticator := authenticators.BasicAuth()
 
 	router := gin.Default()
@@ -31,6 +30,12 @@ func Router() *gin.Engine {
 	 */
 	accountController := new(controllers.AccountController)
 
+	authController := new(controllers.AuthController)
+
+	// Verify the email address for an account
+	router.POST(version+"/auth/token", authController.Token)
+	router.POST("/auth/token", authController.Token)
+
 	// Verify the email address for an account
 	router.GET(version+"/auth/verify/:email", accountController.AuthVerify)
 	router.GET("/auth/verify/:email", accountController.AuthVerify)
@@ -38,14 +43,6 @@ func Router() *gin.Engine {
 	// Set the password using the authorisation code
 	router.POST(version+"/auth/setpassword", accountController.SetPassword)
 	router.POST("/auth/setpassword", accountController.SetPassword)
-
-	// login to create a JWT token
-	router.POST(version+"/auth/login", authenticator.LoginHandler)
-	router.POST("/auth/login", authenticator.LoginHandler)
-
-	// Refresh the token
-	router.POST(version+"/auth/refresh_token", authenticator.RefreshHandler)
-	router.POST("/auth/refresh_token", authenticator.RefreshHandler)
 
 	// register a new account - this will send an email with the authorisation code
 	router.POST(version+"/account/register", accountController.Register)
@@ -55,7 +52,7 @@ func Router() *gin.Engine {
 	 * authenticated routes
 	 */
 	auth := router.Group("/")
-	auth.Use(authenticator.MiddlewareFunc())
+	auth.Use(authController.AuthenticationRequired)
 	{
 		auth.GET("/"+version+"/account/:accountid", accountController.Get)
 		auth.GET("/account/:accountid", accountController.Get)

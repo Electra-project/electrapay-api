@@ -29,8 +29,8 @@ func Authenticator() (middleware *jwt.GinJWTMiddleware) {
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "test zone",
 		Key:         []byte("password"),
-		Timeout:     time.Hour,
-		MaxRefresh:  time.Hour,
+		Timeout:     time.Minute,
+		MaxRefresh:  time.Minute * 5,
 		IdentityKey: identityKey,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*models.Account); ok {
