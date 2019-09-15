@@ -41,8 +41,8 @@ func Router() *gin.Engine {
 	router.GET("/auth/verify/:email", accountController.AuthVerify)
 
 	// Verify the email address for an account
-	router.GET(version+"/auth/forgotpassword", accountController.ForgotPassword)
-	router.GET("/auth/forgotpassword", accountController.ForgotPassword)
+	router.POST(version+"/auth/forgotpassword/:email", accountController.ForgotPassword)
+	router.POST("/auth/forgotpassword/:email", accountController.ForgotPassword)
 
 	// Set the password using the authorisation code
 	router.POST(version+"/auth/setpassword", accountController.SetPassword)
