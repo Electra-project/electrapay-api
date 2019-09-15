@@ -96,6 +96,48 @@ func (s AccountController) SetPassword(c *gin.Context) {
 
 }
 
+func (s AccountController) ForgotPassword(c *gin.Context) {
+	//API to set the user password
+	version := helpers.GetVersion()
+
+	var queueinfo queue.Queue
+	queueinfo.Category = "AUTH_ForgotPASSWORD"
+	queueinfo.APIType = "POST"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if URLArray[1] != "auth" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = ""
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "auth" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = ""
+		queueinfo.Version = version
+	}
+	buf := make([]byte, 1024)
+	num, _ := c.Request.Body.Read(buf)
+	queueinfo.RequestInfo = string(buf[0:num])
+	queueinfo, err := queue.QueueProcess(queueinfo)
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+	if queueinfo.ResponseCode != "00" {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.Header("X-Version", "1.0")
+		c.JSON(400, returnError)
+	} else {
+		var user models.UserVerify
+		userbyte := []byte(queueinfo.ResponseInfo)
+		json.Unmarshal(userbyte, &user)
+
+		c.JSON(200, user)
+	}
+
+}
+
 func (s AccountController) Get(c *gin.Context) {
 	//API to retrieve account information
 	// We get the authenticated user
