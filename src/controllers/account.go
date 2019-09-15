@@ -101,7 +101,7 @@ func (s AccountController) ForgotPassword(c *gin.Context) {
 	version := helpers.GetVersion()
 
 	var queueinfo queue.Queue
-	queueinfo.Category = "AUTH_ForgotPASSWORD"
+	queueinfo.Category = "AUTH_FORGOTPASSWORD"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "auth" {
