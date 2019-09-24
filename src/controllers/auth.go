@@ -11,9 +11,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
+
+type AccessClaims struct {
+	Accountid string `json:"accountid"`
+	jwt.StandardClaims
+}
 
 type AuthController struct{}
 
@@ -21,6 +27,7 @@ func (s AuthController) Token(c *gin.Context) {
 
 	grantType, err := checkGrantType(c)
 	var email string
+	var accountid string
 	mySigningKey := []byte(os.Getenv("JWTSECRET"))
 
 	if err != nil || grantType == "" {
@@ -45,7 +52,13 @@ func (s AuthController) Token(c *gin.Context) {
 				c.JSON(http.StatusUnauthorized, "unauthorized")
 				return
 			}
+			if account.ResponseCode != "00" {
+				c.JSON(http.StatusUnauthorized, "unauthorized")
+				return
+
+			}
 			email = account.ContactEmail
+			accountid = strconv.FormatInt(account.Id, 10)
 		}
 
 	case "refresh_token":
@@ -63,9 +76,6 @@ func (s AuthController) Token(c *gin.Context) {
 			tkn, err := jwt.ParseWithClaims(gt.RefreshToken, &claims, func(token *jwt.Token) (interface{}, error) {
 				return mySigningKey, nil
 			})
-
-			fmt.Println(err)
-			fmt.Println(tkn)
 
 			if err != nil {
 				if err == jwt.ErrSignatureInvalid {
@@ -94,7 +104,7 @@ func (s AuthController) Token(c *gin.Context) {
 		return
 	}
 
-	tokenRes, err := generateTokenResponse(email)
+	tokenRes, err := generateTokenResponse(email, accountid)
 	if err != nil {
 		fmt.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, "something went wrong. we are already investigating.")
@@ -105,19 +115,20 @@ func (s AuthController) Token(c *gin.Context) {
 
 }
 
-func generateTokenResponse(email string) (models.GrantTypeResponse, error) {
+func generateTokenResponse(email string, accountid string) (models.GrantTypeResponse, error) {
 
 	mySigningKey := []byte(os.Getenv("JWTSECRET"))
 
 	tokenExp := time.Now().Add(6 * time.Minute).Unix()
 	refreshTokenExp := time.Now().Add(10 * time.Minute).Unix()
 
-	claims := &jwt.StandardClaims{
-		Subject:   email,
-		ExpiresAt: tokenExp,
-	}
+	accessclaims := AccessClaims{accountid,
+		jwt.StandardClaims{
+			Subject:   email,
+			ExpiresAt: tokenExp,
+		}}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, accessclaims)
 
 	rClaims := &jwt.StandardClaims{
 		Subject:   email,
@@ -175,6 +186,7 @@ func authenticate(email string, password string) (models.Account, error) {
 
 func (s AuthController) AuthenticationRequired(c *gin.Context) {
 	t, err := extractToken(c)
+
 	if err != nil {
 		fmt.Println(err.Error())
 		c.JSON(http.StatusUnauthorized, "invalid token.")
@@ -182,10 +194,10 @@ func (s AuthController) AuthenticationRequired(c *gin.Context) {
 		return
 	}
 
-	claims := jwt.StandardClaims{}
 	mySigningKey := []byte(os.Getenv("JWTSECRET"))
+	accessclaims := AccessClaims{}
 
-	_, err = jwt.ParseWithClaims(t, &claims, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(t, &accessclaims, func(token *jwt.Token) (interface{}, error) {
 		return mySigningKey, nil
 	})
 
@@ -195,7 +207,16 @@ func (s AuthController) AuthenticationRequired(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	fmt.Println(claims.Id)
+	claims, ok := token.Claims.(*AccessClaims)
+
+	if ok && token.Valid {
+		authaccount := c.Param("accountid")
+		if authaccount != claims.Accountid {
+			c.JSON(http.StatusUnauthorized, "Invalid Account.")
+			c.Abort()
+			return
+		}
+	}
 	return
 }
 

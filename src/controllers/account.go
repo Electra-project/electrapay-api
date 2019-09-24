@@ -6,7 +6,6 @@ import (
 	"github.com/Electra-project/electrapay-api/src/helpers"
 	"github.com/Electra-project/electrapay-api/src/models"
 	"github.com/Electra-project/electrapay-api/src/queue"
-	"strconv"
 	"strings"
 )
 
@@ -93,7 +92,6 @@ func (s AccountController) SetPassword(c *gin.Context) {
 
 		c.JSON(200, user)
 	}
-
 }
 
 func (s AccountController) ForgotPassword(c *gin.Context) {
@@ -140,9 +138,8 @@ func (s AccountController) ForgotPassword(c *gin.Context) {
 func (s AccountController) Get(c *gin.Context) {
 	//API to retrieve account information
 	// We get the authenticated user
-	//	user, _ := c.Get("email")
+
 	version := helpers.GetVersion()
-	//var authenticatedAccount = user.(*models.Account)
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_FETCH"
@@ -160,12 +157,13 @@ func (s AccountController) Get(c *gin.Context) {
 	}
 	queueinfo.RequestInfo = "{}"
 	queueinfo, err := queue.QueueProcess(queueinfo)
+
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
 	}
 
-	var account models.AccountAPIKey
+	var account models.AccountEdit
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
 
@@ -258,8 +256,6 @@ func (s AccountController) Edit(c *gin.Context) {
 func (s AccountController) Close(c *gin.Context) {
 	//API to Close account details
 	version := helpers.GetVersion()
-	user, _ := c.Get("uuid")
-	var authenticatedAccount = user.(*models.Account)
 
 	var queueinfo queue.Queue
 
@@ -268,12 +264,12 @@ func (s AccountController) Close(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
@@ -293,8 +289,6 @@ func (s AccountController) Close(c *gin.Context) {
 func (s AccountController) Suspend(c *gin.Context) {
 	//API to Close account details
 
-	user, _ := c.Get("uuid")
-	var authenticatedAccount = user.(*models.Account)
 	version := helpers.GetVersion()
 	var queueinfo queue.Queue
 
@@ -303,12 +297,12 @@ func (s AccountController) Suspend(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
@@ -328,8 +322,6 @@ func (s AccountController) Suspend(c *gin.Context) {
 func (s AccountController) ApiKey(c *gin.Context) {
 	//API to generate a new APIKey
 
-	user, _ := c.Get("uuid")
-	var authenticatedAccount = user.(*models.Account)
 	version := helpers.GetVersion()
 	var queueinfo queue.Queue
 
@@ -338,12 +330,12 @@ func (s AccountController) ApiKey(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
@@ -365,20 +357,18 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 	//API to Edit account Address details
 
 	var queueinfo queue.Queue
-	user, _ := c.Get("uuid")
-	var authenticatedAccount = user.(*models.Account)
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_ADDRESS_EDIT"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[3]
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	buf := make([]byte, 1024)
@@ -410,20 +400,18 @@ func (s AccountController) AddressAdd(c *gin.Context) {
 	//API to Add account address details
 
 	var queueinfo queue.Queue
-	user, _ := c.Get("uuid")
-	var authenticatedAccount = user.(*models.Account)
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_ADDRESS_NEW"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	buf := make([]byte, 1024)
@@ -454,20 +442,18 @@ func (s AccountController) AddressRemove(c *gin.Context) {
 
 	//API to Delete account address details
 	var queueinfo queue.Queue
-	user, _ := c.Get("uuid")
-	var authenticatedAccount = user.(*models.Account)
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_ADDRESS_DELETE"
 	queueinfo.APIType = "DELETE"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
@@ -489,20 +475,18 @@ func (s AccountController) ContactEdit(c *gin.Context) {
 	//API to Edit account Contact details
 
 	var queueinfo queue.Queue
-	user, _ := c.Get("uuid")
-	var authenticatedAccount = user.(*models.Account)
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_CONTACT_EDIT"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[3]
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	buf := make([]byte, 1024)
@@ -534,20 +518,18 @@ func (s AccountController) ContactAdd(c *gin.Context) {
 	//API to Add account contact details
 
 	var queueinfo queue.Queue
-	user, _ := c.Get("uuid")
-	var authenticatedAccount = user.(*models.Account)
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_CONTACT_NEW"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id))
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	buf := make([]byte, 1024)
@@ -578,20 +560,18 @@ func (s AccountController) ContactRemove(c *gin.Context) {
 
 	//API to Delete contact address details
 	var queueinfo queue.Queue
-	user, _ := c.Get("uuid")
-	var authenticatedAccount = user.(*models.Account)
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_CONTACT_DELETE"
 	queueinfo.APIType = "DELETE"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = strconv.Itoa(int(authenticatedAccount.Id)) + "," + URLArray[4]
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
