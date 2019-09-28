@@ -93,7 +93,6 @@ func (s CodeController) GetAccountType(c *gin.Context) {
 	queueResult := queueinfo.ResponseInfo
 	json.Unmarshal([]byte(queueResult), &accounttypes)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, accounttypes)
 
 }
@@ -127,7 +126,6 @@ func (s CodeController) GetAddressType(c *gin.Context) {
 	queueResult := queueinfo.ResponseInfo
 	json.Unmarshal([]byte(queueResult), &addresstypes)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, addresstypes)
 
 }
@@ -161,7 +159,6 @@ func (s CodeController) GetContactType(c *gin.Context) {
 	queueResult := queueinfo.ResponseInfo
 	json.Unmarshal([]byte(queueResult), &contacttypes)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, contacttypes)
 
 }
@@ -194,7 +191,6 @@ func (s CodeController) GetCurrencyType(c *gin.Context) {
 	queueResult := queueinfo.ResponseInfo
 	json.Unmarshal([]byte(queueResult), &currencytypes)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, currencytypes)
 
 }
@@ -227,7 +223,6 @@ func (s CodeController) GetPluginType(c *gin.Context) {
 	queueResult := queueinfo.ResponseInfo
 	json.Unmarshal([]byte(queueResult), &plugintypes)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, plugintypes)
 
 }
@@ -262,7 +257,6 @@ func (s CodeController) GetCurrency(c *gin.Context) {
 
 	json.Unmarshal([]byte(queueResult), &currencies)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, currencies)
 
 }
@@ -295,7 +289,6 @@ func (s CodeController) GetCountry(c *gin.Context) {
 	queueResult := queueinfo.ResponseInfo
 	json.Unmarshal([]byte(queueResult), &countries)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, countries)
 
 }
@@ -329,7 +322,6 @@ func (s CodeController) GetLanguage(c *gin.Context) {
 	queueResult := queueinfo.ResponseInfo
 	json.Unmarshal([]byte(queueResult), &languages)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, languages)
 
 }
@@ -362,7 +354,6 @@ func (s CodeController) GetTimeZone(c *gin.Context) {
 	queueResult := queueinfo.ResponseInfo
 	json.Unmarshal([]byte(queueResult), &timezones)
 
-	c.Header("X-Version", "1.0")
 	c.JSON(200, timezones)
 
 }

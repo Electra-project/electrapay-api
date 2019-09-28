@@ -37,7 +37,6 @@ func (s AccountController) AuthVerify(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.Header("X-Version", "1.0")
 		c.JSON(200, returnError)
 	} else {
 		var user models.UserVerify
@@ -83,7 +82,6 @@ func (s AccountController) SetPassword(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.Header("X-Version", "1.0")
 		c.JSON(400, returnError)
 	} else {
 		var user models.UserVerify
@@ -119,7 +117,6 @@ func (s AccountController) ForgotPassword(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.Header("X-Version", "1.0")
 		c.JSON(200, returnError)
 	} else {
 		var user models.UserVerify
@@ -201,7 +198,6 @@ func (s AccountController) Register(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.Header("X-Version", "1.0")
 		c.JSON(200, returnError)
 	} else {
 		var account models.Account
@@ -242,7 +238,6 @@ func (s AccountController) Edit(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.Header("X-Version", "1.0")
 		c.JSON(200, returnError)
 	} else {
 		var account models.AccountEdit
@@ -384,7 +379,6 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.Header("X-Version", "1.0")
 		c.JSON(200, returnError)
 	} else {
 		var address models.Address
@@ -427,7 +421,6 @@ func (s AccountController) AddressAdd(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.Header("X-Version", "1.0")
 		c.JSON(200, returnError)
 	} else {
 		var address models.Address
@@ -502,7 +495,6 @@ func (s AccountController) ContactEdit(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.Header("X-Version", "1.0")
 		c.JSON(200, returnError)
 	} else {
 		var contact models.Contact
@@ -545,7 +537,6 @@ func (s AccountController) ContactAdd(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.Header("X-Version", "1.0")
 		c.JSON(200, returnError)
 	} else {
 		var contact models.Contact
