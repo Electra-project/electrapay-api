@@ -91,7 +91,7 @@ func Router() *gin.Engine {
 		authapi.POST("/"+version+"/order", orderController.New)
 		authapi.POST("/order", orderController.New)
 		authapi.GET("/"+version+"/order/:uuid", orderController.Get)
-		authapi.GET("/order/:uuid/", orderController.Get)
+		authapi.GET("/order/:uuid", orderController.Get)
 		authapi.POST("/"+version+"/order/:uuid/cancel", orderController.Cancel)
 		authapi.POST("/order/:uuid/cancel", orderController.Cancel)
 		authapi.POST("/"+version+"/order/:uuid/reverse", orderController.Reverse)

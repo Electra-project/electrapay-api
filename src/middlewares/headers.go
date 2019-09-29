@@ -1,9 +1,13 @@
 package middlewares
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/Electra-project/electrapay-api/src/helpers"
+	"github.com/gin-gonic/gin"
+)
 
 func ResponseHeaders() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Header("X-Version", "1.0")
+		version := helpers.GetVersion()
+		c.Header("X-Version", version)
 	}
 }
