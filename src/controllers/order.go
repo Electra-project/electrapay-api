@@ -76,36 +76,6 @@ func (s OrderController) Get(c *gin.Context) {
 	json.Unmarshal(orderbyte, &order)
 
 	c.JSON(200, order)
-
-}
-
-func GetOrderNode(orderuuid string, accountid int64, orderreference string, version string) (orderqueryresult models.OrderQuery) {
-
-	var queueinfo queue.Queue
-	var orderquery models.OrderQuery
-
-	orderquery.Uuid = orderuuid
-	orderquery.AccountId = accountid
-	orderquery.Reference = orderreference
-
-	queueinfo.Category = "ORDER_FIND_NODE"
-	queueinfo.APIType = "GET"
-	queueinfo.APIURL = ""
-	queueinfo.Parameters = ""
-	queueinfo.Version = version
-	str, err := json.Marshal(orderquery)
-	queueinfo.RequestInfo = string(str)
-	queueinfo, err = queue.QueueProcess(queueinfo)
-	if err != nil {
-		return
-	}
-
-	var orderqueryresponse models.OrderQuery
-	orderbyte := []byte(queueinfo.ResponseInfo)
-	json.Unmarshal(orderbyte, &orderqueryresponse)
-
-	return orderqueryresponse
-
 }
 
 func (s OrderController) Cancel(c *gin.Context) {
