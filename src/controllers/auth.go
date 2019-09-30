@@ -28,10 +28,13 @@ func (s AuthController) Token(c *gin.Context) {
 	grantType, err := checkGrantType(c)
 	var email string
 	var accountid string
+	var response models.Error
 	mySigningKey := []byte(os.Getenv("JWTSECRET"))
 
 	if err != nil || grantType == "" {
-		c.JSON(http.StatusBadRequest, "malformed request")
+		response.ResponseCode = "AUTH001"
+		response.ResponseDescription = "Grant Type not Specified"
+		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
@@ -42,18 +45,24 @@ func (s AuthController) Token(c *gin.Context) {
 			var gt models.GrantTypePassword
 
 			if err := helpers.DecodeJson(c, &gt); err != nil {
-				c.JSON(http.StatusBadRequest, "malformed request")
+				response.ResponseCode = "AUTH002"
+				response.ResponseDescription = "Malformed Request"
+				c.JSON(http.StatusBadRequest, response)
 				return
 			}
 
 			account, err := authenticate(gt.Email, gt.Password)
 
 			if err != nil {
-				c.JSON(http.StatusUnauthorized, "unauthorized")
+				response.ResponseCode = "AUTH003"
+				response.ResponseDescription = "Unable to Authorise. Please try again later"
+				c.JSON(http.StatusUnauthorized, response)
 				return
 			}
 			if account.ResponseCode != "00" {
-				c.JSON(http.StatusUnauthorized, "unauthorized")
+				response.ResponseCode = account.ResponseCode
+				response.ResponseDescription = account.ResponseDescription
+				c.JSON(http.StatusUnauthorized, response)
 				return
 
 			}
@@ -67,7 +76,9 @@ func (s AuthController) Token(c *gin.Context) {
 			err := helpers.DecodeJson(c, &gt)
 
 			if err != nil {
-				c.JSON(http.StatusBadRequest, "malformed request")
+				response.ResponseCode = "AUTH004"
+				response.ResponseDescription = "Malformed Request"
+				c.JSON(http.StatusUnauthorized, response)
 				return
 			}
 
@@ -79,15 +90,21 @@ func (s AuthController) Token(c *gin.Context) {
 
 			if err != nil {
 				if err == jwt.ErrSignatureInvalid {
-					c.JSON(http.StatusUnauthorized, "unauthorized")
+					response.ResponseCode = "AUTH005"
+					response.ResponseDescription = "Invalid Signature"
+					c.JSON(http.StatusUnauthorized, response)
 					return
 				}
-				c.JSON(http.StatusBadRequest, "malformed request")
+				response.ResponseCode = "AUTH006"
+				response.ResponseDescription = "Malformed Request"
+				c.JSON(http.StatusUnauthorized, response)
 				return
 			}
 
 			if !tkn.Valid {
-				c.JSON(http.StatusUnauthorized, "unauthorized ")
+				response.ResponseCode = "AUTH007"
+				response.ResponseDescription = "Invalid Token"
+				c.JSON(http.StatusUnauthorized, response)
 				return
 			}
 
@@ -100,14 +117,18 @@ func (s AuthController) Token(c *gin.Context) {
 		}
 
 	default:
-		c.JSON(http.StatusBadRequest, "malformed request")
+		response.ResponseCode = "AUTH008"
+		response.ResponseDescription = "Malformed Request"
+		c.JSON(http.StatusUnauthorized, response)
 		return
 	}
 
 	tokenRes, err := generateTokenResponse(email, accountid)
 	if err != nil {
 		fmt.Println(err.Error())
-		c.JSON(http.StatusInternalServerError, "something went wrong. we are already investigating.")
+		response.ResponseCode = "AUTH010"
+		response.ResponseDescription = "Failed to Generate a token"
+		c.JSON(http.StatusUnauthorized, response)
 		return
 	}
 
@@ -145,7 +166,6 @@ func generateTokenResponse(email string, accountid string) (models.GrantTypeResp
 
 	refreshTokenString, err := refreshToken.SignedString(mySigningKey)
 	if err != nil {
-		fmt.Println(err.Error())
 		return models.GrantTypeResponse{}, err
 	}
 
@@ -186,10 +206,13 @@ func authenticate(email string, password string) (models.Account, error) {
 
 func (s AuthController) AuthenticationRequired(c *gin.Context) {
 	t, err := extractToken(c)
+	var response models.Error
 
 	if err != nil {
 		fmt.Println(err.Error())
-		c.JSON(http.StatusUnauthorized, "invalid token.")
+		response.ResponseCode = "AUTH011"
+		response.ResponseDescription = "Invalid Token"
+		c.JSON(http.StatusUnauthorized, response)
 		c.Abort()
 		return
 	}
@@ -203,7 +226,9 @@ func (s AuthController) AuthenticationRequired(c *gin.Context) {
 
 	if err != nil {
 		fmt.Println(err.Error())
-		c.JSON(http.StatusUnauthorized, "invalid token.")
+		response.ResponseCode = "AUTH012"
+		response.ResponseDescription = "Invalid Token"
+		c.JSON(http.StatusUnauthorized, response)
 		c.Abort()
 		return
 	}
@@ -212,7 +237,9 @@ func (s AuthController) AuthenticationRequired(c *gin.Context) {
 	if ok && token.Valid {
 		authaccount := c.Param("accountid")
 		if authaccount != claims.Accountid {
-			c.JSON(http.StatusUnauthorized, "Invalid Account.")
+			response.ResponseCode = "AUTH013"
+			response.ResponseDescription = "Invalid Account Identified"
+			c.JSON(http.StatusUnauthorized, response)
 			c.Abort()
 			return
 		}
@@ -221,10 +248,15 @@ func (s AuthController) AuthenticationRequired(c *gin.Context) {
 }
 
 func extractToken(c *gin.Context) (string, error) {
+	var response models.Error
 	reqToken := c.Request.Header.Get("Authorization")
 	splitToken := strings.Split(string(reqToken), "Bearer ")
 	if len(splitToken) != 2 {
-		return "", errors.New("wrong auth header format")
+		response.ResponseCode = "AUTH013"
+		response.ResponseDescription = "Invalid Header"
+		c.JSON(http.StatusBadRequest, response)
+
+		return "", errors.New("Invalid Header")
 	}
 	return strings.TrimSpace(splitToken[1]), nil
 }
