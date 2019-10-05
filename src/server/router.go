@@ -29,24 +29,20 @@ func Router() *gin.Engine {
 	 * public routes
 	 */
 	accountController := new(controllers.AccountController)
-
 	authController := new(controllers.AuthController)
+	userController := new(controllers.UserController)
 
-	// Verify the email address for an account
+	// Create a login token
 	router.POST(version+"/auth/token", authController.Token)
 	router.POST("/auth/token", authController.Token)
 
-	// Verify the email address for an account
-	router.GET(version+"/auth/verify/:email", accountController.AuthVerify)
-	router.GET("/auth/verify/:email", accountController.AuthVerify)
+	// Send email for forgot password
+	router.POST(version+"/auth/forgotpassword/:email", authController.ForgotPassword)
+	router.POST("/auth/forgotpassword/:email", authController.ForgotPassword)
 
-	// Verify the email address for an account
-	router.POST(version+"/auth/forgotpassword/:email", accountController.ForgotPassword)
-	router.POST("/auth/forgotpassword/:email", accountController.ForgotPassword)
-
-	// Set the password using the authorisation code
-	router.POST(version+"/auth/setpassword", accountController.SetPassword)
-	router.POST("/auth/setpassword", accountController.SetPassword)
+	// Set the password using the jwt token sent with expiry of 24hour
+	router.POST(version+"/auth/setpassword", authController.SetPassword)
+	router.POST("/auth/setpassword", authController.SetPassword)
 
 	// register a new account - this will send an email with the authorisation code
 	router.POST(version+"/account/register", accountController.Register)
@@ -55,8 +51,18 @@ func Router() *gin.Engine {
 	/**
 	 * authenticated routes
 	 */
+
+	authUser := router.Group("/")
+	authUser.Use(userController.UserAuthenticationRequired)
+	{
+		authUser.GET("/"+version+"/user/:email", userController.Get)
+		authUser.GET("/user/:email", userController.Get)
+		authUser.PUT("/"+version+"/user/:email", userController.Get)
+		authUser.PUT("/user/:email", userController.Get)
+	}
+
 	auth := router.Group("/")
-	auth.Use(authController.AuthenticationRequired)
+	auth.Use(authController.AccountAuthenticationRequired)
 	{
 		auth.GET("/"+version+"/account/:accountid", accountController.Get)
 		auth.GET("/account/:accountid", accountController.Get)
