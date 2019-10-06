@@ -3,11 +3,11 @@ package controllers
 import "github.com/gin-gonic/gin"
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/Electra-project/electrapay-api/src/helpers"
 	"github.com/Electra-project/electrapay-api/src/models"
 	"github.com/Electra-project/electrapay-api/src/queue"
 	"github.com/dgrijalva/jwt-go"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -45,8 +45,6 @@ func (s UserController) UserAuthenticationRequired(c *gin.Context) {
 
 	if ok && token.Valid {
 		email := c.Param("email")
-		fmt.Println(email)
-		fmt.Println(claims.Subject)
 		if email != claims.Subject {
 			response.ResponseCode = "AUTH202"
 			response.ResponseDescription = "Invalid Account Identified"
@@ -62,7 +60,7 @@ func (s UserController) Get(c *gin.Context) {
 	//API to retrieve User information
 
 	var queueinfo queue.Queue
-	queueinfo.Category = "USER"
+	queueinfo.Category = "USER_FETCH"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	version := helpers.GetVersion()
@@ -84,7 +82,7 @@ func (s UserController) Get(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(200, returnError)
+		c.JSON(400, returnError)
 	} else {
 		var user models.UserInfo
 		userbyte := []byte(queueinfo.ResponseInfo)
@@ -103,7 +101,7 @@ func (s UserController) Get(c *gin.Context) {
 
 }
 
-func (s UserController) Put(c *gin.Context) {
+func (s UserController) Edit(c *gin.Context) {
 	//API to edit user information
 
 	var queueinfo queue.Queue
@@ -122,14 +120,20 @@ func (s UserController) Put(c *gin.Context) {
 		queueinfo.Parameters = c.Param("email")
 		queueinfo.Version = version
 	}
-	queueinfo.RequestInfo = "{}"
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	queueinfo.RequestInfo = string(x)
 	queueinfo, err := queue.QueueProcess(queueinfo)
+
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
 
 	if queueinfo.ResponseCode != "00" {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(200, returnError)
+		c.JSON(400, returnError)
 	} else {
 		var user models.UserInfo
 		userbyte := []byte(queueinfo.ResponseInfo)
