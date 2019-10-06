@@ -9,8 +9,9 @@ import (
 )
 
 type AccountType struct {
-	Id   int64  `json:"id"`
-	Code string `json:"code"`
+	Id          int64  `json:"id"`
+	Code        string `json:"code"`
+	Description string `json:"description"`
 }
 
 type AddressType struct {
