@@ -3,7 +3,6 @@ package controllers
 import "github.com/gin-gonic/gin"
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/Electra-project/electrapay-api/src/helpers"
 	"github.com/Electra-project/electrapay-api/src/models"
 	"github.com/Electra-project/electrapay-api/src/queue"
@@ -46,8 +45,6 @@ func (s UserController) UserAuthenticationRequired(c *gin.Context) {
 
 	if ok && token.Valid {
 		email := c.Param("email")
-		fmt.Println(email)
-		fmt.Println(claims.Subject)
 		if email != claims.Subject {
 			response.ResponseCode = "AUTH202"
 			response.ResponseDescription = "Invalid Account Identified"
@@ -124,9 +121,7 @@ func (s UserController) Edit(c *gin.Context) {
 		queueinfo.Version = version
 	}
 	x, _ := ioutil.ReadAll(c.Request.Body)
-	fmt.Printf("%s \n", string(x))
 	queueinfo.RequestInfo = string(x)
-	fmt.Println(queueinfo.RequestInfo)
 	queueinfo, err := queue.QueueProcess(queueinfo)
 
 	if err != nil {
