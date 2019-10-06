@@ -81,7 +81,7 @@ func (s AccountController) Register(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(200, returnError)
+		c.JSON(400, returnError)
 	} else {
 		var account models.Account
 		accountbyte := []byte(queueinfo.ResponseInfo)
@@ -125,7 +125,7 @@ func (s AccountController) Edit(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(200, returnError)
+		c.JSON(400, returnError)
 	} else {
 		var account models.AccountEdit
 		accountbyte := []byte(queueinfo.ResponseInfo)
@@ -282,7 +282,7 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(200, returnError)
+		c.JSON(400, returnError)
 	} else {
 		var address models.Address
 		addressbyte := []byte(queueinfo.ResponseInfo)
@@ -328,7 +328,7 @@ func (s AccountController) AddressAdd(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(200, returnError)
+		c.JSON(400, returnError)
 	} else {
 		var address models.Address
 		addressbyte := []byte(queueinfo.ResponseInfo)
@@ -410,7 +410,7 @@ func (s AccountController) ContactEdit(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(200, returnError)
+		c.JSON(400, returnError)
 	} else {
 		var contact models.Contact
 		contactbyte := []byte(queueinfo.ResponseInfo)
@@ -456,7 +456,7 @@ func (s AccountController) ContactAdd(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(200, returnError)
+		c.JSON(400, returnError)
 	} else {
 		var contact models.Contact
 		contactbyte := []byte(queueinfo.ResponseInfo)
