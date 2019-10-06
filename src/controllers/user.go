@@ -90,7 +90,11 @@ func (s UserController) Get(c *gin.Context) {
 		userbyte := []byte(queueinfo.ResponseInfo)
 		json.Unmarshal(userbyte, &user)
 
-		c.JSON(200, user)
+		if user.ResponseCode != "00" {
+			c.JSON(408, user)
+		} else {
+			c.JSON(200, user)
+		}
 	}
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -131,7 +135,11 @@ func (s UserController) Put(c *gin.Context) {
 		userbyte := []byte(queueinfo.ResponseInfo)
 		json.Unmarshal(userbyte, &user)
 
-		c.JSON(200, user)
+		if user.ResponseCode != "00" {
+			c.JSON(408, user)
+		} else {
+			c.JSON(200, user)
+		}
 	}
 	if err != nil {
 		c.AbortWithError(404, err)

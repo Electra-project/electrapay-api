@@ -106,13 +106,6 @@ func (s AuthController) Token(c *gin.Context) {
 				c.JSON(http.StatusUnauthorized, response)
 				return
 			}
-
-			/*if err := s.db.Model(&user).Where("id = ?", claims.Subject).Select(); err != nil {
-			  if strings.Contains(err.Error(), "no rows in result set") {
-			    http.Error(w, "unauthorized", http.StatusUnauthorized)
-			    return
-			  }
-			}*/
 		}
 
 	default:
@@ -281,7 +274,7 @@ func (s AuthController) ForgotPassword(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(200, returnError)
+		c.JSON(408, returnError)
 	} else {
 		var user models.UserVerify
 		userbyte := []byte(queueinfo.ResponseInfo)
@@ -326,7 +319,7 @@ func (s AuthController) SetPassword(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(400, returnError)
+		c.JSON(408, returnError)
 	} else {
 		var user models.UserVerify
 		userbyte := []byte(queueinfo.ResponseInfo)
@@ -362,7 +355,7 @@ func (s AuthController) AuthVerify(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(200, returnError)
+		c.JSON(408, returnError)
 	} else {
 		var user models.UserVerify
 		userbyte := []byte(queueinfo.ResponseInfo)
