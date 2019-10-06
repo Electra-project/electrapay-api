@@ -44,7 +44,7 @@ func (s AccountController) Get(c *gin.Context) {
 	json.Unmarshal(accountbyte, &account)
 
 	if account.ResponseCode != "00" {
-		c.JSON(408, account)
+		c.JSON(400, account)
 	} else {
 		c.JSON(200, account)
 	}
@@ -88,7 +88,7 @@ func (s AccountController) Register(c *gin.Context) {
 		json.Unmarshal(accountbyte, &account)
 
 		if account.ResponseCode != "00" {
-			c.JSON(408, account)
+			c.JSON(400, account)
 		} else {
 			c.JSON(200, account)
 		}
@@ -132,7 +132,7 @@ func (s AccountController) Edit(c *gin.Context) {
 		json.Unmarshal(accountbyte, &account)
 
 		if account.ResponseCode != "00" {
-			c.JSON(408, account)
+			c.JSON(400, account)
 		} else {
 			c.JSON(200, account)
 		}
@@ -170,7 +170,7 @@ func (s AccountController) Close(c *gin.Context) {
 	json.Unmarshal(accountbyte, &account)
 
 	if account.ResponseCode != "00" {
-		c.JSON(408, account)
+		c.JSON(400, account)
 	} else {
 		c.JSON(200, account)
 	}
@@ -207,7 +207,7 @@ func (s AccountController) Suspend(c *gin.Context) {
 	json.Unmarshal(accountbyte, &account)
 
 	if account.ResponseCode != "00" {
-		c.JSON(408, account)
+		c.JSON(400, account)
 	} else {
 		c.JSON(200, account)
 	}
@@ -244,7 +244,7 @@ func (s AccountController) ApiKey(c *gin.Context) {
 	json.Unmarshal(apikeybyte, &apikey)
 
 	if apikey.ResponseCode != "00" {
-		c.JSON(408, apikey)
+		c.JSON(400, apikey)
 	} else {
 		c.JSON(200, apikey)
 	}
@@ -289,7 +289,7 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 		json.Unmarshal(addressbyte, &address)
 
 		if address.ResponseCode != "00" {
-			c.JSON(408, address)
+			c.JSON(400, address)
 		} else {
 			c.JSON(200, address)
 		}
@@ -335,7 +335,7 @@ func (s AccountController) AddressAdd(c *gin.Context) {
 		json.Unmarshal(addressbyte, &address)
 
 		if address.ResponseCode != "00" {
-			c.JSON(408, address)
+			c.JSON(400, address)
 		} else {
 			c.JSON(200, address)
 		}
@@ -372,7 +372,7 @@ func (s AccountController) AddressRemove(c *gin.Context) {
 	json.Unmarshal(addressbyte, &address)
 
 	if address.ResponseCode != "00" {
-		c.JSON(408, address)
+		c.JSON(400, address)
 	} else {
 		c.JSON(200, address)
 	}
@@ -417,7 +417,7 @@ func (s AccountController) ContactEdit(c *gin.Context) {
 		json.Unmarshal(contactbyte, &contact)
 
 		if contact.ResponseCode != "00" {
-			c.JSON(408, contact)
+			c.JSON(400, contact)
 		} else {
 			c.JSON(200, contact)
 		}
@@ -463,7 +463,7 @@ func (s AccountController) ContactAdd(c *gin.Context) {
 		json.Unmarshal(contactbyte, &contact)
 
 		if contact.ResponseCode != "00" {
-			c.JSON(408, contact)
+			c.JSON(400, contact)
 		} else {
 			c.JSON(200, contact)
 		}
@@ -500,7 +500,7 @@ func (s AccountController) ContactRemove(c *gin.Context) {
 	json.Unmarshal(contactbyte, &contact)
 
 	if contact.ResponseCode != "00" {
-		c.JSON(408, contact)
+		c.JSON(400, contact)
 	} else {
 		c.JSON(200, contact)
 	}

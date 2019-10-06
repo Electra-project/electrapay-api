@@ -274,7 +274,7 @@ func (s AuthController) ForgotPassword(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(408, returnError)
+		c.JSON(400, returnError)
 	} else {
 		var user models.UserVerify
 		userbyte := []byte(queueinfo.ResponseInfo)
@@ -319,7 +319,7 @@ func (s AuthController) SetPassword(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(408, returnError)
+		c.JSON(400, returnError)
 	} else {
 		var user models.UserVerify
 		userbyte := []byte(queueinfo.ResponseInfo)
@@ -355,7 +355,7 @@ func (s AuthController) AuthVerify(c *gin.Context) {
 		returnError := models.Error{}
 		returnError.ResponseCode = queueinfo.ResponseCode
 		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(408, returnError)
+		c.JSON(400, returnError)
 	} else {
 		var user models.UserVerify
 		userbyte := []byte(queueinfo.ResponseInfo)

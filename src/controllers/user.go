@@ -91,7 +91,7 @@ func (s UserController) Get(c *gin.Context) {
 		json.Unmarshal(userbyte, &user)
 
 		if user.ResponseCode != "00" {
-			c.JSON(408, user)
+			c.JSON(400, user)
 		} else {
 			c.JSON(200, user)
 		}
@@ -136,7 +136,7 @@ func (s UserController) Put(c *gin.Context) {
 		json.Unmarshal(userbyte, &user)
 
 		if user.ResponseCode != "00" {
-			c.JSON(408, user)
+			c.JSON(400, user)
 		} else {
 			c.JSON(200, user)
 		}
