@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/Electra-project/electrapay-api/src/helpers"
 	"github.com/Electra-project/electrapay-api/src/models"
 	"github.com/Electra-project/electrapay-api/src/queue"
@@ -107,13 +106,6 @@ func (s AuthController) Token(c *gin.Context) {
 				c.JSON(http.StatusUnauthorized, response)
 				return
 			}
-
-			/*if err := s.db.Model(&user).Where("id = ?", claims.Subject).Select(); err != nil {
-			  if strings.Contains(err.Error(), "no rows in result set") {
-			    http.Error(w, "unauthorized", http.StatusUnauthorized)
-			    return
-			  }
-			}*/
 		}
 
 	default:
@@ -125,7 +117,6 @@ func (s AuthController) Token(c *gin.Context) {
 
 	tokenRes, err := generateTokenResponse(email, accountid)
 	if err != nil {
-		fmt.Println(err.Error())
 		response.ResponseCode = "AUTH010"
 		response.ResponseDescription = "Failed to Generate a token"
 		c.JSON(http.StatusUnauthorized, response)
@@ -160,7 +151,6 @@ func generateTokenResponse(email string, accountid string) (models.GrantTypeResp
 
 	tokenString, err := token.SignedString(mySigningKey)
 	if err != nil {
-		fmt.Println(err.Error())
 		return models.GrantTypeResponse{}, err
 	}
 
@@ -204,13 +194,12 @@ func authenticate(email string, password string) (models.Account, error) {
 
 }
 
-func (s AuthController) AuthenticationRequired(c *gin.Context) {
+func (s AuthController) AccountAuthenticationRequired(c *gin.Context) {
 	t, err := extractToken(c)
 	var response models.Error
 
 	if err != nil {
-		fmt.Println(err.Error())
-		response.ResponseCode = "AUTH011"
+		response.ResponseCode = "AUTH100"
 		response.ResponseDescription = "Invalid Token"
 		c.JSON(http.StatusUnauthorized, response)
 		c.Abort()
@@ -225,8 +214,7 @@ func (s AuthController) AuthenticationRequired(c *gin.Context) {
 	})
 
 	if err != nil {
-		fmt.Println(err.Error())
-		response.ResponseCode = "AUTH012"
+		response.ResponseCode = "AUTH101"
 		response.ResponseDescription = "Invalid Token"
 		c.JSON(http.StatusUnauthorized, response)
 		c.Abort()
@@ -237,7 +225,7 @@ func (s AuthController) AuthenticationRequired(c *gin.Context) {
 	if ok && token.Valid {
 		authaccount := c.Param("accountid")
 		if authaccount != claims.Accountid {
-			response.ResponseCode = "AUTH013"
+			response.ResponseCode = "AUTH103"
 			response.ResponseDescription = "Invalid Account Identified"
 			c.JSON(http.StatusUnauthorized, response)
 			c.Abort()
@@ -252,11 +240,132 @@ func extractToken(c *gin.Context) (string, error) {
 	reqToken := c.Request.Header.Get("Authorization")
 	splitToken := strings.Split(string(reqToken), "Bearer ")
 	if len(splitToken) != 2 {
-		response.ResponseCode = "AUTH013"
+		response.ResponseCode = "AUTH300"
 		response.ResponseDescription = "Invalid Header"
 		c.JSON(http.StatusBadRequest, response)
 
 		return "", errors.New("Invalid Header")
 	}
 	return strings.TrimSpace(splitToken[1]), nil
+}
+
+func (s AuthController) ForgotPassword(c *gin.Context) {
+	//API to set the user password
+	var queueinfo queue.Queue
+	queueinfo.Category = "AUTH_FORGOTPASSWORD"
+	queueinfo.APIType = "POST"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	version := helpers.GetVersion()
+
+	if URLArray[1] != "auth" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = URLArray[4]
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "auth" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = URLArray[3]
+		queueinfo.Version = version
+	}
+	queueinfo.RequestInfo = "{}"
+	queueinfo, err := queue.QueueProcess(queueinfo)
+
+	if queueinfo.ResponseCode != "00" {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.JSON(400, returnError)
+	} else {
+		var user models.UserVerify
+		userbyte := []byte(queueinfo.ResponseInfo)
+		json.Unmarshal(userbyte, &user)
+
+		c.JSON(200, user)
+	}
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+
+}
+
+func (s AuthController) SetPassword(c *gin.Context) {
+	//API to set the user password
+	version := helpers.GetVersion()
+
+	var queueinfo queue.Queue
+	queueinfo.Category = "AUTH_SETPASSWORD"
+	queueinfo.APIType = "POST"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if URLArray[1] != "auth" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = ""
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "auth" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = ""
+		queueinfo.Version = version
+	}
+	buf := make([]byte, 1024)
+	num, _ := c.Request.Body.Read(buf)
+	queueinfo.RequestInfo = string(buf[0:num])
+	queueinfo, err := queue.QueueProcess(queueinfo)
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+	if queueinfo.ResponseCode != "00" {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.JSON(400, returnError)
+	} else {
+		var user models.UserVerify
+		userbyte := []byte(queueinfo.ResponseInfo)
+		json.Unmarshal(userbyte, &user)
+
+		c.JSON(200, user)
+	}
+}
+
+func (s AuthController) AuthVerify(c *gin.Context) {
+	//API to verify the status of a user
+
+	var queueinfo queue.Queue
+	queueinfo.Category = "AUTH_VERIFY"
+	queueinfo.APIType = "GET"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	version := helpers.GetVersion()
+
+	if URLArray[1] != "auth" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = URLArray[4]
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "auth" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = URLArray[3]
+		queueinfo.Version = version
+	}
+	queueinfo.RequestInfo = "{}"
+	queueinfo, err := queue.QueueProcess(queueinfo)
+
+	if queueinfo.ResponseCode != "00" {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.JSON(400, returnError)
+	} else {
+		var user models.UserVerify
+		userbyte := []byte(queueinfo.ResponseInfo)
+		json.Unmarshal(userbyte, &user)
+
+		c.JSON(200, user)
+	}
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+
 }

@@ -11,127 +11,6 @@ import (
 
 type AccountController struct{}
 
-func (s AccountController) AuthVerify(c *gin.Context) {
-	//API to verify the status of a user
-
-	var queueinfo queue.Queue
-	queueinfo.Category = "AUTH_VERIFY"
-	queueinfo.APIType = "GET"
-	URLArray := strings.Split(c.Request.RequestURI, "/")
-	version := helpers.GetVersion()
-
-	if URLArray[1] != "auth" {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[4]
-		queueinfo.Version = URLArray[1]
-	}
-	if URLArray[1] == "auth" {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
-		queueinfo.Version = version
-	}
-	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
-
-	if queueinfo.ResponseCode != "00" {
-		returnError := models.Error{}
-		returnError.ResponseCode = queueinfo.ResponseCode
-		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(200, returnError)
-	} else {
-		var user models.UserVerify
-		userbyte := []byte(queueinfo.ResponseInfo)
-		json.Unmarshal(userbyte, &user)
-
-		c.JSON(200, user)
-	}
-	if err != nil {
-		c.AbortWithError(404, err)
-		return
-	}
-
-}
-
-func (s AccountController) SetPassword(c *gin.Context) {
-	//API to set the user password
-	version := helpers.GetVersion()
-
-	var queueinfo queue.Queue
-	queueinfo.Category = "AUTH_SETPASSWORD"
-	queueinfo.APIType = "POST"
-	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if URLArray[1] != "auth" {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = ""
-		queueinfo.Version = URLArray[1]
-	}
-	if URLArray[1] == "auth" {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = ""
-		queueinfo.Version = version
-	}
-	buf := make([]byte, 1024)
-	num, _ := c.Request.Body.Read(buf)
-	queueinfo.RequestInfo = string(buf[0:num])
-	queueinfo, err := queue.QueueProcess(queueinfo)
-	if err != nil {
-		c.AbortWithError(404, err)
-		return
-	}
-	if queueinfo.ResponseCode != "00" {
-		returnError := models.Error{}
-		returnError.ResponseCode = queueinfo.ResponseCode
-		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(400, returnError)
-	} else {
-		var user models.UserVerify
-		userbyte := []byte(queueinfo.ResponseInfo)
-		json.Unmarshal(userbyte, &user)
-
-		c.JSON(200, user)
-	}
-}
-
-func (s AccountController) ForgotPassword(c *gin.Context) {
-	//API to set the user password
-	var queueinfo queue.Queue
-	queueinfo.Category = "AUTH_FORGOTPASSWORD"
-	queueinfo.APIType = "POST"
-	URLArray := strings.Split(c.Request.RequestURI, "/")
-	version := helpers.GetVersion()
-
-	if URLArray[1] != "auth" {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[4]
-		queueinfo.Version = URLArray[1]
-	}
-	if URLArray[1] == "auth" {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
-		queueinfo.Version = version
-	}
-	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
-
-	if queueinfo.ResponseCode != "00" {
-		returnError := models.Error{}
-		returnError.ResponseCode = queueinfo.ResponseCode
-		returnError.ResponseDescription = queueinfo.ResponseDescription
-		c.JSON(200, returnError)
-	} else {
-		var user models.UserVerify
-		userbyte := []byte(queueinfo.ResponseInfo)
-		json.Unmarshal(userbyte, &user)
-
-		c.JSON(200, user)
-	}
-	if err != nil {
-		c.AbortWithError(404, err)
-		return
-	}
-
-}
-
 func (s AccountController) Get(c *gin.Context) {
 	//API to retrieve account information
 	// We get the authenticated user
@@ -164,7 +43,11 @@ func (s AccountController) Get(c *gin.Context) {
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
 
-	c.JSON(200, account)
+	if account.ResponseCode != "00" {
+		c.JSON(400, account)
+	} else {
+		c.JSON(200, account)
+	}
 }
 
 func (s AccountController) Register(c *gin.Context) {
@@ -204,7 +87,11 @@ func (s AccountController) Register(c *gin.Context) {
 		accountbyte := []byte(queueinfo.ResponseInfo)
 		json.Unmarshal(accountbyte, &account)
 
-		c.JSON(200, account)
+		if account.ResponseCode != "00" {
+			c.JSON(400, account)
+		} else {
+			c.JSON(200, account)
+		}
 	}
 }
 
@@ -244,7 +131,11 @@ func (s AccountController) Edit(c *gin.Context) {
 		accountbyte := []byte(queueinfo.ResponseInfo)
 		json.Unmarshal(accountbyte, &account)
 
-		c.JSON(200, account)
+		if account.ResponseCode != "00" {
+			c.JSON(400, account)
+		} else {
+			c.JSON(200, account)
+		}
 	}
 }
 
@@ -278,7 +169,11 @@ func (s AccountController) Close(c *gin.Context) {
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
 
-	c.JSON(200, account)
+	if account.ResponseCode != "00" {
+		c.JSON(400, account)
+	} else {
+		c.JSON(200, account)
+	}
 }
 
 func (s AccountController) Suspend(c *gin.Context) {
@@ -311,7 +206,11 @@ func (s AccountController) Suspend(c *gin.Context) {
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
 
-	c.JSON(200, account)
+	if account.ResponseCode != "00" {
+		c.JSON(400, account)
+	} else {
+		c.JSON(200, account)
+	}
 }
 
 func (s AccountController) ApiKey(c *gin.Context) {
@@ -344,7 +243,11 @@ func (s AccountController) ApiKey(c *gin.Context) {
 	apikeybyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(apikeybyte, &apikey)
 
-	c.JSON(200, apikey)
+	if apikey.ResponseCode != "00" {
+		c.JSON(400, apikey)
+	} else {
+		c.JSON(200, apikey)
+	}
 }
 
 func (s AccountController) AddressEdit(c *gin.Context) {
@@ -385,7 +288,11 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 		addressbyte := []byte(queueinfo.ResponseInfo)
 		json.Unmarshal(addressbyte, &address)
 
-		c.JSON(200, address)
+		if address.ResponseCode != "00" {
+			c.JSON(400, address)
+		} else {
+			c.JSON(200, address)
+		}
 	}
 }
 
@@ -427,7 +334,11 @@ func (s AccountController) AddressAdd(c *gin.Context) {
 		addressbyte := []byte(queueinfo.ResponseInfo)
 		json.Unmarshal(addressbyte, &address)
 
-		c.JSON(200, address)
+		if address.ResponseCode != "00" {
+			c.JSON(400, address)
+		} else {
+			c.JSON(200, address)
+		}
 	}
 }
 
@@ -460,7 +371,11 @@ func (s AccountController) AddressRemove(c *gin.Context) {
 	addressbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(addressbyte, &address)
 
-	c.JSON(200, address)
+	if address.ResponseCode != "00" {
+		c.JSON(400, address)
+	} else {
+		c.JSON(200, address)
+	}
 }
 
 func (s AccountController) ContactEdit(c *gin.Context) {
@@ -501,7 +416,11 @@ func (s AccountController) ContactEdit(c *gin.Context) {
 		contactbyte := []byte(queueinfo.ResponseInfo)
 		json.Unmarshal(contactbyte, &contact)
 
-		c.JSON(200, contact)
+		if contact.ResponseCode != "00" {
+			c.JSON(400, contact)
+		} else {
+			c.JSON(200, contact)
+		}
 	}
 }
 
@@ -543,7 +462,11 @@ func (s AccountController) ContactAdd(c *gin.Context) {
 		contactbyte := []byte(queueinfo.ResponseInfo)
 		json.Unmarshal(contactbyte, &contact)
 
-		c.JSON(200, contact)
+		if contact.ResponseCode != "00" {
+			c.JSON(400, contact)
+		} else {
+			c.JSON(200, contact)
+		}
 	}
 }
 
@@ -576,5 +499,9 @@ func (s AccountController) ContactRemove(c *gin.Context) {
 	contactbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(contactbyte, &contact)
 
-	c.JSON(200, contact)
+	if contact.ResponseCode != "00" {
+		c.JSON(400, contact)
+	} else {
+		c.JSON(200, contact)
+	}
 }
