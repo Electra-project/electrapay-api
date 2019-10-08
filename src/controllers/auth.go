@@ -72,6 +72,7 @@ func (s AuthController) Token(c *gin.Context) {
 	case "refresh_token":
 		{
 			var gt models.GrantTypeRefreshToken
+
 			err := helpers.DecodeJson(c, &gt)
 
 			if err != nil {
@@ -95,7 +96,7 @@ func (s AuthController) Token(c *gin.Context) {
 					return
 				}
 				response.ResponseCode = "AUTH006"
-				response.ResponseDescription = "Malformed Request"
+				response.ResponseDescription = "Token Expired"
 				c.JSON(http.StatusUnauthorized, response)
 				return
 			}
@@ -106,6 +107,19 @@ func (s AuthController) Token(c *gin.Context) {
 				c.JSON(http.StatusUnauthorized, response)
 				return
 			}
+
+			mySigningKey := []byte(os.Getenv("JWTSECRET"))
+			accessclaims := AccessClaims{}
+
+			t, err := extractToken(c)
+
+			at, err := jwt.ParseWithClaims(t, &accessclaims, func(token *jwt.Token) (interface{}, error) {
+				return mySigningKey, nil
+			})
+			aclaims, _ := at.Claims.(*AccessClaims)
+			accountid = aclaims.Id
+			email = aclaims.Subject
+
 		}
 
 	default:
