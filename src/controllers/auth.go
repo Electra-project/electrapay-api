@@ -145,8 +145,8 @@ func generateTokenResponse(email string, accountid string) (models.GrantTypeResp
 
 	mySigningKey := []byte(os.Getenv("JWTSECRET"))
 
-	tokenExp := time.Now().Add(1 * time.Minute).Unix()
-	refreshTokenExp := time.Now().Add(2 * time.Minute).Unix()
+	tokenExp := time.Now().Add(20 * time.Minute).Unix()
+	refreshTokenExp := time.Now().Add(24 * time.Hour).Unix()
 
 	accessclaims := AccessClaims{accountid,
 		jwt.StandardClaims{

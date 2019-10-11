@@ -1,5 +1,7 @@
 package models
 
+import "github.com/shopspring/decimal"
+
 type Account struct {
 	Id                  int64    `json:"id"`
 	Uuid                string   `json:"uuid"`
@@ -86,6 +88,17 @@ type AccountAPIKey struct {
 	Name                string `json:"name"`
 	Description         string `json:"description"`
 	ApiKey              string `json:"apikey"`
+	ResponseCode        string `json:"responsecode"`
+	ResponseDescription string `json:"responsedescription"`
+}
+
+type AccountWallet struct {
+	WalletAddress       string `json:"walletaddress"`
+	WalletCurrency      string `json:"walletcurrency"`
+	WalletBalance       decimal.Decimal
+	ECAPrice            decimal.Decimal
+	BTCPrice            decimal.Decimal
+	USDPrice            decimal.Decimal
 	ResponseCode        string `json:"responsecode"`
 	ResponseDescription string `json:"responsedescription"`
 }
