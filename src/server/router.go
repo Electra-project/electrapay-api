@@ -87,6 +87,9 @@ func Router() *gin.Engine {
 		//auth.POST("/account/:accountid/contact/new", accountController.ContactAdd)
 		auth.DELETE("/"+version+"/account/:accountid/contact/:contactid", accountController.ContactRemove)
 		auth.DELETE("/account/:accountid/contact/:contactid", accountController.ContactRemove)
+
+		auth.GET("/"+version+"/account/:accountid/balance", accountController.AccountBalance)
+		auth.GET("/account/:accountid/balance", accountController.AccountBalance)
 	}
 
 	authapi := router.Group("/")
