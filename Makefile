@@ -17,7 +17,7 @@ lint:
 	golint ./src/...
 
 start:
-	go build && "./electrapay-api"
+	go build -ldflags="-s -w" && "./electrapay-api"
 
 test:
 	make lint
