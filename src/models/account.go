@@ -57,29 +57,37 @@ type AccountNew struct {
 	ResponseDescription string `json:"responsedescription"`
 }
 
-type AccountEdit struct {
+type AccountPersonal struct {
+	Id                  int64  `json:"id"`
+	Name                string `json:"name"`
+	Description         string `json:"description"`
+	Type                string `json:"accounttype"`
+	LogoURL             string `json:"logourl"`
+	LogoImg             string `json:"logoimg"`
+	Status              string `json:"status"`
+	ResponseCode        string `json:"responsecode"`
+	ResponseDescription string `json:"responsedescription"`
+}
+
+type AccountPayment struct {
 	Id                  int64    `json:"id"`
-	Uuid                string   `json:"uuid"`
-	Name                string   `json:"name"`
-	Description         string   `json:"description"`
-	Type                string   `json:"accounttype"`
-	LogoURL             string   `json:"logourl"`
-	LogoImg             string   `json:"logoimg"`
-	Country             string   `json:"country"`
-	Language            string   `json:"language"`
-	Timezone            string   `json:"timezone"`
 	CallbackURI         string   `json:"callbackurl"`
 	Website             string   `json:"website"`
 	Currencies          []string `json:"currencies"`
 	WalletAddress       string   `json:"walletaddress"`
 	WalletCurrency      string   `json:"walletcurrency"`
-	VatNo               string   `json:"vatno"`
-	DefaultVAT          int64    `json:"defaultvat"`
-	Organisation        string   `json:"orgnisation"`
 	PluginType          string   `json:"plugintype"`
-	Status              string   `json:"status"`
 	ResponseCode        string   `json:"responsecode"`
 	ResponseDescription string   `json:"responsedescription"`
+}
+
+type AccountOrg struct {
+	Id                  int64  `json:"id"`
+	VatNo               string `json:"vatno"`
+	DefaultVAT          int64  `json:"defaultvat"`
+	Organisation        string `json:"orgnisation"`
+	ResponseCode        string `json:"responsecode"`
+	ResponseDescription string `json:"responsedescription"`
 }
 
 type AccountAPIKey struct {

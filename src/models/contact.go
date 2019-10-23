@@ -1,8 +1,8 @@
 package models
 
 type Contact struct {
-	AccountId           int64  `json:"id"`
-	Uuid                string `json:"uuid"`
+	AccountId           int64  `json:"accountid"`
+	ContactId           int64  `json:"addressid"`
 	ContactType         string `json:"contacttype"`
 	ContactTitle        string `json:"contacttitle"`
 	ContactFirstname    string `json:"contactfirstname"`
