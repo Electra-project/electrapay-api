@@ -2,7 +2,15 @@
 	"ImportPath": "github.com/Electra-project/electrapay-api",
 	"GoVersion": "go1.10",
 	"GodepVersion": "v80",
+	"Packages": [
+		"./..."
+	],
 	"Deps": [
+		{
+			"ImportPath": "github.com/dgrijalva/jwt-go",
+			"Comment": "v3.2.0-4-g3af4c74",
+			"Rev": "3af4c746e1c248ee8491a3e0c6f7a9cd831e95f8"
+		},
 		{
 			"ImportPath": "github.com/gin-contrib/sse",
 			"Rev": "22d885f9ecc78bf4ee5d72b937e4bbcdc58e8cae"
@@ -26,6 +34,11 @@
 			"ImportPath": "github.com/gin-gonic/gin/render",
 			"Comment": "v1.2-165-gcaf3e35",
 			"Rev": "caf3e350a548af1add9def68087ac53d1d000caa"
+		},
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.4.0-5-g99ff426",
+			"Rev": "99ff426eb706cffe92ff3d058e168b278cabf7c7"
 		},
 		{
 			"ImportPath": "github.com/golang/protobuf/proto",
@@ -58,9 +71,14 @@
 			"Rev": "58118c1ea9161250907268a484af4dd6ed314280"
 		},
 		{
-			"ImportPath": "github.com/patrickmn/go-cache",
-			"Comment": "v2.1.0",
-			"Rev": "a3647f8e31d79543b2d0f0ae2fe5c379d72cedc0"
+			"ImportPath": "github.com/satori/go.uuid",
+			"Comment": "v1.2.0-4-g36e9d2e",
+			"Rev": "36e9d2ebbde5e3f13ab2e25625fd453271d6522e"
+		},
+		{
+			"ImportPath": "github.com/shopspring/decimal",
+			"Comment": "1.1.0",
+			"Rev": "cd690d0c9e2447b1ef2a129a6b7b49077da89b8e"
 		},
 		{
 			"ImportPath": "github.com/ttacon/chalk",
@@ -73,10 +91,6 @@
 			"Rev": "f3cacc17c85ecb7f1b6a9e373ee85d1480919868"
 		},
 		{
-			"ImportPath": "golang.org/x/crypto/pbkdf2",
-			"Rev": "8ac0e0d97ce45cd83d1d7243c060cb8461dda5e9"
-		},
-		{
 			"ImportPath": "golang.org/x/sys/unix",
 			"Rev": "2c42eef0765b9837fbdab12011af7830f55f88f0"
 		},
@@ -87,12 +101,8 @@
 		},
 		{
 			"ImportPath": "gopkg.in/yaml.v2",
+			"Comment": "v2.0.0",
 			"Rev": "d670f9405373e636a5a2765eea47fac0c9bc91a4"
-		},
-		{
-			"ImportPath": "github.com/deckarep/golang-set",
-			"Comment": "v1.7-3-g504e848",
-			"Rev": "504e848d77ea4752b3057b8fb46da0e7f746ccf3"
 		}
 	]
 }
