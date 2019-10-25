@@ -68,12 +68,12 @@ func (s AccountController) GetPersonalInformation(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
+		queueinfo.Parameters = URLArray[4]
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[2]
+		queueinfo.Parameters = URLArray[3]
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
@@ -151,12 +151,12 @@ func (s AccountController) GetPaymentDetails(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
+		queueinfo.Parameters = URLArray[4]
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[2]
+		queueinfo.Parameters = URLArray[3]
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
@@ -234,12 +234,12 @@ func (s AccountController) GetOrganizationDetails(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
+		queueinfo.Parameters = URLArray[4]
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[2]
+		queueinfo.Parameters = URLArray[3]
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
@@ -427,12 +427,12 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("addressid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("addressid")
 		queueinfo.Version = version
 	}
 	buf := make([]byte, 1024)
@@ -518,12 +518,12 @@ func (s AccountController) AddressRemove(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("addressid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("addressid")
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
@@ -555,12 +555,12 @@ func (s AccountController) ContactEdit(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("contactid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("contactid")
 		queueinfo.Version = version
 	}
 	buf := make([]byte, 1024)
@@ -646,12 +646,12 @@ func (s AccountController) ContactRemove(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("contactid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("contactid")
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"

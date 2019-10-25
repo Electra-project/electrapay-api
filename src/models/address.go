@@ -12,6 +12,7 @@ type Address struct {
 	PostalCode          string `json:"postalcode"`
 	City                string `json:"city"`
 	Country             string `json:"country"`
+	Language            string `json:"language"`
 	Timezone            string `json:"timezone"`
 	ResponseCode        string `json:"responsecode"`
 	ResponseDescription string `json:"responsedescription"`
