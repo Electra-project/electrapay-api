@@ -55,13 +55,13 @@ func (s AuthController) Token(c *gin.Context) {
 			if err != nil {
 				response.ResponseCode = "AUTH003"
 				response.ResponseDescription = "Unable to Authorise. Please try again later"
-				c.JSON(http.StatusUnauthorized, response)
+				c.JSON(http.StatusBadRequest, response)
 				return
 			}
 			if account.ResponseCode != "00" {
 				response.ResponseCode = account.ResponseCode
 				response.ResponseDescription = account.ResponseDescription
-				c.JSON(http.StatusUnauthorized, response)
+				c.JSON(http.StatusBadRequest, response)
 				return
 
 			}
@@ -117,7 +117,7 @@ func (s AuthController) Token(c *gin.Context) {
 				return mySigningKey, nil
 			})
 			aclaims, _ := at.Claims.(*AccessClaims)
-			accountid = aclaims.Id
+			accountid = aclaims.Accountid
 			email = aclaims.Subject
 
 		}
@@ -378,7 +378,7 @@ func (s AuthController) AuthVerify(c *gin.Context) {
 		c.JSON(200, user)
 	}
 	if err != nil {
-		c.AbortWithError(404, err)
+		c.AbortWithError(400, err)
 		return
 	}
 
