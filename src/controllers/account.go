@@ -427,12 +427,12 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("addressid")
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("addressid")
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	buf := make([]byte, 1024)
@@ -459,6 +459,44 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 		} else {
 			c.JSON(200, address)
 		}
+	}
+}
+
+func (s AccountController) AddressFetch(c *gin.Context) {
+
+	//API to Edit account Address details
+
+	var queueinfo queue.Queue
+	version := helpers.GetVersion()
+	queueinfo.Category = "ACCOUNT_ADDRESS_FETCH"
+	queueinfo.APIType = "GET"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if URLArray[1] != "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("addresstype")
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("addresstype")
+		queueinfo.Version = version
+	}
+	queueinfo.RequestInfo = "{}"
+	queueinfo, err := queue.QueueProcess(queueinfo)
+
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+
+	var account models.AccountAddress
+	accountbyte := []byte(queueinfo.ResponseInfo)
+	json.Unmarshal(accountbyte, &account)
+
+	if account.ResponseCode != "00" {
+		c.JSON(400, account)
+	} else {
+		c.JSON(200, account)
 	}
 }
 
