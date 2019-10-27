@@ -86,8 +86,10 @@ func Router() *gin.Engine {
 		auth.POST("/"+version+"/account/suspend/:accountid", accountController.Suspend)
 		auth.POST("/account/suspend/:accountid", accountController.Suspend)
 
-		auth.PUT("/account/address/:accountid/:addressid", accountController.AddressEdit)
-		auth.PUT("/"+version+"/account/address/:accountid/:addressid", accountController.AddressEdit)
+		auth.GET("/account/address/:accountid/:addresstype", accountController.AddressFetch)
+		auth.GET("/"+version+"/account/address/:accountid/:addresstype", accountController.AddressFetch)
+		auth.PUT("/account/address/:accountid", accountController.AddressEdit)
+		auth.PUT("/"+version+"/account/address/:accountid", accountController.AddressEdit)
 		auth.POST(version+"/account/address/:accountid/", accountController.AddressAdd)
 		auth.POST("/account/address/:accountid", accountController.AddressAdd)
 		auth.DELETE("/"+version+"/account/address/:accountid/:addressid", accountController.AddressRemove)
