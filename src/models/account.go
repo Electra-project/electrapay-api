@@ -85,7 +85,7 @@ type AccountOrg struct {
 	Id                  int64  `json:"id"`
 	VatNo               string `json:"vatno"`
 	DefaultVAT          int64  `json:"defaultvat"`
-	Organisation        string `json:"orgnisation"`
+	Organisation        string `json:"organisation"`
 	ResponseCode        string `json:"responsecode"`
 	ResponseDescription string `json:"responsedescription"`
 }
