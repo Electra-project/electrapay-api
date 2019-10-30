@@ -68,12 +68,12 @@ func (s AccountController) GetPersonalInformation(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[4]
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
@@ -105,12 +105,12 @@ func (s AccountController) EditPersonalInformation(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = ""
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = ""
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	buf := make([]byte, 1024)
@@ -151,12 +151,12 @@ func (s AccountController) GetPaymentDetails(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[4]
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
@@ -188,12 +188,12 @@ func (s AccountController) EditPaymentDetails(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = ""
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = ""
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	buf := make([]byte, 1024)
@@ -234,12 +234,12 @@ func (s AccountController) GetOrganizationDetails(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[4]
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
@@ -271,12 +271,12 @@ func (s AccountController) EditOrganizationDetails(c *gin.Context) {
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = ""
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = URLArray[1]
 	}
 	if URLArray[1] == "account" {
 		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = ""
+		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
 	buf := make([]byte, 1024)
