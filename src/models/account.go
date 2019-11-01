@@ -121,7 +121,7 @@ type AccountAddress struct {
 type AccountContact struct {
 	AccountId           int64  `json:"accountid"`
 	ContactId           int64  `json:"contactid"`
-	ContactType         string `json:"contactype"`
+	ContactType         string `json:"contacttype"`
 	ContactTitle        string `json:"contacttitle"`
 	ContactFirstname    string `json:"contactfirstname"`
 	ContactMiddlenames  string `json:"contactmiddlenames"`
