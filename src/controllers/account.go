@@ -582,6 +582,44 @@ func (s AccountController) AddressRemove(c *gin.Context) {
 	}
 }
 
+func (s AccountController) ContactFetch(c *gin.Context) {
+
+	//API to Edit account Address details
+
+	var queueinfo queue.Queue
+	version := helpers.GetVersion()
+	queueinfo.Category = "ACCOUNT_CONTACT_FETCH"
+	queueinfo.APIType = "GET"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if URLArray[1] != "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("contacttype")
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("contacttype")
+		queueinfo.Version = version
+	}
+	queueinfo.RequestInfo = "{}"
+	queueinfo, err := queue.QueueProcess(queueinfo)
+
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+
+	var account models.AccountContact
+	accountbyte := []byte(queueinfo.ResponseInfo)
+	json.Unmarshal(accountbyte, &account)
+
+	if account.ResponseCode != "00" {
+		c.JSON(400, account)
+	} else {
+		c.JSON(200, account)
+	}
+}
+
 func (s AccountController) ContactEdit(c *gin.Context) {
 
 	//API to Edit account Contact details

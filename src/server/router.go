@@ -95,6 +95,8 @@ func Router() *gin.Engine {
 		auth.DELETE("/"+version+"/account/address/:accountid/:addressid", accountController.AddressRemove)
 		auth.DELETE("/account/address/:accountid/:addressid", accountController.AddressRemove)
 
+		auth.GET("/account/contact/:accountid/:contacttype", accountController.ContactFetch)
+		auth.GET("/"+version+"/account/contact/:accountid/:contacttype", accountController.ContactFetch)
 		auth.PUT("/"+version+"/account/contact/:accountid/:contactid", accountController.ContactEdit)
 		auth.PUT("/account/contact/:accountid/:contactid", accountController.ContactEdit)
 		auth.POST(version+"/account/contact/:accountid", accountController.ContactAdd)

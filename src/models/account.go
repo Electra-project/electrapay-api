@@ -118,6 +118,21 @@ type AccountAddress struct {
 	ResponseDescription string `json:"responsedescription"`
 }
 
+type AccountContact struct {
+	AccountId           int64  `json:"accountid"`
+	ContactId           int64  `json:"contactid"`
+	ContactType         string `json:"contactype"`
+	ContactTitle        string `json:"contacttitle"`
+	ContactFirstname    string `json:"contactfirstname"`
+	ContactMiddlenames  string `json:"contactmiddlenames"`
+	ContactLastname     string `json:"contactlastname"`
+	ContactEmail        string `json:"contactemail"`
+	ContactPhone        string `json:"contactphone"`
+	ContactMobile       string `json:"contactmobile"`
+	ResponseCode        string `json:"responsecode"`
+	ResponseDescription string `json:"responsedescription"`
+}
+
 type AccountWallet struct {
 	WalletAddress       string `json:"walletaddress"`
 	WalletCurrency      string `json:"walletcurrency"`
