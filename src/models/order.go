@@ -58,6 +58,23 @@ type OrderSummary struct {
 	Reversals       int64 `json:"reversals"`
 }
 
+type OrderView struct {
+	OrderId                  int64           `json:"id"`
+	Reference                string          `json:"reference"`
+	Paymentcategory          string          `json:"paymentcategory"`
+	OrderCurrency            string          `json:"ordercurrency"`
+	OrderAmount              decimal.Decimal `json:"orderamount"`
+	QuoteCurrency            string          `json:"quotecurrency"`
+	QuoteTotal               decimal.Decimal `json:"quotetotal"`
+	OrderDate                time.Time       `json:"orderdate"`
+	OrderQuoteSubmittedDate  time.Time       `json:"orderquotesubmitteddate"`
+	OrderReceivedPaymentDate time.Time       `json:"orderreceivedpaymentdate"`
+	OrderSettled             bool            `json:"ordersettled"`
+	OrderStatus              string          `json:"orderstatus"`
+	ResponseCode             string          `json:"responsecode"`
+	ResponseDescription      string          `json:"responsedescription"`
+}
+
 type PaymentCategory struct {
 	Id          int64  `json:"id"`
 	Code        string `json:"code"`
