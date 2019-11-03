@@ -6,6 +6,7 @@ import (
 	"github.com/Electra-project/electrapay-api/src/helpers"
 	"github.com/Electra-project/electrapay-api/src/models"
 	"github.com/Electra-project/electrapay-api/src/queue"
+	"io/ioutil"
 	"strings"
 )
 
@@ -29,10 +30,10 @@ func (s AccountController) Register(c *gin.Context) {
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
 	}
-	buf := make([]byte, 1024)
-	num, _ := c.Request.Body.Read(buf)
-	queueinfo.RequestInfo = string(buf[0:num])
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	queueinfo.RequestInfo = string(x)
 	queueinfo, err := queue.QueueProcess(queueinfo)
+
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
@@ -113,10 +114,10 @@ func (s AccountController) EditPersonalInformation(c *gin.Context) {
 		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
-	buf := make([]byte, 1024)
-	num, _ := c.Request.Body.Read(buf)
-	queueinfo.RequestInfo = string(buf[0:num])
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	queueinfo.RequestInfo = string(x)
 	queueinfo, err := queue.QueueProcess(queueinfo)
+
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
@@ -196,10 +197,10 @@ func (s AccountController) EditPaymentDetails(c *gin.Context) {
 		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
-	buf := make([]byte, 1024)
-	num, _ := c.Request.Body.Read(buf)
-	queueinfo.RequestInfo = string(buf[0:num])
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	queueinfo.RequestInfo = string(x)
 	queueinfo, err := queue.QueueProcess(queueinfo)
+
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
@@ -279,10 +280,10 @@ func (s AccountController) EditOrganizationDetails(c *gin.Context) {
 		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
-	buf := make([]byte, 1024)
-	num, _ := c.Request.Body.Read(buf)
-	queueinfo.RequestInfo = string(buf[0:num])
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	queueinfo.RequestInfo = string(x)
 	queueinfo, err := queue.QueueProcess(queueinfo)
+
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
@@ -435,10 +436,10 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
-	buf := make([]byte, 1024)
-	num, _ := c.Request.Body.Read(buf)
-	queueinfo.RequestInfo = string(buf[0:num])
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	queueinfo.RequestInfo = string(x)
 	queueinfo, err := queue.QueueProcess(queueinfo)
+
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
@@ -519,10 +520,10 @@ func (s AccountController) AddressAdd(c *gin.Context) {
 		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
-	buf := make([]byte, 1024)
-	num, _ := c.Request.Body.Read(buf)
-	queueinfo.RequestInfo = string(buf[0:num])
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	queueinfo.RequestInfo = string(x)
 	queueinfo, err := queue.QueueProcess(queueinfo)
+
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
@@ -639,10 +640,10 @@ func (s AccountController) ContactEdit(c *gin.Context) {
 		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("contactid")
 		queueinfo.Version = version
 	}
-	buf := make([]byte, 1024)
-	num, _ := c.Request.Body.Read(buf)
-	queueinfo.RequestInfo = string(buf[0:num])
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	queueinfo.RequestInfo = string(x)
 	queueinfo, err := queue.QueueProcess(queueinfo)
+
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
@@ -685,10 +686,10 @@ func (s AccountController) ContactAdd(c *gin.Context) {
 		queueinfo.Parameters = c.Param("accountid")
 		queueinfo.Version = version
 	}
-	buf := make([]byte, 1024)
-	num, _ := c.Request.Body.Read(buf)
-	queueinfo.RequestInfo = string(buf[0:num])
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	queueinfo.RequestInfo = string(x)
 	queueinfo, err := queue.QueueProcess(queueinfo)
+
 	if err != nil {
 		c.AbortWithError(404, err)
 		return

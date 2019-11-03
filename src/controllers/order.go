@@ -6,6 +6,7 @@ import (
 	"github.com/Electra-project/electrapay-api/src/models"
 	"github.com/Electra-project/electrapay-api/src/queue"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"strings"
 )
 
@@ -28,10 +29,10 @@ func (s OrderController) New(c *gin.Context) {
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
 	}
-	buf := make([]byte, 1024)
-	num, _ := c.Request.Body.Read(buf)
-	queueinfo.RequestInfo = string(buf[0:num])
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	queueinfo.RequestInfo = string(x)
 	queueinfo, err := queue.QueueProcess(queueinfo)
+
 	if err != nil {
 		c.AbortWithError(404, err)
 		return

@@ -8,6 +8,7 @@ import (
 	"github.com/Electra-project/electrapay-api/src/queue"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -321,10 +322,10 @@ func (s AuthController) SetPassword(c *gin.Context) {
 		queueinfo.Parameters = ""
 		queueinfo.Version = version
 	}
-	buf := make([]byte, 1024)
-	num, _ := c.Request.Body.Read(buf)
-	queueinfo.RequestInfo = string(buf[0:num])
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	queueinfo.RequestInfo = string(x)
 	queueinfo, err := queue.QueueProcess(queueinfo)
+
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
