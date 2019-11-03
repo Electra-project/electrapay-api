@@ -787,3 +787,41 @@ func (s AccountController) AccountBalance(c *gin.Context) {
 		c.JSON(200, account)
 	}
 }
+
+func (s AccountController) OrderSummary(c *gin.Context) {
+
+	//var queueinfo queue.Queue
+	//version := helpers.GetVersion()
+
+	//queueinfo.Category = "ORDER_SUMMARY"
+	//queueinfo.APIType = "GET"
+	//URLArray := strings.Split(c.Request.RequestURI, "/")
+	/*if URLArray[1] != "order" {
+	    queueinfo.APIURL = c.Request.RequestURI
+	    queueinfo.Parameters = URLArray[3]
+	    queueinfo.Version = URLArray[1]
+	  }
+	  if URLArray[1] == "order" {
+	    queueinfo.APIURL = c.Request.RequestURI
+	    queueinfo.Parameters = URLArray[2]
+	    queueinfo.Version = version
+	  }
+	  queueinfo.RequestInfo = "{}"
+	  queueinfo, err := queue.QueueProcess(queueinfo)
+	  if err != nil {
+	    c.AbortWithError(404, err)
+	    return
+	  }
+	*/
+	var order models.OrderSummary
+	//orderbyte := []byte(queueinfo.ResponseInfo)
+	order.AwaitingPayment = 10
+	order.PaymentReceived = 12
+	order.Reversals = 20
+	order.Settled = 10
+
+	//json.Unmarshal(orderbyte, &order)
+
+	c.JSON(200, order)
+
+}

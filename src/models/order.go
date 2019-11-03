@@ -51,6 +51,13 @@ type Order struct {
 	ResponseDescription      string          `json:"responsedescription"`
 }
 
+type OrderSummary struct {
+	AwaitingPayment int64 `json:"awaitingpayment"`
+	PaymentReceived int64 `json:"paymentreceived"`
+	Settled         int64 `json:"settled"`
+	Reversals       int64 `json:"reversals"`
+}
+
 type PaymentCategory struct {
 	Id          int64  `json:"id"`
 	Code        string `json:"code"`
