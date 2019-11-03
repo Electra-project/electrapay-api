@@ -109,6 +109,9 @@ func Router() *gin.Engine {
 
 		auth.GET("/"+version+"/account/ordersummary/:accountid/:frequency", accountController.OrderSummary)
 		auth.GET("/account/ordersummary/:accountid/:frequency", accountController.OrderSummary)
+
+		auth.GET("/"+version+"/account/orderlist/:accountid/:frequency", accountController.OrderList)
+		auth.GET("/account/orderlist/:accountid/:frequency", accountController.OrderList)
 	}
 
 	authapi := router.Group("/")
