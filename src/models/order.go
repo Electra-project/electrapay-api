@@ -52,10 +52,12 @@ type Order struct {
 }
 
 type OrderSummary struct {
-	AwaitingPayment int64 `json:"awaitingpayment"`
-	PaymentReceived int64 `json:"paymentreceived"`
-	Settled         int64 `json:"settled"`
-	Reversals       int64 `json:"reversals"`
+	AwaitingPayment     int64  `json:"awaitingpayment"`
+	PaymentReceived     int64  `json:"paymentreceived"`
+	Settled             int64  `json:"settled"`
+	Reversals           int64  `json:"reversals"`
+	ResponseCode        string `json:"responsecode"`
+	ResponseDescription string `json:"responsedescription"`
 }
 
 type OrderView struct {
