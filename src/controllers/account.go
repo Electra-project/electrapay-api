@@ -811,91 +811,112 @@ func (s AccountController) OrderSummary(c *gin.Context) {
 	var queueinfo queue.Queue
 	version := helpers.GetVersion()
 
-	queueinfo.Category = "ORDER_SUMMARY"
-	queueinfo.APIType = "GET"
-	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if URLArray[1] != "order" {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("frequency")
-		queueinfo.Version = URLArray[1]
+	if c.Request.Header.Get("mock") == "yes" {
+		var order models.OrderSummary
+		orderbyte := []byte(queueinfo.ResponseInfo)
+		order.AwaitingPayment = 10
+		order.PaymentReceived = 12
+		order.Reversals = 20
+		order.Settled = 10
+
+		json.Unmarshal(orderbyte, &order)
+
+		c.JSON(200, order)
+
+	} else {
+
+		queueinfo.Category = "ORDER_SUMMARY"
+		queueinfo.APIType = "GET"
+		URLArray := strings.Split(c.Request.RequestURI, "/")
+		if URLArray[1] != "order" {
+			queueinfo.APIURL = c.Request.RequestURI
+			queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("frequency")
+			queueinfo.Version = URLArray[1]
+		}
+		if URLArray[1] == "order" {
+			queueinfo.APIURL = c.Request.RequestURI
+			queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("frequency")
+			queueinfo.Version = version
+		}
+		queueinfo.RequestInfo = "{}"
+		queueinfo, err := queue.QueueProcess(queueinfo)
+		if err != nil {
+			c.AbortWithError(404, err)
+			return
+		}
+		var order models.OrderSummary
+		orderbyte := []byte(queueinfo.ResponseInfo)
+
+		json.Unmarshal(orderbyte, &order)
+
+		c.JSON(200, order)
 	}
-	if URLArray[1] == "order" {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("frequency")
-		queueinfo.Version = version
-	}
-	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
-	if err != nil {
-		c.AbortWithError(404, err)
-		return
-	}
-
-	var order models.OrderSummary
-	orderbyte := []byte(queueinfo.ResponseInfo)
-	/*order.AwaitingPayment = 10
-	order.PaymentReceived = 12
-	order.Reversals = 20
-	order.Settled = 10*/
-
-	json.Unmarshal(orderbyte, &order)
-
-	c.JSON(200, order)
-
 }
 
 func (s AccountController) OrderList(c *gin.Context) {
 
-	//var queueinfo queue.Queue
-	//version := helpers.GetVersion()
+	if c.Request.Header.Get("mock") == "yes" {
+		var amount decimal.Decimal
+		var i int64
+		amount, _ = decimal.NewFromString("10.00")
+		var queueinfo queue.Queue
 
-	//queueinfo.Category = "ORDER_SUMMARY"
-	//queueinfo.APIType = "GET"
-	//URLArray := strings.Split(c.Request.RequestURI, "/")
-	/*if URLArray[1] != "order" {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
-		queueinfo.Version = URLArray[1]
-	  }
-	  if URLArray[1] == "order" {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[2]
-		queueinfo.Version = version
-	  }
-	  queueinfo.RequestInfo = "{}"
-	  queueinfo, err := queue.QueueProcess(queueinfo)
-	  if err != nil {
-		c.AbortWithError(404, err)
-		return
-	  }
-	*/
-	var orderlist []models.OrderView
-	var amount decimal.Decimal
-	var i int64
-	amount, _ = decimal.NewFromString("10.00")
-	//orderbyte := []byte(queueinfo.ResponseInfo)
+		var orderlist []models.OrderView
+		orderbyte := []byte(queueinfo.ResponseInfo)
 
-	for i = 0; i < 10; i++ {
+		for i = 0; i < 10; i++ {
 
-		var orderview models.OrderView
-		orderview.OrderId = i
-		orderview.Reference = "#ord"
-		orderview.Paymentcategory = "FOOD"
-		orderview.OrderCurrency = "USD"
-		orderview.OrderAmount = amount
-		orderview.QuoteCurrency = "ECA"
-		orderview.QuoteTotal = amount
-		orderview.OrderDate = time.Now()
-		orderview.OrderQuoteSubmittedDate = time.Now()
-		orderview.OrderReceivedPaymentDate = time.Now()
-		orderview.OrderSettled = true
-		orderview.OrderStatus = "SETTLED"
+			var orderview models.OrderView
+			orderview.OrderId = i
+			orderview.Reference = "#ord"
+			orderview.Paymentcategory = "FOOD"
+			orderview.OrderCurrency = "USD"
+			orderview.OrderAmount = amount
+			orderview.QuoteCurrency = "ECA"
+			orderview.QuoteTotal = amount
+			orderview.OrderDate = time.Now()
+			orderview.OrderQuoteSubmittedDate = time.Now()
+			orderview.OrderReceivedPaymentDate = time.Now()
+			orderview.OrderSettled = true
+			orderview.OrderStatus = "SETTLED"
 
-		orderlist = append(orderlist, orderview)
+			orderlist = append(orderlist, orderview)
+		}
+
+		json.Unmarshal(orderbyte, &orderlist)
+
+		c.JSON(200, orderlist)
+
+	} else {
+
+		var queueinfo queue.Queue
+		version := helpers.GetVersion()
+
+		queueinfo.Category = "ORDER_LIST"
+		queueinfo.APIType = "GET"
+		URLArray := strings.Split(c.Request.RequestURI, "/")
+		if URLArray[1] != "order" {
+			queueinfo.APIURL = c.Request.RequestURI
+			queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("frequency")
+			queueinfo.Version = URLArray[1]
+		}
+		if URLArray[1] == "order" {
+			queueinfo.APIURL = c.Request.RequestURI
+			queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("frequency")
+			queueinfo.Version = version
+		}
+		queueinfo.RequestInfo = "{}"
+		queueinfo, err := queue.QueueProcess(queueinfo)
+		if err != nil {
+			c.AbortWithError(404, err)
+			return
+		}
+		var orderlist []models.OrderView
+		orderbyte := []byte(queueinfo.ResponseInfo)
+
+		json.Unmarshal(orderbyte, &orderlist)
+
+		c.JSON(200, orderlist)
 	}
-
-	//json.Unmarshal(orderbyte, &order)
-
-	c.JSON(200, orderlist)
 
 }
