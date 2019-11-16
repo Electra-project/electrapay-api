@@ -755,55 +755,60 @@ func (s AccountController) AccountBalance(c *gin.Context) {
 	//API to retrieve account Balance information
 	// We get the authenticated user
 
-	//version := helpers.GetVersion()
+	version := helpers.GetVersion()
 
-	/*var queueinfo queue.Queue
-	queueinfo.Category = "ACCOUNT_WALLET_BALANCE"
-	queueinfo.APIType = "GET"
-	URLArray := strings.Split(c.Request.RequestURI, "/")
-	if URLArray[1] != "account" {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[3]
-		queueinfo.Version = URLArray[1]
+	if c.Request.Header.Get("mock") == "yes" {
+		var account models.AccountWallet
+		var USDPrice, ECAPrice, BTCPrice, WalletAmount decimal.Decimal
+		USDPrice, _ = decimal.NewFromString("13.45")
+		ECAPrice, _ = decimal.NewFromString("11.45")
+		BTCPrice, _ = decimal.NewFromString("12.45")
+		WalletAmount, _ = decimal.NewFromString("12.45")
+		account.USDPrice = USDPrice
+		account.ECAPrice = ECAPrice
+		account.BTCPrice = BTCPrice
+		account.WalletBalance = WalletAmount
+		account.WalletCurrency = "ECA"
+		account.WalletAddress = "EVSXj6ExieGBtf4K7Fuw4mBpCwbffwBowm"
+		account.ResponseCode = "00"
+		account.ResponseDescription = "Success"
+
+		c.JSON(200, account)
+	} else {
+
+		var queueinfo queue.Queue
+		queueinfo.Category = "ACCOUNT_WALLET_BALANCE"
+		queueinfo.APIType = "GET"
+		URLArray := strings.Split(c.Request.RequestURI, "/")
+		if URLArray[1] != "account" {
+			queueinfo.APIURL = c.Request.RequestURI
+			queueinfo.Parameters = URLArray[3]
+			queueinfo.Version = URLArray[1]
+		}
+		if URLArray[1] == "account" {
+			queueinfo.APIURL = c.Request.RequestURI
+			queueinfo.Parameters = URLArray[2]
+			queueinfo.Version = version
+		}
+		queueinfo.RequestInfo = "{}"
+		queueinfo, err := queue.QueueProcess(queueinfo)
+
+		if err != nil {
+			c.AbortWithError(404, err)
+			return
+		}
+		var account models.AccountWallet
+		accountbyte := []byte(queueinfo.ResponseInfo)
+		json.Unmarshal(accountbyte, &account)
+
+		if account.ResponseCode != "00" {
+			c.JSON(400, account)
+		} else {
+			c.JSON(200, account)
+		}
+
 	}
-	if URLArray[1] == "account" {
-		queueinfo.APIURL = c.Request.RequestURI
-		queueinfo.Parameters = URLArray[2]
-		queueinfo.Version = version
-	}
-	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
 
-	if err != nil {
-		c.AbortWithError(404, err)
-		return
-	}
-	*/
-
-	var account models.AccountWallet
-	//accountbyte := []byte(queueinfo.ResponseInfo)
-	//json.Unmarshal(accountbyte, &account)
-
-	//if account.ResponseCode != "00" {
-	//	c.JSON(400, account)
-	//} else {
-	//	c.JSON(200, account)
-	//}
-	var USDPrice, ECAPrice, BTCPrice, WalletAmount decimal.Decimal
-	USDPrice, _ = decimal.NewFromString("13.45")
-	ECAPrice, _ = decimal.NewFromString("11.45")
-	BTCPrice, _ = decimal.NewFromString("12.45")
-	WalletAmount, _ = decimal.NewFromString("12.45")
-	account.USDPrice = USDPrice
-	account.ECAPrice = ECAPrice
-	account.BTCPrice = BTCPrice
-	account.WalletBalance = WalletAmount
-	account.WalletCurrency = "ECA"
-	account.WalletAddress = "EVSXj6ExieGBtf4K7Fuw4mBpCwbffwBowm"
-	account.ResponseCode = "00"
-	account.ResponseDescription = "Success"
-
-	c.JSON(200, account)
 }
 
 func (s AccountController) OrderSummary(c *gin.Context) {
