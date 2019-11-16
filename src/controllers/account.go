@@ -8,6 +8,7 @@ import (
 	"github.com/Electra-project/electrapay-api/src/queue"
 	"github.com/shopspring/decimal"
 	"io/ioutil"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -782,12 +783,12 @@ func (s AccountController) AccountBalance(c *gin.Context) {
 		URLArray := strings.Split(c.Request.RequestURI, "/")
 		if URLArray[1] != "account" {
 			queueinfo.APIURL = c.Request.RequestURI
-			queueinfo.Parameters = URLArray[3]
+			queueinfo.Parameters = c.Param("accountid")
 			queueinfo.Version = URLArray[1]
 		}
 		if URLArray[1] == "account" {
 			queueinfo.APIURL = c.Request.RequestURI
-			queueinfo.Parameters = URLArray[2]
+			queueinfo.Parameters = c.Param("accountid")
 			queueinfo.Version = version
 		}
 		queueinfo.RequestInfo = "{}"
@@ -873,7 +874,7 @@ func (s AccountController) OrderList(c *gin.Context) {
 
 			var orderview models.OrderView
 			orderview.OrderId = i
-			orderview.Reference = "#ord"
+			orderview.Reference = strings.Join([]string{"ord#", strconv.FormatInt(i, 10)}, "")
 			orderview.Paymentcategory = "FOOD"
 			orderview.OrderCurrency = "USD"
 			orderview.OrderAmount = amount
