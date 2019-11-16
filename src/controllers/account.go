@@ -849,6 +849,8 @@ func (s AccountController) OrderSummary(c *gin.Context) {
 		orderseries.Data = append(orderseries.Data, num10)
 		order.Series = append(order.Series, orderseries)
 
+		orderseries = models.OrderSeries{}
+
 		orderseries.Name = "Total Settled"
 		num1, _ = decimal.NewFromString("100.20")
 		num2, _ = decimal.NewFromString("20010.22")
