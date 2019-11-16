@@ -819,11 +819,58 @@ func (s AccountController) OrderSummary(c *gin.Context) {
 
 	if c.Request.Header.Get("mock") == "yes" {
 		var order models.OrderSummary
+		var orderseries models.OrderSeries
+
 		orderbyte := []byte(queueinfo.ResponseInfo)
 		order.AwaitingPayment = 10
 		order.PaymentReceived = 12
 		order.Reversals = 20
 		order.Settled = 10
+		orderseries.Name = "Total Ordered"
+		num1, _ := decimal.NewFromString("100.20")
+		num2, _ := decimal.NewFromString("20012.22")
+		num3, _ := decimal.NewFromString("40005.45")
+		num4, _ := decimal.NewFromString("678.90")
+		num5, _ := decimal.NewFromString("8809.01")
+		num6, _ := decimal.NewFromString("540908.44")
+		num7, _ := decimal.NewFromString("560.20")
+		num8, _ := decimal.NewFromString("9078.42")
+		num9, _ := decimal.NewFromString("598.33")
+		num10, _ := decimal.NewFromString("8908.90")
+		orderseries.Data = append(orderseries.Data, num1)
+		orderseries.Data = append(orderseries.Data, num2)
+		orderseries.Data = append(orderseries.Data, num3)
+		orderseries.Data = append(orderseries.Data, num4)
+		orderseries.Data = append(orderseries.Data, num5)
+		orderseries.Data = append(orderseries.Data, num6)
+		orderseries.Data = append(orderseries.Data, num7)
+		orderseries.Data = append(orderseries.Data, num8)
+		orderseries.Data = append(orderseries.Data, num9)
+		orderseries.Data = append(orderseries.Data, num10)
+		order.Series = append(order.Series, orderseries)
+
+		orderseries.Name = "Total Settled"
+		num1, _ = decimal.NewFromString("100.20")
+		num2, _ = decimal.NewFromString("20010.22")
+		num3, _ = decimal.NewFromString("40001.45")
+		num4, _ = decimal.NewFromString("654.90")
+		num5, _ = decimal.NewFromString("8809.01")
+		num6, _ = decimal.NewFromString("520908.44")
+		num7, _ = decimal.NewFromString("540.20")
+		num8, _ = decimal.NewFromString("9078.42")
+		num9, _ = decimal.NewFromString("538.33")
+		num10, _ = decimal.NewFromString("8208.90")
+		orderseries.Data = append(orderseries.Data, num1)
+		orderseries.Data = append(orderseries.Data, num2)
+		orderseries.Data = append(orderseries.Data, num3)
+		orderseries.Data = append(orderseries.Data, num4)
+		orderseries.Data = append(orderseries.Data, num5)
+		orderseries.Data = append(orderseries.Data, num6)
+		orderseries.Data = append(orderseries.Data, num7)
+		orderseries.Data = append(orderseries.Data, num8)
+		orderseries.Data = append(orderseries.Data, num9)
+		orderseries.Data = append(orderseries.Data, num10)
+		order.Series = append(order.Series, orderseries)
 
 		json.Unmarshal(orderbyte, &order)
 
