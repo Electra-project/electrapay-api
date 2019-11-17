@@ -761,14 +761,15 @@ func (s AccountController) AccountBalance(c *gin.Context) {
 	if c.Request.Header.Get("mock") == "yes" {
 		var account models.AccountWallet
 		var USDPrice, ECAPrice, BTCPrice, WalletAmount decimal.Decimal
-		USDPrice, _ = decimal.NewFromString("13.45")
-		ECAPrice, _ = decimal.NewFromString("11.45")
-		BTCPrice, _ = decimal.NewFromString("12.45")
-		WalletAmount, _ = decimal.NewFromString("12.45")
+		USDPrice, _ = decimal.NewFromString("0.0002793411")
+		ECAPrice, _ = decimal.NewFromString("1")
+		BTCPrice, _ = decimal.NewFromString("0.00000003")
+		WalletAmount, _ = decimal.NewFromString("802.25")
 		account.USDPrice = USDPrice
 		account.ECAPrice = ECAPrice
 		account.BTCPrice = BTCPrice
 		account.WalletBalance = WalletAmount
+		account.WalletFiat = account.WalletBalance.Mul(account.BTCPrice).Round(2)
 		account.WalletCurrency = "ECA"
 		account.WalletAddress = "EVSXj6ExieGBtf4K7Fuw4mBpCwbffwBowm"
 		account.ResponseCode = "00"
@@ -802,10 +803,10 @@ func (s AccountController) AccountBalance(c *gin.Context) {
 		accountbyte := []byte(queueinfo.ResponseInfo)
 		json.Unmarshal(accountbyte, &account)
 
-		if account.ResponseCode != "00" {
-			c.JSON(400, account)
-		} else {
+		if account.ResponseCode == "00" {
 			c.JSON(200, account)
+		} else {
+			c.JSON(400, account)
 		}
 
 	}
@@ -847,6 +848,7 @@ func (s AccountController) OrderSummary(c *gin.Context) {
 		orderseries.Data = append(orderseries.Data, num8)
 		orderseries.Data = append(orderseries.Data, num9)
 		orderseries.Data = append(orderseries.Data, num10)
+		orderseries.Total, _ = decimal.NewFromString("69561.07")
 		order.Series = append(order.Series, orderseries)
 
 		orderseries = models.OrderSeries{}
@@ -872,6 +874,7 @@ func (s AccountController) OrderSummary(c *gin.Context) {
 		orderseries.Data = append(orderseries.Data, num8)
 		orderseries.Data = append(orderseries.Data, num9)
 		orderseries.Data = append(orderseries.Data, num10)
+		orderseries.Total, _ = decimal.NewFromString("65008.63")
 		order.Series = append(order.Series, orderseries)
 
 		ordertimeline := models.OrderTimeline{}

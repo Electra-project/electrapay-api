@@ -52,8 +52,9 @@ type Order struct {
 }
 
 type OrderSeries struct {
-	Name string            `json:"name"`
-	Data []decimal.Decimal `json:"data"`
+	Name  string            `json:"name"`
+	Total decimal.Decimal   `json:"total"`
+	Data  []decimal.Decimal `json:"data"`
 }
 
 type OrderTimeline struct {

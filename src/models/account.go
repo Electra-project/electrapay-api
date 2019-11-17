@@ -134,12 +134,13 @@ type AccountContact struct {
 }
 
 type AccountWallet struct {
-	WalletAddress       string `json:"walletaddress"`
-	WalletCurrency      string `json:"walletcurrency"`
-	WalletBalance       decimal.Decimal
-	ECAPrice            decimal.Decimal
-	BTCPrice            decimal.Decimal
-	USDPrice            decimal.Decimal
-	ResponseCode        string `json:"responsecode"`
-	ResponseDescription string `json:"responsedescription"`
+	WalletAddress       string          `json:"walletaddress"`
+	WalletCurrency      string          `json:"walletcurrency"`
+	WalletBalance       decimal.Decimal `json:"walletbalance"`
+	WalletFiat          decimal.Decimal `json:"walletfiat"`
+	ECAPrice            decimal.Decimal `json:"ecaprice"`
+	BTCPrice            decimal.Decimal `json:"btcprice"`
+	USDPrice            decimal.Decimal `json:"usdprice"`
+	ResponseCode        string          `json:"responsecode"`
+	ResponseDescription string          `json:"responsedescription"`
 }
