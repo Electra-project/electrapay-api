@@ -56,14 +56,20 @@ type OrderSeries struct {
 	Data []decimal.Decimal `json:"data"`
 }
 
+type OrderTimeline struct {
+	Name string   `json:"name"`
+	Data []string `json:"data"`
+}
+
 type OrderSummary struct {
-	AwaitingPayment     int64         `json:"awaitingpayment"`
-	PaymentReceived     int64         `json:"paymentreceived"`
-	Settled             int64         `json:"settled"`
-	Reversals           int64         `json:"reversals"`
-	Series              []OrderSeries `json:"series"`
-	ResponseCode        string        `json:"responsecode"`
-	ResponseDescription string        `json:"responsedescription"`
+	AwaitingPayment     int64           `json:"awaitingpayment"`
+	PaymentReceived     int64           `json:"paymentreceived"`
+	Settled             int64           `json:"settled"`
+	Reversals           int64           `json:"reversals"`
+	Series              []OrderSeries   `json:"series"`
+	Timeline            []OrderTimeline `json:"timeline"`
+	ResponseCode        string          `json:"responsecode"`
+	ResponseDescription string          `json:"responsedescription"`
 }
 
 type OrderView struct {
