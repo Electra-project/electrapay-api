@@ -827,15 +827,15 @@ func (s AccountController) OrderSummary(c *gin.Context) {
 		order.Reversals = 20
 		order.Settled = 10
 		orderseries.Name = "Total Ordered"
-		num1, _ := decimal.NewFromString("100.20")
-		num2, _ := decimal.NewFromString("20012.22")
-		num3, _ := decimal.NewFromString("40005.45")
-		num4, _ := decimal.NewFromString("678.90")
+		num1, _ := decimal.NewFromString("6001.20")
+		num2, _ := decimal.NewFromString("5012.22")
+		num3, _ := decimal.NewFromString("4005.45")
+		num4, _ := decimal.NewFromString("5678.90")
 		num5, _ := decimal.NewFromString("8809.01")
-		num6, _ := decimal.NewFromString("540908.44")
-		num7, _ := decimal.NewFromString("560.20")
+		num6, _ := decimal.NewFromString("9908.44")
+		num7, _ := decimal.NewFromString("7560.20")
 		num8, _ := decimal.NewFromString("9078.42")
-		num9, _ := decimal.NewFromString("598.33")
+		num9, _ := decimal.NewFromString("4598.33")
 		num10, _ := decimal.NewFromString("8908.90")
 		orderseries.Data = append(orderseries.Data, num1)
 		orderseries.Data = append(orderseries.Data, num2)
@@ -852,16 +852,16 @@ func (s AccountController) OrderSummary(c *gin.Context) {
 		orderseries = models.OrderSeries{}
 
 		orderseries.Name = "Total Settled"
-		num1, _ = decimal.NewFromString("100.20")
-		num2, _ = decimal.NewFromString("20010.22")
-		num3, _ = decimal.NewFromString("40001.45")
-		num4, _ = decimal.NewFromString("654.90")
-		num5, _ = decimal.NewFromString("8809.01")
-		num6, _ = decimal.NewFromString("520908.44")
-		num7, _ = decimal.NewFromString("540.20")
-		num8, _ = decimal.NewFromString("9078.42")
-		num9, _ = decimal.NewFromString("538.33")
-		num10, _ = decimal.NewFromString("8208.90")
+		num1, _ = decimal.NewFromString("5402.20")
+		num2, _ = decimal.NewFromString("5001.22")
+		num3, _ = decimal.NewFromString("3967.45")
+		num4, _ = decimal.NewFromString("5452.90")
+		num5, _ = decimal.NewFromString("7098.01")
+		num6, _ = decimal.NewFromString("9902.44")
+		num7, _ = decimal.NewFromString("7342.19")
+		num8, _ = decimal.NewFromString("8034.56")
+		num9, _ = decimal.NewFromString("4498.23")
+		num10, _ = decimal.NewFromString("8309.43")
 		orderseries.Data = append(orderseries.Data, num1)
 		orderseries.Data = append(orderseries.Data, num2)
 		orderseries.Data = append(orderseries.Data, num3)
@@ -923,8 +923,8 @@ func (s AccountController) OrderList(c *gin.Context) {
 
 			var orderview models.OrderView
 			orderview.OrderId = i
-			orderview.Reference = strings.Join([]string{"ord#", strconv.FormatInt(i, 10)}, "")
-			orderview.Paymentcategory = "FOOD"
+			orderview.Reference = strings.Join([]string{"ord#", strconv.FormatInt(i+1, 10)}, "")
+			orderview.Paymentcategory = "ElectraPay Donation"
 			orderview.OrderCurrency = "USD"
 			orderview.OrderAmount = amount
 			orderview.QuoteCurrency = "ECA"
@@ -952,12 +952,12 @@ func (s AccountController) OrderList(c *gin.Context) {
 		URLArray := strings.Split(c.Request.RequestURI, "/")
 		if URLArray[1] != "order" {
 			queueinfo.APIURL = c.Request.RequestURI
-			queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("frequency")
+			queueinfo.Parameters = c.Param("accountid")
 			queueinfo.Version = URLArray[1]
 		}
 		if URLArray[1] == "order" {
 			queueinfo.APIURL = c.Request.RequestURI
-			queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("frequency")
+			queueinfo.Parameters = c.Param("accountid")
 			queueinfo.Version = version
 		}
 		queueinfo.RequestInfo = "{}"
