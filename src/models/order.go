@@ -62,14 +62,14 @@ type OrderTimeline struct {
 }
 
 type OrderSummary struct {
-	AwaitingPayment     int64           `json:"awaitingpayment"`
-	PaymentReceived     int64           `json:"paymentreceived"`
-	Settled             int64           `json:"settled"`
-	Reversals           int64           `json:"reversals"`
-	Series              []OrderSeries   `json:"series"`
-	Timeline            []OrderTimeline `json:"timeline"`
-	ResponseCode        string          `json:"responsecode"`
-	ResponseDescription string          `json:"responsedescription"`
+	AwaitingPayment     int64         `json:"awaitingpayment"`
+	PaymentReceived     int64         `json:"paymentreceived"`
+	Settled             int64         `json:"settled"`
+	Reversals           int64         `json:"reversals"`
+	Series              []OrderSeries `json:"series"`
+	Timeline            OrderTimeline `json:"timeline"`
+	ResponseCode        string        `json:"responsecode"`
+	ResponseDescription string        `json:"responsedescription"`
 }
 
 type OrderView struct {

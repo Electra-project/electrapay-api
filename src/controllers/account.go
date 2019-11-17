@@ -898,7 +898,7 @@ func (s AccountController) OrderSummary(c *gin.Context) {
 		ordertimeline.Data = append(ordertimeline.Data, string8)
 		ordertimeline.Data = append(ordertimeline.Data, string9)
 		ordertimeline.Data = append(ordertimeline.Data, string10)
-		order.Timeline = append(order.Timeline, ordertimeline)
+		order.Timeline = ordertimeline
 
 		json.Unmarshal(orderbyte, &order)
 
