@@ -822,10 +822,10 @@ func (s AccountController) OrderSummary(c *gin.Context) {
 		var orderseries models.OrderSeries
 
 		orderbyte := []byte(queueinfo.ResponseInfo)
-		order.AwaitingPayment = 10
-		order.PaymentReceived = 12
-		order.Reversals = 20
-		order.Settled = 10
+		order.AwaitingPayment = 101
+		order.PaymentReceived = 5034
+		order.Reversals = 10
+		order.Settled = 4098
 		orderseries.Name = "Total Ordered"
 		num1, _ := decimal.NewFromString("6001.20")
 		num2, _ := decimal.NewFromString("5012.22")
@@ -873,6 +873,32 @@ func (s AccountController) OrderSummary(c *gin.Context) {
 		orderseries.Data = append(orderseries.Data, num9)
 		orderseries.Data = append(orderseries.Data, num10)
 		order.Series = append(order.Series, orderseries)
+
+		ordertimeline := models.OrderTimeline{}
+
+		ordertimeline.Name = "per month"
+		string1 := "Jan 2019"
+		string2 := "Feb 2019"
+		string3 := "Mar 2019"
+		string4 := "Apr 2019"
+		string5 := "May 2019"
+		string6 := "Jun 2019"
+		string7 := "Jul 2019"
+		string8 := "Aug 2019"
+		string9 := "Sept 2019"
+		string10 := "Oct 2019"
+
+		ordertimeline.Data = append(ordertimeline.Data, string1)
+		ordertimeline.Data = append(ordertimeline.Data, string2)
+		ordertimeline.Data = append(ordertimeline.Data, string3)
+		ordertimeline.Data = append(ordertimeline.Data, string4)
+		ordertimeline.Data = append(ordertimeline.Data, string5)
+		ordertimeline.Data = append(ordertimeline.Data, string6)
+		ordertimeline.Data = append(ordertimeline.Data, string7)
+		ordertimeline.Data = append(ordertimeline.Data, string8)
+		ordertimeline.Data = append(ordertimeline.Data, string9)
+		ordertimeline.Data = append(ordertimeline.Data, string10)
+		order.Timeline = append(order.Timeline, ordertimeline)
 
 		json.Unmarshal(orderbyte, &order)
 
