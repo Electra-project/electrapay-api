@@ -15,6 +15,7 @@ type Queue struct {
 	APIType             string    `json: "apitype"`
 	Version             string    `json: "version"`
 	Parameters          string    `json: "parameters"`
+	Token               string    `json: "token"`
 	Status              string    `json: "status"`
 	RequestDate         time.Time `json: "request_date"`
 	RequestInfo         string    `json: "request_info"`
@@ -46,6 +47,7 @@ func QueueProcess(queue Queue) (Queue, error) {
 	if error != nil {
 		return queue, error
 	}
+
 	return queue, error
 }
 
@@ -62,19 +64,21 @@ func queueAdd(queue Queue) (Queue, error) {
 		"api_type, " +
 		"version, " +
 		"parameters, " +
+		"token, " +
 		"request_date, " +
 		"request_info, " +
 		"response_code, " +
 		"response_info, " +
 		"response_description)  " +
-		"VALUES(?,?,?,?,?,?,?,?,?,?,?)")
+		"VALUES(?,?,?,?,?,?,?,?,?,?,?,?)")
 
 	if err != nil {
 		helpers.LogErr("Queue : Cannot update Queue to process - " + err.Error())
 		return Queue{}, err
 	}
 	res, err := stmt.Exec(queue.Reference, queue.Category, queue.APIURL, queue.APIType,
-		queue.Version, queue.Parameters, time.Now().UTC(), queue.RequestInfo, queue.ResponseCode, "", queue.ResponseDescription)
+		queue.Version, queue.Parameters, queue.Token,
+		time.Now().UTC(), queue.RequestInfo, queue.ResponseCode, "", queue.ResponseDescription)
 	if err != nil {
 		helpers.LogErr("Queue : Cannot insert into Queue to process - " + err.Error())
 		return Queue{}, err
@@ -113,10 +117,13 @@ func queueWaitResponse(queue Queue) (Queue, error) {
 		if queuestatus != "COMPLETED_PROCESSING" {
 			helpers.LogErr("Queue : Still Processing")
 		} else {
-			queueLoop = 30
+			queueLoop = 9999
 		}
 		queueLoop = queueLoop + 1
-		time.Sleep(200 * time.Millisecond)
+		time.Sleep(100 * time.Millisecond)
+	}
+	if queueLoop != 30 {
+		queueTimeout(queue)
 	}
 	queueinfo, err := queueGet(queue.Id)
 	return queueinfo, err
@@ -189,6 +196,32 @@ func queueClose(queue Queue) (Queue, error) {
 	}
 	rowCnt, err := res.RowsAffected()
 	helpers.LogInfo("Queue : Queue marked closed " + string(rowCnt) + "Row(s)")
+	stmt.Close()
+
+	return queue, nil
+
+}
+
+func queueTimeout(queue Queue) (Queue, error) {
+
+	db := mysqldatabase.GetQueueDatabase()
+	stmt, err := db.Prepare("UPDATE queue " +
+		"set response_code = ?," +
+		"response_description = ?, " +
+		"status = ?, " +
+		"response_date = ? " +
+		"WHERE id = ?")
+	if err != nil {
+		helpers.LogErr("Queue : Cannot update Queue to Close it - " + err.Error())
+		return Queue{}, err
+	}
+	res, err := stmt.Exec("91", "TIMEOUT", "COMPLETED", time.Now().UTC(), queue.Id)
+	if err != nil {
+		helpers.LogErr("Queue :  Cannot update Queue to Close it - " + err.Error())
+		return Queue{}, err
+	}
+	rowCnt, err := res.RowsAffected()
+	helpers.LogInfo("Queue : Queue marked timeout " + string(rowCnt) + "Row(s)")
 	stmt.Close()
 
 	return queue, nil

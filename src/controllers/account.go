@@ -65,10 +65,12 @@ func (s AccountController) GetAccount(c *gin.Context) {
 	// We get the authenticated user
 
 	version := helpers.GetVersion()
+	t, err := extractToken(c)
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_FETCH"
 	queueinfo.APIType = "GET"
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -81,7 +83,7 @@ func (s AccountController) GetAccount(c *gin.Context) {
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -130,6 +132,11 @@ func (s AccountController) GetPersonalInformation(c *gin.Context) {
 	var account models.AccountPersonal
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
+
+	if queueinfo.ResponseCode != "00" {
+		account.ResponseCode = queueinfo.ResponseCode
+		account.ResponseDescription = queueinfo.ResponseDescription
+	}
 
 	if account.ResponseCode != "00" {
 		c.JSON(400, account)
@@ -214,6 +221,11 @@ func (s AccountController) GetPaymentDetails(c *gin.Context) {
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
 
+	if queueinfo.ResponseCode != "00" {
+		account.ResponseCode = queueinfo.ResponseCode
+		account.ResponseDescription = queueinfo.ResponseDescription
+	}
+
 	if account.ResponseCode != "00" {
 		c.JSON(400, account)
 	} else {
@@ -297,6 +309,11 @@ func (s AccountController) GetOrganizationDetails(c *gin.Context) {
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
 
+	if queueinfo.ResponseCode != "00" {
+		account.ResponseCode = queueinfo.ResponseCode
+		account.ResponseDescription = queueinfo.ResponseDescription
+	}
+
 	if account.ResponseCode != "00" {
 		c.JSON(400, account)
 	} else {
@@ -378,6 +395,11 @@ func (s AccountController) Close(c *gin.Context) {
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
 
+	if queueinfo.ResponseCode != "00" {
+		account.ResponseCode = queueinfo.ResponseCode
+		account.ResponseDescription = queueinfo.ResponseDescription
+	}
+
 	if account.ResponseCode != "00" {
 		c.JSON(400, account)
 	} else {
@@ -415,6 +437,11 @@ func (s AccountController) Suspend(c *gin.Context) {
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
 
+	if queueinfo.ResponseCode != "00" {
+		account.ResponseCode = queueinfo.ResponseCode
+		account.ResponseDescription = queueinfo.ResponseDescription
+	}
+
 	if account.ResponseCode != "00" {
 		c.JSON(400, account)
 	} else {
@@ -451,6 +478,11 @@ func (s AccountController) ApiKey(c *gin.Context) {
 	var apikey models.AccountAPIKey
 	apikeybyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(apikeybyte, &apikey)
+
+	if queueinfo.ResponseCode != "00" {
+		apikey.ResponseCode = queueinfo.ResponseCode
+		apikey.ResponseDescription = queueinfo.ResponseDescription
+	}
 
 	if apikey.ResponseCode != "00" {
 		c.JSON(400, apikey)
@@ -536,6 +568,11 @@ func (s AccountController) AddressFetch(c *gin.Context) {
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
 
+	if queueinfo.ResponseCode != "00" {
+		account.ResponseCode = queueinfo.ResponseCode
+		account.ResponseDescription = queueinfo.ResponseDescription
+	}
+
 	if account.ResponseCode != "00" {
 		c.JSON(400, account)
 	} else {
@@ -618,6 +655,11 @@ func (s AccountController) AddressRemove(c *gin.Context) {
 	addressbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(addressbyte, &address)
 
+	if queueinfo.ResponseCode != "00" {
+		address.ResponseCode = queueinfo.ResponseCode
+		address.ResponseDescription = queueinfo.ResponseDescription
+	}
+
 	if address.ResponseCode != "00" {
 		c.JSON(400, address)
 	} else {
@@ -655,6 +697,11 @@ func (s AccountController) ContactFetch(c *gin.Context) {
 	var account models.AccountContact
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
+
+	if queueinfo.ResponseCode != "00" {
+		account.ResponseCode = queueinfo.ResponseCode
+		account.ResponseDescription = queueinfo.ResponseDescription
+	}
 
 	if account.ResponseCode != "00" {
 		c.JSON(400, account)
@@ -784,6 +831,11 @@ func (s AccountController) ContactRemove(c *gin.Context) {
 	contactbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(contactbyte, &contact)
 
+	if queueinfo.ResponseCode != "00" {
+		contact.ResponseCode = queueinfo.ResponseCode
+		contact.ResponseDescription = queueinfo.ResponseDescription
+	}
+
 	if contact.ResponseCode != "00" {
 		c.JSON(400, contact)
 	} else {
@@ -841,6 +893,11 @@ func (s AccountController) AccountBalance(c *gin.Context) {
 		var account models.AccountWallet
 		accountbyte := []byte(queueinfo.ResponseInfo)
 		json.Unmarshal(accountbyte, &account)
+
+		if queueinfo.ResponseCode != "00" {
+			account.ResponseCode = queueinfo.ResponseCode
+			account.ResponseDescription = queueinfo.ResponseDescription
+		}
 
 		if account.ResponseCode == "00" {
 			c.JSON(200, account)
@@ -972,7 +1029,16 @@ func (s AccountController) OrderSummary(c *gin.Context) {
 
 		json.Unmarshal(orderbyte, &order)
 
-		c.JSON(200, order)
+		if queueinfo.ResponseCode != "00" {
+			order.ResponseCode = queueinfo.ResponseCode
+			order.ResponseDescription = queueinfo.ResponseDescription
+		}
+
+		if order.ResponseCode == "00" {
+			c.JSON(200, order)
+		} else {
+			c.JSON(400, order)
+		}
 	}
 }
 
