@@ -64,6 +64,9 @@ func Router() *gin.Engine {
 	auth := router.Group("/")
 	auth.Use(authController.AccountAuthenticationRequired)
 	{
+		auth.GET("/"+version+"/account/:accountid", accountController.GetAccount)
+		auth.GET("/account/:accountid", accountController.GetAccount)
+
 		auth.GET("/"+version+"/account/personalinformation/:accountid", accountController.GetPersonalInformation)
 		auth.GET("/account/personalinformation/:accountid", accountController.GetPersonalInformation)
 		auth.PUT("/"+version+"/account/personalinformation/:accountid", accountController.EditPersonalInformation)

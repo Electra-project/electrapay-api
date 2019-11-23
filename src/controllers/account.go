@@ -60,6 +60,45 @@ func (s AccountController) Register(c *gin.Context) {
 	}
 }
 
+func (s AccountController) GetAccount(c *gin.Context) {
+	//API to retrieve account information
+	// We get the authenticated user
+
+	version := helpers.GetVersion()
+
+	var queueinfo queue.Queue
+	queueinfo.Category = "ACCOUNT_FETCH"
+	queueinfo.APIType = "GET"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if URLArray[1] != "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Version = version
+	}
+	queueinfo.RequestInfo = "{}"
+	queueinfo, err := queue.QueueProcess(queueinfo)
+
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+
+	var account models.Account
+	accountbyte := []byte(queueinfo.ResponseInfo)
+	json.Unmarshal(accountbyte, &account)
+
+	if account.ResponseCode != "00" {
+		c.JSON(400, account)
+	} else {
+		c.JSON(200, account)
+	}
+}
+
 func (s AccountController) GetPersonalInformation(c *gin.Context) {
 	//API to retrieve account information
 	// We get the authenticated user
