@@ -64,6 +64,9 @@ func Router() *gin.Engine {
 	auth := router.Group("/")
 	auth.Use(authController.AccountAuthenticationRequired)
 	{
+		auth.GET("/"+version+"/account/details/:accountid", accountController.GetAccount)
+		auth.GET("/account/details/:accountid", accountController.GetAccount)
+
 		auth.GET("/"+version+"/account/personalinformation/:accountid", accountController.GetPersonalInformation)
 		auth.GET("/account/personalinformation/:accountid", accountController.GetPersonalInformation)
 		auth.PUT("/"+version+"/account/personalinformation/:accountid", accountController.EditPersonalInformation)
@@ -112,6 +115,9 @@ func Router() *gin.Engine {
 
 		auth.GET("/"+version+"/account/orderlist/:accountid", accountController.OrderList)
 		auth.GET("/account/orderlist/:accountid", accountController.OrderList)
+
+		auth.GET("/"+version+"/account/activitylist/:accountid", accountController.ActivityList)
+		auth.GET("/account/activitylist/:accountid", accountController.ActivityList)
 	}
 
 	authapi := router.Group("/")

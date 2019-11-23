@@ -1,6 +1,9 @@
 package models
 
-import "github.com/shopspring/decimal"
+import (
+	"github.com/shopspring/decimal"
+	"time"
+)
 
 type Account struct {
 	Id                  int64    `json:"id"`
@@ -143,4 +146,11 @@ type AccountWallet struct {
 	USDPrice            decimal.Decimal `json:"usdprice"`
 	ResponseCode        string          `json:"responsecode"`
 	ResponseDescription string          `json:"responsedescription"`
+}
+
+type AccountActivity struct {
+	ActivityDate time.Time `json:"activitydate"`
+	Category     string    `json:"category"`
+	Description  string    `json:"description"`
+	UserName     string    `json:"username"`
 }

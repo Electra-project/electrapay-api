@@ -60,6 +60,45 @@ func (s AccountController) Register(c *gin.Context) {
 	}
 }
 
+func (s AccountController) GetAccount(c *gin.Context) {
+	//API to retrieve account information
+	// We get the authenticated user
+
+	version := helpers.GetVersion()
+
+	var queueinfo queue.Queue
+	queueinfo.Category = "ACCOUNT_FETCH"
+	queueinfo.APIType = "GET"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if URLArray[1] != "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Version = version
+	}
+	queueinfo.RequestInfo = "{}"
+	queueinfo, err := queue.QueueProcess(queueinfo)
+
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+
+	var account models.Account
+	accountbyte := []byte(queueinfo.ResponseInfo)
+	json.Unmarshal(accountbyte, &account)
+
+	if account.ResponseCode != "00" {
+		c.JSON(400, account)
+	} else {
+		c.JSON(200, account)
+	}
+}
+
 func (s AccountController) GetPersonalInformation(c *gin.Context) {
 	//API to retrieve account information
 	// We get the authenticated user
@@ -1001,6 +1040,64 @@ func (s AccountController) OrderList(c *gin.Context) {
 		json.Unmarshal(orderbyte, &orderlist)
 
 		c.JSON(200, orderlist)
+	}
+
+}
+
+func (s AccountController) ActivityList(c *gin.Context) {
+
+	if c.Request.Header.Get("mock") == "yes" {
+		var queueinfo queue.Queue
+		var i int64
+
+		var activitylist []models.AccountActivity
+		activitybyte := []byte(queueinfo.ResponseInfo)
+
+		for i = 0; i < 10; i++ {
+
+			var activity models.AccountActivity
+			activity.ActivityDate = time.Now()
+			activity.Category = "account"
+			activity.Description = "Update account address details"
+			activity.UserName = "John Doe"
+
+			activitylist = append(activitylist, activity)
+		}
+
+		json.Unmarshal(activitybyte, &activitylist)
+
+		c.JSON(200, activitylist)
+
+	} else {
+
+		var queueinfo queue.Queue
+		version := helpers.GetVersion()
+
+		queueinfo.Category = "ACTIVITY_LIST"
+		queueinfo.APIType = "GET"
+		URLArray := strings.Split(c.Request.RequestURI, "/")
+		if URLArray[1] != "account" {
+			queueinfo.APIURL = c.Request.RequestURI
+			queueinfo.Parameters = c.Param("accountid")
+			queueinfo.Version = URLArray[1]
+		}
+		if URLArray[1] == "account" {
+			queueinfo.APIURL = c.Request.RequestURI
+			queueinfo.Parameters = c.Param("accountid")
+			queueinfo.Version = version
+		}
+		queueinfo.RequestInfo = "{}"
+		queueinfo, err := queue.QueueProcess(queueinfo)
+		if err != nil {
+			c.AbortWithError(404, err)
+			return
+		}
+		var activitylist []models.AccountActivity
+		activitybyte := []byte(queueinfo.ResponseInfo)
+
+		json.Unmarshal(activitybyte, &activitylist)
+
+		c.JSON(200, activitylist)
 	}
 
 }
