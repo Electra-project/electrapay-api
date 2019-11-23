@@ -65,10 +65,12 @@ func (s AccountController) GetAccount(c *gin.Context) {
 	// We get the authenticated user
 
 	version := helpers.GetVersion()
+	t, err := extractToken(c)
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_FETCH"
 	queueinfo.APIType = "GET"
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -81,7 +83,7 @@ func (s AccountController) GetAccount(c *gin.Context) {
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -108,6 +110,8 @@ func (s AccountController) GetPersonalInformation(c *gin.Context) {
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_PERSONAL_FETCH"
 	queueinfo.APIType = "GET"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -120,7 +124,7 @@ func (s AccountController) GetPersonalInformation(c *gin.Context) {
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -130,6 +134,11 @@ func (s AccountController) GetPersonalInformation(c *gin.Context) {
 	var account models.AccountPersonal
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
+
+	if queueinfo.ResponseCode != "00" {
+		account.ResponseCode = queueinfo.ResponseCode
+		account.ResponseDescription = queueinfo.ResponseDescription
+	}
 
 	if account.ResponseCode != "00" {
 		c.JSON(400, account)
@@ -145,6 +154,8 @@ func (s AccountController) EditPersonalInformation(c *gin.Context) {
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_PERSONAL_EDIT"
 	queueinfo.APIType = "PUT"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -158,7 +169,7 @@ func (s AccountController) EditPersonalInformation(c *gin.Context) {
 	}
 	x, _ := ioutil.ReadAll(c.Request.Body)
 	queueinfo.RequestInfo = string(x)
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -191,6 +202,8 @@ func (s AccountController) GetPaymentDetails(c *gin.Context) {
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_PAYMENT_FETCH"
 	queueinfo.APIType = "GET"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -203,7 +216,7 @@ func (s AccountController) GetPaymentDetails(c *gin.Context) {
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -213,6 +226,11 @@ func (s AccountController) GetPaymentDetails(c *gin.Context) {
 	var account models.AccountPayment
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
+
+	if queueinfo.ResponseCode != "00" {
+		account.ResponseCode = queueinfo.ResponseCode
+		account.ResponseDescription = queueinfo.ResponseDescription
+	}
 
 	if account.ResponseCode != "00" {
 		c.JSON(400, account)
@@ -226,6 +244,8 @@ func (s AccountController) EditPaymentDetails(c *gin.Context) {
 	//API to Edit account details
 	version := helpers.GetVersion()
 	var queueinfo queue.Queue
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	queueinfo.Category = "ACCOUNT_PAYMENT_EDIT"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
@@ -241,7 +261,7 @@ func (s AccountController) EditPaymentDetails(c *gin.Context) {
 	}
 	x, _ := ioutil.ReadAll(c.Request.Body)
 	queueinfo.RequestInfo = string(x)
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -274,6 +294,8 @@ func (s AccountController) GetOrganizationDetails(c *gin.Context) {
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_ORG_FETCH"
 	queueinfo.APIType = "GET"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -286,7 +308,7 @@ func (s AccountController) GetOrganizationDetails(c *gin.Context) {
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -296,6 +318,11 @@ func (s AccountController) GetOrganizationDetails(c *gin.Context) {
 	var account models.AccountOrg
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
+
+	if queueinfo.ResponseCode != "00" {
+		account.ResponseCode = queueinfo.ResponseCode
+		account.ResponseDescription = queueinfo.ResponseDescription
+	}
 
 	if account.ResponseCode != "00" {
 		c.JSON(400, account)
@@ -311,6 +338,8 @@ func (s AccountController) EditOrganizationDetails(c *gin.Context) {
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_ORG_EDIT"
 	queueinfo.APIType = "PUT"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -324,7 +353,7 @@ func (s AccountController) EditOrganizationDetails(c *gin.Context) {
 	}
 	x, _ := ioutil.ReadAll(c.Request.Body)
 	queueinfo.RequestInfo = string(x)
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -356,6 +385,8 @@ func (s AccountController) Close(c *gin.Context) {
 
 	queueinfo.Category = "ACCOUNT_CLOSE"
 	queueinfo.APIType = "POST"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -368,7 +399,7 @@ func (s AccountController) Close(c *gin.Context) {
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
@@ -377,6 +408,11 @@ func (s AccountController) Close(c *gin.Context) {
 	var account models.Account
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
+
+	if queueinfo.ResponseCode != "00" {
+		account.ResponseCode = queueinfo.ResponseCode
+		account.ResponseDescription = queueinfo.ResponseDescription
+	}
 
 	if account.ResponseCode != "00" {
 		c.JSON(400, account)
@@ -393,6 +429,8 @@ func (s AccountController) Suspend(c *gin.Context) {
 
 	queueinfo.Category = "ACCOUNT_SUSPEND"
 	queueinfo.APIType = "POST"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -405,7 +443,7 @@ func (s AccountController) Suspend(c *gin.Context) {
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
@@ -414,6 +452,11 @@ func (s AccountController) Suspend(c *gin.Context) {
 	var account models.Account
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
+
+	if queueinfo.ResponseCode != "00" {
+		account.ResponseCode = queueinfo.ResponseCode
+		account.ResponseDescription = queueinfo.ResponseDescription
+	}
 
 	if account.ResponseCode != "00" {
 		c.JSON(400, account)
@@ -430,6 +473,8 @@ func (s AccountController) ApiKey(c *gin.Context) {
 
 	queueinfo.Category = "ACCOUNT_APIKEY_RENEW"
 	queueinfo.APIType = "POST"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -442,7 +487,7 @@ func (s AccountController) ApiKey(c *gin.Context) {
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
@@ -451,6 +496,11 @@ func (s AccountController) ApiKey(c *gin.Context) {
 	var apikey models.AccountAPIKey
 	apikeybyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(apikeybyte, &apikey)
+
+	if queueinfo.ResponseCode != "00" {
+		apikey.ResponseCode = queueinfo.ResponseCode
+		apikey.ResponseDescription = queueinfo.ResponseDescription
+	}
 
 	if apikey.ResponseCode != "00" {
 		c.JSON(400, apikey)
@@ -467,6 +517,8 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_ADDRESS_EDIT"
 	queueinfo.APIType = "PUT"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -480,7 +532,7 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 	}
 	x, _ := ioutil.ReadAll(c.Request.Body)
 	queueinfo.RequestInfo = string(x)
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -513,6 +565,8 @@ func (s AccountController) AddressFetch(c *gin.Context) {
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_ADDRESS_FETCH"
 	queueinfo.APIType = "GET"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -525,7 +579,7 @@ func (s AccountController) AddressFetch(c *gin.Context) {
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -535,6 +589,11 @@ func (s AccountController) AddressFetch(c *gin.Context) {
 	var account models.AccountAddress
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
+
+	if queueinfo.ResponseCode != "00" {
+		account.ResponseCode = queueinfo.ResponseCode
+		account.ResponseDescription = queueinfo.ResponseDescription
+	}
 
 	if account.ResponseCode != "00" {
 		c.JSON(400, account)
@@ -551,6 +610,8 @@ func (s AccountController) AddressAdd(c *gin.Context) {
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_ADDRESS_NEW"
 	queueinfo.APIType = "POST"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -564,7 +625,7 @@ func (s AccountController) AddressAdd(c *gin.Context) {
 	}
 	x, _ := ioutil.ReadAll(c.Request.Body)
 	queueinfo.RequestInfo = string(x)
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -596,6 +657,8 @@ func (s AccountController) AddressRemove(c *gin.Context) {
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_ADDRESS_DELETE"
 	queueinfo.APIType = "DELETE"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -608,7 +671,7 @@ func (s AccountController) AddressRemove(c *gin.Context) {
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
@@ -617,6 +680,11 @@ func (s AccountController) AddressRemove(c *gin.Context) {
 	var address models.Address
 	addressbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(addressbyte, &address)
+
+	if queueinfo.ResponseCode != "00" {
+		address.ResponseCode = queueinfo.ResponseCode
+		address.ResponseDescription = queueinfo.ResponseDescription
+	}
 
 	if address.ResponseCode != "00" {
 		c.JSON(400, address)
@@ -633,6 +701,8 @@ func (s AccountController) ContactFetch(c *gin.Context) {
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_CONTACT_FETCH"
 	queueinfo.APIType = "GET"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -645,7 +715,7 @@ func (s AccountController) ContactFetch(c *gin.Context) {
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -655,6 +725,11 @@ func (s AccountController) ContactFetch(c *gin.Context) {
 	var account models.AccountContact
 	accountbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(accountbyte, &account)
+
+	if queueinfo.ResponseCode != "00" {
+		account.ResponseCode = queueinfo.ResponseCode
+		account.ResponseDescription = queueinfo.ResponseDescription
+	}
 
 	if account.ResponseCode != "00" {
 		c.JSON(400, account)
@@ -671,6 +746,8 @@ func (s AccountController) ContactEdit(c *gin.Context) {
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_CONTACT_EDIT"
 	queueinfo.APIType = "PUT"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -684,7 +761,7 @@ func (s AccountController) ContactEdit(c *gin.Context) {
 	}
 	x, _ := ioutil.ReadAll(c.Request.Body)
 	queueinfo.RequestInfo = string(x)
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -717,6 +794,8 @@ func (s AccountController) ContactAdd(c *gin.Context) {
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_CONTACT_NEW"
 	queueinfo.APIType = "POST"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -730,7 +809,7 @@ func (s AccountController) ContactAdd(c *gin.Context) {
 	}
 	x, _ := ioutil.ReadAll(c.Request.Body)
 	queueinfo.RequestInfo = string(x)
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 
 	if err != nil {
 		c.AbortWithError(404, err)
@@ -762,6 +841,8 @@ func (s AccountController) ContactRemove(c *gin.Context) {
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_CONTACT_DELETE"
 	queueinfo.APIType = "DELETE"
+	t, err := extractToken(c)
+	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
 		queueinfo.APIURL = c.Request.RequestURI
@@ -774,7 +855,7 @@ func (s AccountController) ContactRemove(c *gin.Context) {
 		queueinfo.Version = version
 	}
 	queueinfo.RequestInfo = "{}"
-	queueinfo, err := queue.QueueProcess(queueinfo)
+	queueinfo, err = queue.QueueProcess(queueinfo)
 	if err != nil {
 		c.AbortWithError(404, err)
 		return
@@ -783,6 +864,11 @@ func (s AccountController) ContactRemove(c *gin.Context) {
 	var contact models.Contact
 	contactbyte := []byte(queueinfo.ResponseInfo)
 	json.Unmarshal(contactbyte, &contact)
+
+	if queueinfo.ResponseCode != "00" {
+		contact.ResponseCode = queueinfo.ResponseCode
+		contact.ResponseDescription = queueinfo.ResponseDescription
+	}
 
 	if contact.ResponseCode != "00" {
 		c.JSON(400, contact)
@@ -820,6 +906,8 @@ func (s AccountController) AccountBalance(c *gin.Context) {
 		var queueinfo queue.Queue
 		queueinfo.Category = "ACCOUNT_WALLET_BALANCE"
 		queueinfo.APIType = "GET"
+		t, err := extractToken(c)
+		queueinfo.Token = t
 		URLArray := strings.Split(c.Request.RequestURI, "/")
 		if URLArray[1] != "account" {
 			queueinfo.APIURL = c.Request.RequestURI
@@ -832,7 +920,7 @@ func (s AccountController) AccountBalance(c *gin.Context) {
 			queueinfo.Version = version
 		}
 		queueinfo.RequestInfo = "{}"
-		queueinfo, err := queue.QueueProcess(queueinfo)
+		queueinfo, err = queue.QueueProcess(queueinfo)
 
 		if err != nil {
 			c.AbortWithError(404, err)
@@ -841,6 +929,11 @@ func (s AccountController) AccountBalance(c *gin.Context) {
 		var account models.AccountWallet
 		accountbyte := []byte(queueinfo.ResponseInfo)
 		json.Unmarshal(accountbyte, &account)
+
+		if queueinfo.ResponseCode != "00" {
+			account.ResponseCode = queueinfo.ResponseCode
+			account.ResponseDescription = queueinfo.ResponseDescription
+		}
 
 		if account.ResponseCode == "00" {
 			c.JSON(200, account)
@@ -950,6 +1043,8 @@ func (s AccountController) OrderSummary(c *gin.Context) {
 
 		queueinfo.Category = "ORDER_SUMMARY"
 		queueinfo.APIType = "GET"
+		t, err := extractToken(c)
+		queueinfo.Token = t
 		URLArray := strings.Split(c.Request.RequestURI, "/")
 		if URLArray[1] != "order" {
 			queueinfo.APIURL = c.Request.RequestURI
@@ -962,7 +1057,7 @@ func (s AccountController) OrderSummary(c *gin.Context) {
 			queueinfo.Version = version
 		}
 		queueinfo.RequestInfo = "{}"
-		queueinfo, err := queue.QueueProcess(queueinfo)
+		queueinfo, err = queue.QueueProcess(queueinfo)
 		if err != nil {
 			c.AbortWithError(404, err)
 			return
@@ -972,7 +1067,16 @@ func (s AccountController) OrderSummary(c *gin.Context) {
 
 		json.Unmarshal(orderbyte, &order)
 
-		c.JSON(200, order)
+		if queueinfo.ResponseCode != "00" {
+			order.ResponseCode = queueinfo.ResponseCode
+			order.ResponseDescription = queueinfo.ResponseDescription
+		}
+
+		if order.ResponseCode == "00" {
+			c.JSON(200, order)
+		} else {
+			c.JSON(400, order)
+		}
 	}
 }
 
@@ -1017,6 +1121,8 @@ func (s AccountController) OrderList(c *gin.Context) {
 
 		queueinfo.Category = "ORDER_LIST"
 		queueinfo.APIType = "GET"
+		t, err := extractToken(c)
+		queueinfo.Token = t
 		URLArray := strings.Split(c.Request.RequestURI, "/")
 		if URLArray[1] != "order" {
 			queueinfo.APIURL = c.Request.RequestURI
@@ -1029,7 +1135,7 @@ func (s AccountController) OrderList(c *gin.Context) {
 			queueinfo.Version = version
 		}
 		queueinfo.RequestInfo = "{}"
-		queueinfo, err := queue.QueueProcess(queueinfo)
+		queueinfo, err = queue.QueueProcess(queueinfo)
 		if err != nil {
 			c.AbortWithError(404, err)
 			return
@@ -1075,6 +1181,8 @@ func (s AccountController) ActivityList(c *gin.Context) {
 
 		queueinfo.Category = "ACTIVITY_LIST"
 		queueinfo.APIType = "GET"
+		t, err := extractToken(c)
+		queueinfo.Token = t
 		URLArray := strings.Split(c.Request.RequestURI, "/")
 		if URLArray[1] != "account" {
 			queueinfo.APIURL = c.Request.RequestURI
@@ -1087,7 +1195,7 @@ func (s AccountController) ActivityList(c *gin.Context) {
 			queueinfo.Version = version
 		}
 		queueinfo.RequestInfo = "{}"
-		queueinfo, err := queue.QueueProcess(queueinfo)
+		queueinfo, err = queue.QueueProcess(queueinfo)
 		if err != nil {
 			c.AbortWithError(404, err)
 			return

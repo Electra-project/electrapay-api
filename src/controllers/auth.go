@@ -195,7 +195,6 @@ func authenticate(email string, password string) (models.Account, error) {
 	queueinfo.Version = "v1"
 	queueinfo.RequestInfo = "{\"Email\": \"" + email + "\", \"Password\": \"" + password + "\"}"
 	queueinfo, err := queue.QueueProcess(queueinfo)
-
 	if err != nil {
 		return account, err
 	}
@@ -204,6 +203,10 @@ func authenticate(email string, password string) (models.Account, error) {
 	json.Unmarshal(accountbyte, &account)
 	if account.ContactEmail == email {
 		return account, nil
+	}
+	if queueinfo.ResponseCode != "00" {
+		account.ResponseCode = queueinfo.ResponseCode
+		account.ResponseDescription = queueinfo.ResponseDescription
 	}
 	return account, nil
 

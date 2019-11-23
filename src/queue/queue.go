@@ -15,6 +15,7 @@ type Queue struct {
 	APIType             string    `json: "apitype"`
 	Version             string    `json: "version"`
 	Parameters          string    `json: "parameters"`
+	Token               string    `json: "token"`
 	Status              string    `json: "status"`
 	RequestDate         time.Time `json: "request_date"`
 	RequestInfo         string    `json: "request_info"`
@@ -46,14 +47,15 @@ func QueueProcess(queue Queue) (Queue, error) {
 	if error != nil {
 		return queue, error
 	}
+
 	return queue, error
 }
 
 func queueAdd(queue Queue) (Queue, error) {
 
 	db := mysqldatabase.GetQueueDatabase()
-	queue.ResponseCode = "00"
-	queue.ResponseDescription = "SUCCESS"
+	queue.ResponseCode = "Q001"
+	queue.ResponseDescription = "TIMEOUT"
 	stmt, err := db.Prepare("INSERT INTO " +
 		"queue(" +
 		"reference, " +
@@ -62,7 +64,7 @@ func queueAdd(queue Queue) (Queue, error) {
 		"api_type, " +
 		"version, " +
 		"parameters, " +
-		"request_date, " +
+		"token, " +
 		"request_info, " +
 		"response_code, " +
 		"response_info, " +
@@ -74,7 +76,8 @@ func queueAdd(queue Queue) (Queue, error) {
 		return Queue{}, err
 	}
 	res, err := stmt.Exec(queue.Reference, queue.Category, queue.APIURL, queue.APIType,
-		queue.Version, queue.Parameters, time.Now().UTC(), queue.RequestInfo, queue.ResponseCode, "", queue.ResponseDescription)
+		queue.Version, queue.Parameters, queue.Token,
+		queue.RequestInfo, queue.ResponseCode, "", queue.ResponseDescription)
 	if err != nil {
 		helpers.LogErr("Queue : Cannot insert into Queue to process - " + err.Error())
 		return Queue{}, err
@@ -101,7 +104,7 @@ func queueWaitResponse(queue Queue) (Queue, error) {
 	queueLoop := 1
 	queuestatus := ""
 	db := mysqldatabase.GetQueueDatabase()
-	for queueLoop < 30 {
+	for queueLoop < 300 {
 		err := db.QueryRow("SELECT status "+
 			"FROM queue "+
 			"WHERE id = ? ", queue.Id).Scan(
@@ -113,10 +116,10 @@ func queueWaitResponse(queue Queue) (Queue, error) {
 		if queuestatus != "COMPLETED_PROCESSING" {
 			helpers.LogErr("Queue : Still Processing")
 		} else {
-			queueLoop = 30
+			queueLoop = 9999
 		}
 		queueLoop = queueLoop + 1
-		time.Sleep(200 * time.Millisecond)
+		time.Sleep(100 * time.Millisecond)
 	}
 	queueinfo, err := queueGet(queue.Id)
 	return queueinfo, err
@@ -176,13 +179,13 @@ func queueClose(queue Queue) (Queue, error) {
 		"set response_code = ?," +
 		"response_description = ?, " +
 		"status = ?, " +
-		"response_date = ? " +
+		"response_date =now() " +
 		"WHERE id = ?")
 	if err != nil {
 		helpers.LogErr("Queue : Cannot update Queue to Close it - " + err.Error())
 		return Queue{}, err
 	}
-	res, err := stmt.Exec(queue.ResponseCode, queue.ResponseDescription, "COMPLETED", time.Now().UTC(), queue.Id)
+	res, err := stmt.Exec(queue.ResponseCode, queue.ResponseDescription, "COMPLETED", queue.Id)
 	if err != nil {
 		helpers.LogErr("Queue :  Cannot update Queue to Close it - " + err.Error())
 		return Queue{}, err
