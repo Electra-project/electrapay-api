@@ -54,8 +54,8 @@ func QueueProcess(queue Queue) (Queue, error) {
 func queueAdd(queue Queue) (Queue, error) {
 
 	db := mysqldatabase.GetQueueDatabase()
-	queue.ResponseCode = "00"
-	queue.ResponseDescription = "SUCCESS"
+	queue.ResponseCode = "Q001"
+	queue.ResponseDescription = "TIMEOUT"
 	stmt, err := db.Prepare("INSERT INTO " +
 		"queue(" +
 		"reference, " +
@@ -65,12 +65,11 @@ func queueAdd(queue Queue) (Queue, error) {
 		"version, " +
 		"parameters, " +
 		"token, " +
-		"request_date, " +
 		"request_info, " +
 		"response_code, " +
 		"response_info, " +
 		"response_description)  " +
-		"VALUES(?,?,?,?,?,?,?,?,?,?,?,?)")
+		"VALUES(?,?,?,?,?,?,?,?,?,?,?)")
 
 	if err != nil {
 		helpers.LogErr("Queue : Cannot update Queue to process - " + err.Error())
@@ -78,7 +77,7 @@ func queueAdd(queue Queue) (Queue, error) {
 	}
 	res, err := stmt.Exec(queue.Reference, queue.Category, queue.APIURL, queue.APIType,
 		queue.Version, queue.Parameters, queue.Token,
-		time.Now().UTC(), queue.RequestInfo, queue.ResponseCode, "", queue.ResponseDescription)
+		queue.RequestInfo, queue.ResponseCode, "", queue.ResponseDescription)
 	if err != nil {
 		helpers.LogErr("Queue : Cannot insert into Queue to process - " + err.Error())
 		return Queue{}, err
@@ -105,7 +104,7 @@ func queueWaitResponse(queue Queue) (Queue, error) {
 	queueLoop := 1
 	queuestatus := ""
 	db := mysqldatabase.GetQueueDatabase()
-	for queueLoop < 30 {
+	for queueLoop < 300 {
 		err := db.QueryRow("SELECT status "+
 			"FROM queue "+
 			"WHERE id = ? ", queue.Id).Scan(
@@ -121,9 +120,6 @@ func queueWaitResponse(queue Queue) (Queue, error) {
 		}
 		queueLoop = queueLoop + 1
 		time.Sleep(100 * time.Millisecond)
-	}
-	if queueLoop != 30 {
-		queueTimeout(queue)
 	}
 	queueinfo, err := queueGet(queue.Id)
 	return queueinfo, err
@@ -183,45 +179,19 @@ func queueClose(queue Queue) (Queue, error) {
 		"set response_code = ?," +
 		"response_description = ?, " +
 		"status = ?, " +
-		"response_date = ? " +
+		"response_date =now() " +
 		"WHERE id = ?")
 	if err != nil {
 		helpers.LogErr("Queue : Cannot update Queue to Close it - " + err.Error())
 		return Queue{}, err
 	}
-	res, err := stmt.Exec(queue.ResponseCode, queue.ResponseDescription, "COMPLETED", time.Now().UTC(), queue.Id)
+	res, err := stmt.Exec(queue.ResponseCode, queue.ResponseDescription, "COMPLETED", queue.Id)
 	if err != nil {
 		helpers.LogErr("Queue :  Cannot update Queue to Close it - " + err.Error())
 		return Queue{}, err
 	}
 	rowCnt, err := res.RowsAffected()
 	helpers.LogInfo("Queue : Queue marked closed " + string(rowCnt) + "Row(s)")
-	stmt.Close()
-
-	return queue, nil
-
-}
-
-func queueTimeout(queue Queue) (Queue, error) {
-
-	db := mysqldatabase.GetQueueDatabase()
-	stmt, err := db.Prepare("UPDATE queue " +
-		"set response_code = ?," +
-		"response_description = ?, " +
-		"status = ?, " +
-		"response_date = ? " +
-		"WHERE id = ?")
-	if err != nil {
-		helpers.LogErr("Queue : Cannot update Queue to Close it - " + err.Error())
-		return Queue{}, err
-	}
-	res, err := stmt.Exec("91", "TIMEOUT", "COMPLETED", time.Now().UTC(), queue.Id)
-	if err != nil {
-		helpers.LogErr("Queue :  Cannot update Queue to Close it - " + err.Error())
-		return Queue{}, err
-	}
-	rowCnt, err := res.RowsAffected()
-	helpers.LogInfo("Queue : Queue marked timeout " + string(rowCnt) + "Row(s)")
 	stmt.Close()
 
 	return queue, nil
