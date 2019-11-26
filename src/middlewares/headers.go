@@ -1,8 +1,8 @@
 package middlewares
 
 import (
-	"github.com/Electra-project/electrapay-api/src/helpers"
 	"github.com/gin-gonic/gin"
+	"github.com/ruannelloyd/electrapay-api/src/helpers"
 )
 
 func ResponseHeaders() gin.HandlerFunc {

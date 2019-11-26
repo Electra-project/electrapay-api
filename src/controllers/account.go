@@ -3,9 +3,9 @@ package controllers
 import "github.com/gin-gonic/gin"
 import (
 	"encoding/json"
-	"github.com/Electra-project/electrapay-api/src/helpers"
-	"github.com/Electra-project/electrapay-api/src/models"
-	"github.com/Electra-project/electrapay-api/src/queue"
+	"github.com/ruannelloyd/electrapay-api/src/helpers"
+	"github.com/ruannelloyd/electrapay-api/src/models"
+	"github.com/ruannelloyd/electrapay-api/src/queue"
 	"github.com/shopspring/decimal"
 	"io/ioutil"
 	"strconv"
@@ -1132,6 +1132,76 @@ func (s AccountController) OrderList(c *gin.Context) {
 		if URLArray[1] == "order" {
 			queueinfo.APIURL = c.Request.RequestURI
 			queueinfo.Parameters = c.Param("accountid")
+			queueinfo.Version = version
+		}
+		queueinfo.RequestInfo = "{}"
+		queueinfo, err = queue.QueueProcess(queueinfo)
+		if err != nil {
+			c.AbortWithError(404, err)
+			return
+		}
+		var orderlist []models.OrderView
+		orderbyte := []byte(queueinfo.ResponseInfo)
+
+		json.Unmarshal(orderbyte, &orderlist)
+
+		c.JSON(200, orderlist)
+	}
+
+}
+
+func (s AccountController) OrderListMax(c *gin.Context) {
+
+	if c.Request.Header.Get("mock") == "yes" {
+		var amount decimal.Decimal
+		var i int64
+		amount, _ = decimal.NewFromString("10.00")
+		var queueinfo queue.Queue
+
+		var orderlist []models.OrderView
+		orderbyte := []byte(queueinfo.ResponseInfo)
+
+		for i = 0; i < 10; i++ {
+
+			var orderview models.OrderView
+			orderview.OrderId = i
+			orderview.Reference = strings.Join([]string{"ord#", strconv.FormatInt(i+1, 10)}, "")
+			orderview.Paymentcategory = "ElectraPay Donation"
+			orderview.OrderCurrency = "USD"
+			orderview.OrderAmount = amount
+			orderview.QuoteCurrency = "ECA"
+			orderview.QuoteTotal = amount
+			orderview.OrderDate = time.Now()
+			orderview.OrderQuoteSubmittedDate = time.Now()
+			orderview.OrderReceivedPaymentDate = time.Now()
+			orderview.OrderSettled = true
+			orderview.OrderStatus = "SETTLED"
+
+			orderlist = append(orderlist, orderview)
+		}
+
+		json.Unmarshal(orderbyte, &orderlist)
+
+		c.JSON(200, orderlist)
+
+	} else {
+
+		var queueinfo queue.Queue
+		version := helpers.GetVersion()
+
+		queueinfo.Category = "ORDER_LIST_MAX"
+		queueinfo.APIType = "GET"
+		t, err := extractToken(c)
+		queueinfo.Token = t
+		URLArray := strings.Split(c.Request.RequestURI, "/")
+		if URLArray[1] != "order" {
+			queueinfo.APIURL = c.Request.RequestURI
+			queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("maxlimit")
+			queueinfo.Version = URLArray[1]
+		}
+		if URLArray[1] == "order" {
+			queueinfo.APIURL = c.Request.RequestURI
+			queueinfo.Parameters = c.Param("accountid") + "?" + c.Param("maxlimit")
 			queueinfo.Version = version
 		}
 		queueinfo.RequestInfo = "{}"

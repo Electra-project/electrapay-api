@@ -3,8 +3,8 @@ package controllers
 import "github.com/gin-gonic/gin"
 import (
 	"encoding/json"
-	"github.com/Electra-project/electrapay-api/src/helpers"
-	"github.com/Electra-project/electrapay-api/src/queue"
+	"github.com/ruannelloyd/electrapay-api/src/helpers"
+	"github.com/ruannelloyd/electrapay-api/src/queue"
 	"strings"
 )
 

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/Electra-project/electrapay-api/src/helpers"
-	"github.com/Electra-project/electrapay-api/src/server"
 	"github.com/joho/godotenv"
+	"github.com/ruannelloyd/electrapay-api/src/helpers"
+	"github.com/ruannelloyd/electrapay-api/src/server"
 	"os"
 )
 
