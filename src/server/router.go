@@ -116,6 +116,9 @@ func Router() *gin.Engine {
 		auth.GET("/"+version+"/account/orderlist/:accountid", accountController.OrderList)
 		auth.GET("/account/orderlist/:accountid", accountController.OrderList)
 
+		auth.GET("/"+version+"/account/orderlist/:accountid/:maxlimit", accountController.OrderListMax)
+		auth.GET("/account/orderlist/:accountid/:maxlimit", accountController.OrderListMax)
+
 		auth.GET("/"+version+"/account/activitylist/:accountid", accountController.ActivityList)
 		auth.GET("/account/activitylist/:accountid", accountController.ActivityList)
 	}
