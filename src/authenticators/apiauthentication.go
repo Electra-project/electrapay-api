@@ -4,10 +4,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"github.com/Electra-project/electrapay-api/src/helpers"
-	"github.com/Electra-project/electrapay-api/src/models"
-	"github.com/Electra-project/electrapay-api/src/queue"
 	"github.com/gin-gonic/gin"
+	"github.com/ruannelloyd/electrapay-api/src/helpers"
+	"github.com/ruannelloyd/electrapay-api/src/models"
+	"github.com/ruannelloyd/electrapay-api/src/queue"
 	"strconv"
 	"strings"
 )

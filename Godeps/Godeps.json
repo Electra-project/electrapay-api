@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/Electra-project/electrapay-api",
+	"ImportPath": "github.com/ruannelloyd/electrapay-api",
 	"GoVersion": "go1.10",
 	"GodepVersion": "v80",
 	"Packages": [

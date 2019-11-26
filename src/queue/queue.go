@@ -1,8 +1,8 @@
 package queue
 
 import (
-	mysqldatabase "github.com/Electra-project/electrapay-api/src/database"
-	"github.com/Electra-project/electrapay-api/src/helpers"
+	mysqldatabase "github.com/ruannelloyd/electrapay-api/src/database"
+	"github.com/ruannelloyd/electrapay-api/src/helpers"
 	"github.com/satori/go.uuid"
 	"time"
 )

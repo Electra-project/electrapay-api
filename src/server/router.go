@@ -1,11 +1,11 @@
 package server
 
 import (
-	"github.com/Electra-project/electrapay-api/src/authenticators"
-	"github.com/Electra-project/electrapay-api/src/controllers"
-	"github.com/Electra-project/electrapay-api/src/helpers"
-	"github.com/Electra-project/electrapay-api/src/middlewares"
 	"github.com/gin-gonic/gin"
+	"github.com/ruannelloyd/electrapay-api/src/authenticators"
+	"github.com/ruannelloyd/electrapay-api/src/controllers"
+	"github.com/ruannelloyd/electrapay-api/src/helpers"
+	"github.com/ruannelloyd/electrapay-api/src/middlewares"
 )
 
 func Router() *gin.Engine {
