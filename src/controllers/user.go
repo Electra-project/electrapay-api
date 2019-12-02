@@ -195,3 +195,49 @@ func (s UserController) Edit(c *gin.Context) {
 	}
 
 }
+
+func (s UserController) EditAvatar(c *gin.Context) {
+	//API to edit user information
+
+	var queueinfo queue.Queue
+	queueinfo.Category = "USER_AVATAR_EDIT"
+	queueinfo.APIType = "PUT"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	version := helpers.GetVersion()
+
+	if URLArray[1] != "user" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("email")
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "user" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("email")
+		queueinfo.Version = version
+	}
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	queueinfo.RequestInfo = string(x)
+	queueinfo, err := queue.QueueProcess(queueinfo)
+
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+
+	if queueinfo.ResponseCode != "00" {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.JSON(400, returnError)
+	} else {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.JSON(200, returnError)
+	}
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+
+}

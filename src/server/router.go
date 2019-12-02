@@ -61,6 +61,8 @@ func Router() *gin.Engine {
 		authUser.GET("/user/avatar/:email", userController.GetAvatar)
 		authUser.PUT("/"+version+"/user/:email", userController.Edit)
 		authUser.PUT("/user/:email", userController.Edit)
+		authUser.PUT("/"+version+"/user/avatar/:email", userController.EditAvatar)
+		authUser.PUT("/user/avatar/:email", userController.EditAvatar)
 	}
 
 	auth := router.Group("/")
@@ -71,6 +73,8 @@ func Router() *gin.Engine {
 
 		auth.GET("/"+version+"/account/logo/:accountid", accountController.GetAccountLogo)
 		auth.GET("/account/logo/:accountid", accountController.GetAccountLogo)
+		auth.PUT("/"+version+"/account/logo/:accountid", accountController.EditAccountLogo)
+		auth.PUT("/account/logo/:accountid", accountController.EditAccountLogo)
 
 		auth.GET("/"+version+"/account/personalinformation/:accountid", accountController.GetPersonalInformation)
 		auth.GET("/account/personalinformation/:accountid", accountController.GetPersonalInformation)

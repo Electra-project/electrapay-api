@@ -140,6 +140,47 @@ func (s AccountController) GetAccountLogo(c *gin.Context) {
 	}
 }
 
+func (s AccountController) EditAccountLogo(c *gin.Context) {
+
+	//API to Edit account details
+	version := helpers.GetVersion()
+	var queueinfo queue.Queue
+	queueinfo.Category = "ACCOUNT_LOGOL_EDIT"
+	queueinfo.APIType = "PUT"
+	t, err := extractToken(c)
+	queueinfo.Token = t
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if URLArray[1] != "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Version = version
+	}
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	queueinfo.RequestInfo = string(x)
+	queueinfo, err = queue.QueueProcess(queueinfo)
+
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+	if queueinfo.ResponseCode != "00" {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.JSON(400, returnError)
+	} else {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.JSON(200, returnError)
+	}
+}
+
 func (s AccountController) GetPersonalInformation(c *gin.Context) {
 	//API to retrieve account information
 	// We get the authenticated user
