@@ -1144,8 +1144,13 @@ func (s AccountController) OrderList(c *gin.Context) {
 		orderbyte := []byte(queueinfo.ResponseInfo)
 
 		json.Unmarshal(orderbyte, &orderlist)
+		if len(orderlist) == 0 {
+			empty := []string{}
+			c.JSON(200, empty)
+		} else {
+			c.JSON(200, orderlist)
+		}
 
-		c.JSON(200, orderlist)
 	}
 
 }
@@ -1215,7 +1220,12 @@ func (s AccountController) OrderListMax(c *gin.Context) {
 
 		json.Unmarshal(orderbyte, &orderlist)
 
-		c.JSON(200, orderlist)
+		if len(orderlist) == 0 {
+			empty := []string{}
+			c.JSON(200, empty)
+		} else {
+			c.JSON(200, orderlist)
+		}
 	}
 
 }
@@ -1275,7 +1285,12 @@ func (s AccountController) ActivityList(c *gin.Context) {
 
 		json.Unmarshal(activitybyte, &activitylist)
 
-		c.JSON(200, activitylist)
+		if len(activitylist) == 0 {
+			empty := []string{}
+			c.JSON(200, empty)
+		} else {
+			c.JSON(200, activitylist)
+		}
 	}
 
 }
