@@ -101,6 +101,45 @@ func (s AccountController) GetAccount(c *gin.Context) {
 	}
 }
 
+func (s AccountController) GetAccountLogo(c *gin.Context) {
+	//API to retrieve account logo information
+	// We get the authenticated user
+
+	version := helpers.GetVersion()
+	t, err := extractToken(c)
+
+	var queueinfo queue.Queue
+	queueinfo.Category = "ACCOUNT_LOGO_FETCH"
+	queueinfo.APIType = "GET"
+	queueinfo.Token = t
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if URLArray[1] != "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Version = version
+	}
+	queueinfo.RequestInfo = "{}"
+	queueinfo, err = queue.QueueProcess(queueinfo)
+
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+
+	logo := queueinfo.ResponseInfo
+
+	if len(logo) < 1 {
+		c.JSON(400, "")
+	} else {
+		c.JSON(200, logo)
+	}
+}
+
 func (s AccountController) GetPersonalInformation(c *gin.Context) {
 	//API to retrieve account information
 	// We get the authenticated user

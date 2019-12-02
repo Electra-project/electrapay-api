@@ -57,6 +57,8 @@ func Router() *gin.Engine {
 	{
 		authUser.GET("/"+version+"/user/:email", userController.Get)
 		authUser.GET("/user/:email", userController.Get)
+		authUser.GET("/"+version+"/user/avatar/:email", userController.GetAvatar)
+		authUser.GET("/user/avatar/:email", userController.GetAvatar)
 		authUser.PUT("/"+version+"/user/:email", userController.Edit)
 		authUser.PUT("/user/:email", userController.Edit)
 	}
@@ -66,6 +68,9 @@ func Router() *gin.Engine {
 	{
 		auth.GET("/"+version+"/account/details/:accountid", accountController.GetAccount)
 		auth.GET("/account/details/:accountid", accountController.GetAccount)
+
+		auth.GET("/"+version+"/account/logo/:accountid", accountController.GetAccountLogo)
+		auth.GET("/account/logo/:accountid", accountController.GetAccountLogo)
 
 		auth.GET("/"+version+"/account/personalinformation/:accountid", accountController.GetPersonalInformation)
 		auth.GET("/account/personalinformation/:accountid", accountController.GetPersonalInformation)

@@ -101,6 +101,50 @@ func (s UserController) Get(c *gin.Context) {
 
 }
 
+func (s UserController) GetAvatar(c *gin.Context) {
+	//API to retrieve User information
+
+	var queueinfo queue.Queue
+	queueinfo.Category = "USER_AVATAR_FETCH"
+	queueinfo.APIType = "GET"
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	version := helpers.GetVersion()
+
+	if URLArray[1] != "user" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("email")
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "user" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("email")
+		queueinfo.Version = version
+	}
+	queueinfo.RequestInfo = "{}"
+	queueinfo, err := queue.QueueProcess(queueinfo)
+
+	if queueinfo.ResponseCode != "00" {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.JSON(400, returnError)
+	} else {
+		var avatar string
+		avatar = queueinfo.ResponseInfo
+
+		if len(avatar) < 1 {
+			c.JSON(400, "")
+		} else {
+			c.JSON(200, avatar)
+		}
+	}
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+
+}
+
 func (s UserController) Edit(c *gin.Context) {
 	//API to edit user information
 
