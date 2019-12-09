@@ -7,7 +7,6 @@ type UserInfo struct {
 	Firstname           string           `json:"firstname"`
 	Middlename          string           `json:"middlename"`
 	Lastname            string           `json:"lastname"`
-	Avatar              string           `json:"avatar"`
 	Telephone           string           `json:"telephone"`
 	Mobile              string           `json:"mobile"`
 	Status              string           `json:"status"`

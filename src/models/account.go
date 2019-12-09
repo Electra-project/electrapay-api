@@ -11,8 +11,6 @@ type Account struct {
 	Name                string   `json:"name"`
 	Description         string   `json:"description"`
 	Type                string   `json:"accounttype"`
-	LogoURL             string   `json:"logourl"`
-	LogoImg             string   `json:"logoimg"`
 	Address1            string   `json:"address1"`
 	Address2            string   `json:"address2"`
 	Address3            string   `json:"address3"`
@@ -65,8 +63,6 @@ type AccountPersonal struct {
 	Name                string `json:"name"`
 	Description         string `json:"description"`
 	Type                string `json:"accounttype"`
-	LogoURL             string `json:"logourl"`
-	LogoImg             string `json:"logoimg"`
 	Status              string `json:"status"`
 	ResponseCode        string `json:"responsecode"`
 	ResponseDescription string `json:"responsedescription"`
