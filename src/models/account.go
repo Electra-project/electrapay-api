@@ -58,6 +58,14 @@ type AccountNew struct {
 	ResponseDescription string `json:"responsedescription"`
 }
 
+type AccountLogo struct {
+	Id                  int64  `json:"id"`
+	LogoURL             string `json:"logourl"`
+	LogoImg             string `json:"logoimg"`
+	ResponseCode        string `json:"responsecode"`
+	ResponseDescription string `json:"responsedescription"`
+}
+
 type AccountPersonal struct {
 	Id                  int64  `json:"id"`
 	Name                string `json:"name"`

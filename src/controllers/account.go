@@ -145,7 +145,7 @@ func (s AccountController) EditAccountLogo(c *gin.Context) {
 	//API to Edit account details
 	version := helpers.GetVersion()
 	var queueinfo queue.Queue
-	queueinfo.Category = "ACCOUNT_LOGOL_EDIT"
+	queueinfo.Category = "ACCOUNT_LOGO_EDIT"
 	queueinfo.APIType = "PUT"
 	t, err := extractToken(c)
 	queueinfo.Token = t
