@@ -10,6 +10,7 @@ type Account struct {
 	Uuid                string   `json:"uuid"`
 	Name                string   `json:"name"`
 	Description         string   `json:"description"`
+	LogoImg             string   `json:"logoimg"`
 	Type                string   `json:"accounttype"`
 	Address1            string   `json:"address1"`
 	Address2            string   `json:"address2"`
@@ -58,20 +59,12 @@ type AccountNew struct {
 	ResponseDescription string `json:"responsedescription"`
 }
 
-type AccountLogo struct {
-	Id                  int64  `json:"id"`
-	LogoURL             string `json:"logourl"`
-	LogoImg             string `json:"logoimg"`
-	ResponseCode        string `json:"responsecode"`
-	ResponseDescription string `json:"responsedescription"`
-}
-
 type AccountPersonal struct {
 	Id                  int64  `json:"id"`
 	Name                string `json:"name"`
 	Description         string `json:"description"`
 	Type                string `json:"accounttype"`
-	Status              string `json:"status"`
+	LogoImg             string `json:"logoimg"`
 	ResponseCode        string `json:"responsecode"`
 	ResponseDescription string `json:"responsedescription"`
 }
