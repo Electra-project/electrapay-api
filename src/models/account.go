@@ -12,6 +12,7 @@ type Account struct {
 	Description         string   `json:"description"`
 	LogoImg             string   `json:"logoimg"`
 	Type                string   `json:"accounttype"`
+	AddressId           int64    `json:"addressid"`
 	Address1            string   `json:"address1"`
 	Address2            string   `json:"address2"`
 	Address3            string   `json:"address3"`
@@ -26,6 +27,7 @@ type Account struct {
 	Currencies          []string `json:"currencies"`
 	WalletAddress       string   `json:"walletaddress"`
 	WalletCurrency      string   `json:"walletcurrency"`
+	ContactId           int64    `json:"contactid"`
 	ContactTitle        string   `json:"contacttitle"`
 	ContactFirstname    string   `json:"contactfirstname"`
 	ContactMiddlenames  string   `json:"contactmiddlenames"`
@@ -35,7 +37,7 @@ type Account struct {
 	ContactMobile       string   `json:"contactmobile"`
 	VatNo               string   `json:"vatno"`
 	DefaultVAT          int64    `json:"defaultvat"`
-	Organisation        string   `json:"orgnisation"`
+	Organisation        string   `json:"organisation"`
 	PluginType          string   `json:"plugintype"`
 	Status              string   `json:"status"`
 	ResponseCode        string   `json:"responsecode"`
