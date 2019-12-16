@@ -62,7 +62,6 @@ type AccountNew struct {
 }
 
 type AccountPersonal struct {
-	Id                  int64  `json:"id"`
 	Name                string `json:"name"`
 	Description         string `json:"description"`
 	Type                string `json:"accounttype"`
@@ -72,7 +71,6 @@ type AccountPersonal struct {
 }
 
 type AccountPayment struct {
-	Id                  int64    `json:"id"`
 	CallbackURI         string   `json:"callbackurl"`
 	Website             string   `json:"website"`
 	Currencies          []string `json:"currencies"`
@@ -84,7 +82,6 @@ type AccountPayment struct {
 }
 
 type AccountOrg struct {
-	Id                  int64  `json:"id"`
 	VatNo               string `json:"vatno"`
 	DefaultVAT          int64  `json:"defaultvat"`
 	Organisation        string `json:"organisation"`

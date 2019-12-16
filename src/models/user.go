@@ -1,7 +1,6 @@
 package models
 
 type UserInfo struct {
-	Id                  int64            `json:"id"`
 	Email               string           `json:"email"`
 	Title               string           `json:"title"`
 	Firstname           string           `json:"firstname"`
