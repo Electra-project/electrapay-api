@@ -150,3 +150,25 @@ type AccountActivity struct {
 	Description  string    `json:"description"`
 	UserName     string    `json:"username"`
 }
+
+type RuleParameter struct {
+	Parameter   string `json:"parameter"`
+	Description string `json:"description"`
+	Type        string `json:"type"`
+	Validation  string `json:"validation"`
+	Options     string `json:"options"`
+	Value       string `json:"value"`
+}
+
+type RuleCompulsory struct {
+	Value     bool   `json:"value"`
+	Condition string `json:"condition"`
+}
+
+type AccountRule struct {
+	Code        string          `json:"code"`
+	Display     string          `json:"display"`
+	Description string          `json:"description"`
+	Compulsory  RuleCompulsory  `json:"compulsory"`
+	Parameters  []RuleParameter `json:"parameters"`
+}

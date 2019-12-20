@@ -114,6 +114,9 @@ func Router() *gin.Engine {
 		auth.DELETE("/"+version+"/account/contact/:accountid/:contactid", accountController.ContactRemove)
 		auth.DELETE("/account/contact/:accountid/:contactid", accountController.ContactRemove)
 
+		auth.GET("/account/rules/:accountid", accountController.RulesFetch)
+		auth.GET("/"+version+"/account/rules/:accountid", accountController.RulesFetch)
+
 		auth.GET("/"+version+"/account/balance/:accountid", accountController.AccountBalance)
 		auth.GET("/account/balance/:accountid/", accountController.AccountBalance)
 

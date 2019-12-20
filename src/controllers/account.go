@@ -1025,6 +1025,77 @@ func (s AccountController) AccountBalance(c *gin.Context) {
 
 }
 
+func (s AccountController) RulesFetch(c *gin.Context) {
+	//API to retrieve account Rules information
+	// We get the authenticated user
+
+	version := helpers.GetVersion()
+
+	if c.Request.Header.Get("mock") == "yes" {
+		var accountrules []models.AccountRule
+		var accountrule models.AccountRule
+		var rulecompulsory models.RuleCompulsory
+		var ruleparameter models.RuleParameter
+
+		rulecompulsory.Value = true
+		rulecompulsory.Condition = ""
+
+		accountrule.Code = "001"
+		accountrule.Display = "Pay {{parameter1}} % to the Electra Foundation"
+		accountrule.Description = "Enter a percentage of the order to donate back to the Foundation"
+		accountrule.Compulsory = rulecompulsory
+
+		ruleparameter.Parameter = "parameter1"
+		ruleparameter.Type = "integer"
+		ruleparameter.Validation = "parameter1 >=2 && parameter1 <=100"
+		ruleparameter.Options = ""
+		ruleparameter.Description = "Percentage"
+		ruleparameter.Value = "2"
+		accountrule.Parameters = append(accountrule.Parameters, ruleparameter)
+
+		accountrules = append(accountrules, accountrule)
+
+		c.JSON(200, accountrules)
+	} else {
+
+		var queueinfo queue.Queue
+		queueinfo.Category = "ACCOUNT_RULES_FETCH"
+		queueinfo.APIType = "GET"
+		t, err := extractToken(c)
+		queueinfo.Token = t
+		URLArray := strings.Split(c.Request.RequestURI, "/")
+		if URLArray[1] != "account" {
+			queueinfo.APIURL = c.Request.RequestURI
+			queueinfo.Parameters = c.Param("accountid")
+			queueinfo.Version = URLArray[1]
+		}
+		if URLArray[1] == "account" {
+			queueinfo.APIURL = c.Request.RequestURI
+			queueinfo.Parameters = c.Param("accountid")
+			queueinfo.Version = version
+		}
+		queueinfo.RequestInfo = "{}"
+		queueinfo, err = queue.QueueProcess(queueinfo)
+
+		if err != nil {
+			c.AbortWithError(404, err)
+			return
+		}
+		var rulelist []models.AccountRule
+		rulelistbyte := []byte(queueinfo.ResponseInfo)
+
+		json.Unmarshal(rulelistbyte, &rulelist)
+		if len(rulelist) == 0 {
+			empty := []string{}
+			c.JSON(200, empty)
+		} else {
+			c.JSON(200, rulelist)
+		}
+
+	}
+
+}
+
 func (s AccountController) OrderSummary(c *gin.Context) {
 
 	var queueinfo queue.Queue
