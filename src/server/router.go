@@ -116,6 +116,8 @@ func Router() *gin.Engine {
 
 		auth.GET("/account/rules/:accountid", accountController.RulesFetch)
 		auth.GET("/"+version+"/account/rules/:accountid", accountController.RulesFetch)
+		auth.PUT("/account/rules/:accountid", accountController.RulesEdit)
+		auth.PUT("/"+version+"/account/rules/:accountid", accountController.RulesEdit)
 
 		auth.GET("/"+version+"/account/balance/:accountid", accountController.AccountBalance)
 		auth.GET("/account/balance/:accountid/", accountController.AccountBalance)
