@@ -1096,6 +1096,49 @@ func (s AccountController) RulesFetch(c *gin.Context) {
 
 }
 
+func (s AccountController) RulesEdit(c *gin.Context) {
+
+	//API to Edit account Contact details
+
+	var queueinfo queue.Queue
+	version := helpers.GetVersion()
+	queueinfo.Category = "ACCOUNT_RULES_EDIT"
+	queueinfo.APIType = "PUT"
+	t, err := extractToken(c)
+	queueinfo.Token = t
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if URLArray[1] != "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Version = version
+	}
+	x, _ := ioutil.ReadAll(c.Request.Body)
+	queueinfo.RequestInfo = string(x)
+	queueinfo, err = queue.QueueProcess(queueinfo)
+
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+
+	if queueinfo.ResponseCode != "00" {
+		returnError := models.Error{}
+		returnError.ResponseCode = queueinfo.ResponseCode
+		returnError.ResponseDescription = queueinfo.ResponseDescription
+		c.JSON(400, returnError)
+	} else {
+		var rulelist []models.AccountRule
+		rulebyte := []byte(queueinfo.ResponseInfo)
+		json.Unmarshal(rulebyte, &rulelist)
+		c.JSON(200, rulelist)
+	}
+}
+
 func (s AccountController) OrderSummary(c *gin.Context) {
 
 	var queueinfo queue.Queue

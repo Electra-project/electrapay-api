@@ -166,9 +166,10 @@ type RuleCompulsory struct {
 }
 
 type AccountRule struct {
-	Code        string          `json:"code"`
-	Display     string          `json:"display"`
-	Description string          `json:"description"`
-	Compulsory  RuleCompulsory  `json:"compulsory"`
-	Parameters  []RuleParameter `json:"parameters"`
+	Code           string          `json:"code"`
+	Display        string          `json:"display"`
+	Description    string          `json:"description"`
+	Compulsory     RuleCompulsory  `json:"compulsory"`
+	PostValidation string          `json:"postvalidation"`
+	Parameters     []RuleParameter `json:"parameters"`
 }
