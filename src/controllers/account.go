@@ -1048,7 +1048,6 @@ func (s AccountController) RulesFetch(c *gin.Context) {
 		ruleparameter.Parameter = "parameter1"
 		ruleparameter.Type = "integer"
 		ruleparameter.Validation = "parameter1 >=2 && parameter1 <=100"
-		ruleparameter.Options = ""
 		ruleparameter.Description = "Percentage"
 		ruleparameter.Value = "2"
 		accountrule.Parameters = append(accountrule.Parameters, ruleparameter)
