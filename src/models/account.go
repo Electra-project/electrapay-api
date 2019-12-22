@@ -152,12 +152,14 @@ type AccountActivity struct {
 }
 
 type RuleParameter struct {
-	Parameter   string `json:"parameter"`
-	Description string `json:"description"`
-	Type        string `json:"type"`
-	Validation  string `json:"validation"`
-	Options     string `json:"options"`
-	Value       string `json:"value"`
+	Parameter           string   `json:"parameter"`
+	Description         string   `json:"description"`
+	Type                string   `json:"type"`
+	Validation          string   `json:"validation"`
+	Options             []string `json:"options"`
+	Value               string   `json:"value"`
+	ResponseCode        string   `json:"responsecode"`
+	ResponseDescription string   `json:"responsedescription"`
 }
 
 type RuleCompulsory struct {
