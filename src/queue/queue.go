@@ -88,12 +88,11 @@ func queueAdd(queue Queue) (Queue, error) {
 
 	err1 := db.QueryRow("SELECT id "+
 		"FROM queue "+
-		"WHERE reference = ? "+
-		"and status = 'PENDING'", queue.Reference).Scan(
+		"WHERE reference = ? ", queue.Reference).Scan(
 		&queue.Id)
 	if err1 != nil {
-		helpers.LogErr("Queue : Cannot verify Queue to process - " + err.Error())
-		return Queue{}, err
+		helpers.LogErr("Queue : Cannot verify Queue to process - " + err1.Error())
+		return Queue{}, err1
 	}
 	helpers.LogInfo("Queue : Id " + string(queue.Id) + " Processing request: " + queue.RequestInfo)
 	return queue, nil
