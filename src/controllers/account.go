@@ -1487,3 +1487,42 @@ func (s AccountController) ActivityList(c *gin.Context) {
 	}
 
 }
+
+func (s AccountController) SettleNow(c *gin.Context) {
+
+	var queueinfo queue.Queue
+	version := helpers.GetVersion()
+
+	queueinfo.Category = "ORDER_SETTLE"
+	queueinfo.APIType = "POST"
+	t, err := extractToken(c)
+	if err != nil {
+		c.AbortWithError(404, err)
+		return
+	}
+	queueinfo.Token = t
+	URLArray := strings.Split(c.Request.RequestURI, "/")
+	if URLArray[1] != "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Version = URLArray[1]
+	}
+	if URLArray[1] == "account" {
+		queueinfo.APIURL = c.Request.RequestURI
+		queueinfo.Parameters = c.Param("accountid")
+		queueinfo.Version = version
+	}
+	queueinfo.RequestInfo = "{}"
+	queueinfo, err = queue.QueueProcess(queueinfo)
+	var orderlist []models.OrderView
+	orderbyte := []byte(queueinfo.ResponseInfo)
+
+	json.Unmarshal(orderbyte, &orderlist)
+	if len(orderlist) == 0 {
+		empty := []string{}
+		c.JSON(200, empty)
+	} else {
+		c.JSON(200, orderlist)
+	}
+
+}

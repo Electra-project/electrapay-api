@@ -133,6 +133,10 @@ func Router() *gin.Engine {
 
 		auth.GET("/"+version+"/account/activitylist/:accountid", accountController.ActivityList)
 		auth.GET("/account/activitylist/:accountid", accountController.ActivityList)
+
+		auth.POST("/"+version+"/account/ordersettle/:accountid", accountController.SettleNow)
+		auth.POST("/account/ordersettle/:accountid", accountController.SettleNow)
+
 	}
 
 	authapi := router.Group("/")
