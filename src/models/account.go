@@ -156,6 +156,7 @@ type RuleParameter struct {
 	Description         string   `json:"description"`
 	Type                string   `json:"type"`
 	Validation          string   `json:"validation"`
+	Validation_Comment  string   `json:"validation_comment"`
 	Options             []string `json:"options"`
 	Value               string   `json:"value"`
 	ResponseCode        string   `json:"responsecode"`
