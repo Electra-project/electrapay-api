@@ -29,6 +29,7 @@ func Router() *gin.Engine {
 	 * public routes
 	 */
 	accountController := new(controllers.AccountController)
+	traceabilityController := new(controllers.TraceabilityController)
 	authController := new(controllers.AuthController)
 	userController := new(controllers.UserController)
 
@@ -137,6 +138,8 @@ func Router() *gin.Engine {
 		auth.POST("/"+version+"/account/ordersettle/:accountid", accountController.SettleNow)
 		auth.POST("/account/ordersettle/:accountid", accountController.SettleNow)
 
+		auth.POST("/"+version+"/traceability/sendcontent/:accountid", traceabilityController.SendContent)
+		auth.POST("/traceability/sendcontent/:accountid", traceabilityController.SendContent)
 	}
 
 	authapi := router.Group("/")

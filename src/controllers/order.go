@@ -17,6 +17,7 @@ func (s OrderController) New(c *gin.Context) {
 	var queueinfo queue.Queue
 	version := helpers.GetVersion()
 	queueinfo.Category = "ORDER_NEW"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "order" {
@@ -51,6 +52,7 @@ func (s OrderController) Get(c *gin.Context) {
 	var queueinfo queue.Queue
 
 	queueinfo.Category = "ORDER_FIND"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	version := helpers.GetVersion()
 	URLArray := strings.Split(c.Request.RequestURI, "/")
@@ -85,6 +87,7 @@ func (s OrderController) Cancel(c *gin.Context) {
 	version := helpers.GetVersion()
 
 	queueinfo.Category = "ORDER_CANCEL"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "PUT"
 
 	URLArray := strings.Split(c.Request.RequestURI, "/")
@@ -119,6 +122,7 @@ func (s OrderController) Reverse(c *gin.Context) {
 	version := helpers.GetVersion()
 
 	queueinfo.Category = "ORDER_REVERSE"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "order" {
@@ -152,6 +156,7 @@ func (s OrderController) PaymentCategory(c *gin.Context) {
 	version := helpers.GetVersion()
 
 	queueinfo.Category = "ORDER_PAYMENTCATEGORY"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "paymentcategory" {
@@ -185,6 +190,7 @@ func (s OrderController) AllowedCurrency(c *gin.Context) {
 	version := helpers.GetVersion()
 
 	queueinfo.Category = "ORDER_ALLOWEDCURRENCY"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "allowedcurrency" {

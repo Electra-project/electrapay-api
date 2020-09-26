@@ -190,6 +190,7 @@ func authenticate(email string, password string) (models.Account, error) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_AUTHENTICATE"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "POST"
 	queueinfo.Parameters = ""
 	queueinfo.Version = "v1"
@@ -271,6 +272,7 @@ func (s AuthController) ForgotPassword(c *gin.Context) {
 	//API to set the user password
 	var queueinfo queue.Queue
 	queueinfo.Category = "AUTH_FORGOTPASSWORD"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	version := helpers.GetVersion()
@@ -313,6 +315,7 @@ func (s AuthController) SetPassword(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "AUTH_SETPASSWORD"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "auth" {
@@ -352,6 +355,7 @@ func (s AuthController) AuthVerify(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "AUTH_VERIFY"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	version := helpers.GetVersion()

@@ -61,6 +61,7 @@ func (s UserController) Get(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "USER_FETCH"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	version := helpers.GetVersion()
@@ -106,6 +107,7 @@ func (s UserController) GetAvatar(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "USER_AVATAR_FETCH"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	version := helpers.GetVersion()
@@ -150,6 +152,7 @@ func (s UserController) EditAvatar(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "USER_AVATAR_EDIT"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	version := helpers.GetVersion()
