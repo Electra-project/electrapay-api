@@ -9,6 +9,7 @@ import (
 
 type Queue struct {
 	Id                  int64     `json: "id"`
+	QueueCategory       string    `json: "queuecategory"`
 	Reference           string    `json: "reference"`
 	Category            string    `json: "category"`
 	APIURL              string    `json: "apiurl"`
@@ -52,12 +53,15 @@ func QueueProcess(queue Queue) (Queue, error) {
 }
 
 func queueAdd(queue Queue) (Queue, error) {
-
+	queueTable := "queue"
+	if len(queue.QueueCategory) > 1 {
+		queueTable = queue.QueueCategory
+	}
 	db := mysqldatabase.GetQueueDatabase()
 	queue.ResponseCode = "Q001"
 	queue.ResponseDescription = "TIMEOUT"
 	stmt, err := db.Prepare("INSERT INTO " +
-		"queue(" +
+		queueTable + "(" +
 		"reference, " +
 		"category, " +
 		"api_url, " +
@@ -87,7 +91,7 @@ func queueAdd(queue Queue) (Queue, error) {
 	stmt.Close()
 
 	err1 := db.QueryRow("SELECT id "+
-		"FROM queue "+
+		"FROM "+queueTable+" "+
 		"WHERE reference = ? ", queue.Reference).Scan(
 		&queue.Id)
 	if err1 != nil {
@@ -100,12 +104,16 @@ func queueAdd(queue Queue) (Queue, error) {
 }
 
 func queueWaitResponse(queue Queue) (Queue, error) {
+	queueTable := "queue"
+	if len(queue.QueueCategory) > 1 {
+		queueTable = queue.QueueCategory
+	}
 	queueLoop := 1
 	queuestatus := ""
 	db := mysqldatabase.GetQueueDatabase()
 	for queueLoop < 300 {
 		err := db.QueryRow("SELECT status "+
-			"FROM queue "+
+			"FROM "+queueTable+" "+
 			"WHERE id = ? ", queue.Id).Scan(
 			&queuestatus)
 		if err != nil {
@@ -120,12 +128,15 @@ func queueWaitResponse(queue Queue) (Queue, error) {
 		queueLoop = queueLoop + 1
 		time.Sleep(100 * time.Millisecond)
 	}
-	queueinfo, err := queueGet(queue.Id)
+	queueinfo, err := queueGet(queue.Id, queue.QueueCategory)
 	return queueinfo, err
 }
 
-func queueGet(queueid int64) (Queue, error) {
-
+func queueGet(queueid int64, queueCategory string) (Queue, error) {
+	queueTable := "queue"
+	if len(queueCategory) > 1 {
+		queueTable = queueCategory
+	}
 	queue := Queue{}
 	db := mysqldatabase.GetQueueDatabase()
 	err := db.QueryRow("SELECT id,"+
@@ -145,7 +156,7 @@ func queueGet(queueid int64) (Queue, error) {
 		"node_response_date, "+
 		"response_code, "+
 		"response_description "+
-		"from queue where id=?", queueid).Scan(
+		"from "+queueTable+" where id=?", queueid).Scan(
 		&queue.Id,
 		&queue.Reference,
 		&queue.Category,
@@ -173,8 +184,12 @@ func queueGet(queueid int64) (Queue, error) {
 
 func queueClose(queue Queue) (Queue, error) {
 
+	queueTable := "queue"
+	if len(queue.QueueCategory) > 1 {
+		queueTable = queue.QueueCategory
+	}
 	db := mysqldatabase.GetQueueDatabase()
-	stmt, err := db.Prepare("UPDATE queue " +
+	stmt, err := db.Prepare("UPDATE " + queueTable + " " +
 		"set response_code = ?," +
 		"response_description = ?, " +
 		"status = ?, " +

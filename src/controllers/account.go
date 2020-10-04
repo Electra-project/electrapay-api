@@ -21,6 +21,7 @@ func (s AccountController) Register(c *gin.Context) {
 	var queueinfo queue.Queue
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_REGISTER"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "POST"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
@@ -69,6 +70,7 @@ func (s AccountController) GetAccount(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_FETCH"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
@@ -110,6 +112,7 @@ func (s AccountController) GetAccountLogo(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_LOGO_FETCH"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	queueinfo.Token = t
 	URLArray := strings.Split(c.Request.RequestURI, "/")
@@ -146,6 +149,7 @@ func (s AccountController) EditAccountLogo(c *gin.Context) {
 	version := helpers.GetVersion()
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_LOGO_EDIT"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "PUT"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -189,6 +193,7 @@ func (s AccountController) GetPersonalInformation(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_PERSONAL_FETCH"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -233,6 +238,7 @@ func (s AccountController) EditPersonalInformation(c *gin.Context) {
 	version := helpers.GetVersion()
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_PERSONAL_EDIT"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "PUT"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -281,6 +287,7 @@ func (s AccountController) GetPaymentDetails(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_PAYMENT_FETCH"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -327,6 +334,7 @@ func (s AccountController) EditPaymentDetails(c *gin.Context) {
 	t, err := extractToken(c)
 	queueinfo.Token = t
 	queueinfo.Category = "ACCOUNT_PAYMENT_EDIT"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "PUT"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if URLArray[1] != "account" {
@@ -373,6 +381,7 @@ func (s AccountController) GetOrganizationDetails(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_ORG_FETCH"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -417,6 +426,7 @@ func (s AccountController) EditOrganizationDetails(c *gin.Context) {
 	version := helpers.GetVersion()
 	var queueinfo queue.Queue
 	queueinfo.Category = "ACCOUNT_ORG_EDIT"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "PUT"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -464,6 +474,7 @@ func (s AccountController) Close(c *gin.Context) {
 	var queueinfo queue.Queue
 
 	queueinfo.Category = "ACCOUNT_CLOSE"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "POST"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -508,6 +519,7 @@ func (s AccountController) Suspend(c *gin.Context) {
 	var queueinfo queue.Queue
 
 	queueinfo.Category = "ACCOUNT_SUSPEND"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "POST"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -552,6 +564,7 @@ func (s AccountController) ApiKey(c *gin.Context) {
 	var queueinfo queue.Queue
 
 	queueinfo.Category = "ACCOUNT_APIKEY_RENEW"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "POST"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -596,6 +609,7 @@ func (s AccountController) AddressEdit(c *gin.Context) {
 	var queueinfo queue.Queue
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_ADDRESS_EDIT"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "PUT"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -644,6 +658,7 @@ func (s AccountController) AddressFetch(c *gin.Context) {
 	var queueinfo queue.Queue
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_ADDRESS_FETCH"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -689,6 +704,7 @@ func (s AccountController) AddressAdd(c *gin.Context) {
 	var queueinfo queue.Queue
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_ADDRESS_NEW"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "POST"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -736,6 +752,7 @@ func (s AccountController) AddressRemove(c *gin.Context) {
 	var queueinfo queue.Queue
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_ADDRESS_DELETE"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "DELETE"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -780,6 +797,7 @@ func (s AccountController) ContactFetch(c *gin.Context) {
 	var queueinfo queue.Queue
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_CONTACT_FETCH"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -825,6 +843,7 @@ func (s AccountController) ContactEdit(c *gin.Context) {
 	var queueinfo queue.Queue
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_CONTACT_EDIT"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "PUT"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -873,6 +892,7 @@ func (s AccountController) ContactAdd(c *gin.Context) {
 	var queueinfo queue.Queue
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_CONTACT_NEW"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "POST"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -920,6 +940,7 @@ func (s AccountController) ContactRemove(c *gin.Context) {
 	var queueinfo queue.Queue
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_CONTACT_DELETE"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "DELETE"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -985,6 +1006,7 @@ func (s AccountController) AccountBalance(c *gin.Context) {
 
 		var queueinfo queue.Queue
 		queueinfo.Category = "ACCOUNT_WALLET_BALANCE"
+		queueinfo.QueueCategory = "queue"
 		queueinfo.APIType = "GET"
 		t, err := extractToken(c)
 		queueinfo.Token = t
@@ -1059,6 +1081,7 @@ func (s AccountController) RulesFetch(c *gin.Context) {
 
 		var queueinfo queue.Queue
 		queueinfo.Category = "ACCOUNT_RULES_FETCH"
+		queueinfo.QueueCategory = "queue"
 		queueinfo.APIType = "GET"
 		t, err := extractToken(c)
 		queueinfo.Token = t
@@ -1102,6 +1125,7 @@ func (s AccountController) RulesEdit(c *gin.Context) {
 	var queueinfo queue.Queue
 	version := helpers.GetVersion()
 	queueinfo.Category = "ACCOUNT_RULES_EDIT"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "PUT"
 	t, err := extractToken(c)
 	queueinfo.Token = t
@@ -1235,6 +1259,7 @@ func (s AccountController) OrderSummary(c *gin.Context) {
 	} else {
 
 		queueinfo.Category = "ORDER_SUMMARY"
+		queueinfo.QueueCategory = "queue"
 		queueinfo.APIType = "GET"
 		t, err := extractToken(c)
 		queueinfo.Token = t
@@ -1313,6 +1338,7 @@ func (s AccountController) OrderList(c *gin.Context) {
 		version := helpers.GetVersion()
 
 		queueinfo.Category = "ORDER_LIST"
+		queueinfo.QueueCategory = "queue"
 		queueinfo.APIType = "GET"
 		t, err := extractToken(c)
 		queueinfo.Token = t
@@ -1388,6 +1414,7 @@ func (s AccountController) OrderListMax(c *gin.Context) {
 		version := helpers.GetVersion()
 
 		queueinfo.Category = "ORDER_LIST_MAX"
+		queueinfo.QueueCategory = "queue"
 		queueinfo.APIType = "GET"
 		t, err := extractToken(c)
 		queueinfo.Token = t
@@ -1453,6 +1480,7 @@ func (s AccountController) ActivityList(c *gin.Context) {
 		version := helpers.GetVersion()
 
 		queueinfo.Category = "ACTIVITY_LIST"
+		queueinfo.QueueCategory = "queue"
 		queueinfo.APIType = "GET"
 		t, err := extractToken(c)
 		queueinfo.Token = t
@@ -1494,6 +1522,7 @@ func (s AccountController) SettleNow(c *gin.Context) {
 	version := helpers.GetVersion()
 
 	queueinfo.Category = "ORDER_SETTLE"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "POST"
 	t, err := extractToken(c)
 	if err != nil {

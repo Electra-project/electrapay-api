@@ -104,6 +104,7 @@ func (s CodeController) GetAddressType(c *gin.Context) {
 	var queueinfo queue.Queue
 	version := helpers.GetVersion()
 	queueinfo.Category = "ADDRESSTYPE_FIND"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray[2]) >= 1 {
@@ -136,6 +137,7 @@ func (s CodeController) GetContactType(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "CONTACTTYPE_FIND"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	version := helpers.GetVersion()
 	URLArray := strings.Split(c.Request.RequestURI, "/")
@@ -170,6 +172,7 @@ func (s CodeController) GetCurrencyType(c *gin.Context) {
 	var queueinfo queue.Queue
 	version := helpers.GetVersion()
 	queueinfo.Category = "CURRENCYTYPE_FIND"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	if len(URLArray[2]) >= 1 {
@@ -201,6 +204,7 @@ func (s CodeController) GetPluginType(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "PLUGINTYPE_FIND"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	version := helpers.GetVersion()
 	URLArray := strings.Split(c.Request.RequestURI, "/")
@@ -233,6 +237,7 @@ func (s CodeController) GetCurrency(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "CURRENCY_FIND"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	version := helpers.GetVersion()
 	URLArray := strings.Split(c.Request.RequestURI, "/")
@@ -267,6 +272,7 @@ func (s CodeController) GetCountry(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "COUNTRY_FIND"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	version := helpers.GetVersion()
 	URLArray := strings.Split(c.Request.RequestURI, "/")
@@ -299,6 +305,7 @@ func (s CodeController) GetLanguage(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "LANGUAGE_FIND"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	version := helpers.GetVersion()
 	URLArray := strings.Split(c.Request.RequestURI, "/")
@@ -332,6 +339,7 @@ func (s CodeController) GetTimeZone(c *gin.Context) {
 
 	var queueinfo queue.Queue
 	queueinfo.Category = "TIMEZONE_FIND"
+	queueinfo.QueueCategory = "queue"
 	queueinfo.APIType = "GET"
 	URLArray := strings.Split(c.Request.RequestURI, "/")
 	version := helpers.GetVersion()

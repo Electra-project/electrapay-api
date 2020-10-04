@@ -26,6 +26,7 @@ type Order struct {
 	OrderId                  int64           `json:"id"`
 	Uuid                     string          `json:"uuid"`
 	AccountId                int64           `json:"accountid"`
+	AcccountName             string          `json:"accountname"`
 	ShortDescription         string          `json:"shortdescription"`
 	LongDescription          string          `json:"longdescription"`
 	Reference                string          `json:"reference"`
